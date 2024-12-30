@@ -1,0 +1,4 @@
+name: EscapeRooms
+version: '${project.version}'
+main: io.github.cardsandhuskers.escaperooms.EscapeRooms
+api-version: '1.21'
