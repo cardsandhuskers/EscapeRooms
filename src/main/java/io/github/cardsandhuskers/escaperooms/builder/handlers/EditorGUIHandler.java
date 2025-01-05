@@ -72,8 +72,7 @@ public class EditorGUIHandler {
         }
 
         switch (mat) {
-            case BLAZE_ROD -> {}
-            case BREEZE_ROD -> {
+            case BLAZE_ROD, BREEZE_ROD -> {
                 p.getInventory().addItem(new ItemStack(mat));
                 plugin.getServer().getPluginManager().registerEvents(new PlayerClickListener(this, currLevel, mat), plugin);
                 p.closeInventory();
@@ -81,6 +80,7 @@ public class EditorGUIHandler {
             case BARRIER -> {}
             case NETHER_STAR -> gui.openAddMechanicInv();
             case ENDER_PEARL -> currLevel.setSpawnPoint(p.getLocation());
+            case GREEN_CONCRETE -> currLevel.saveSchematic();
         }
         switch(itemName) {
             case "Back"-> gui.openMainInv();
@@ -125,6 +125,7 @@ public class EditorGUIHandler {
             }
         }
 
+        currLevel.writeData();
         refreshAll();
 
     }
@@ -144,7 +145,6 @@ public class EditorGUIHandler {
 
     public void onGUIExit(Player p) {
         EditorGUI gui = guiMap.get((OfflinePlayer) p);
-        System.out.println("Close");
 
         if(gui != null) {
             gui.close();

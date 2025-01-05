@@ -34,8 +34,9 @@ public class MechanicMapper {
 
 
     public static Mechanic createTypedMechanic(String ID, String type, Map<?, ?> attributes, Level level) {
+
         Mechanic mechanic = null;
-        if(type.equals("\"Give Item on Spawn")) {
+        if(type.equals("Give Item on Spawn")) {
             String itemString = (String) attributes.get("item");
             ItemStack item = null;
 
@@ -81,6 +82,9 @@ public class MechanicMapper {
 
 
     public static ItemStack createMechanicItem(Mechanic m, EscapeRooms plugin) {
+        if(m == null) {
+            return new ItemStack(Material.SPRUCE_BOAT);
+        }
 
         ItemStack mechanicStack;
         List<Component> explanationLore;
@@ -93,7 +97,6 @@ public class MechanicMapper {
 
             ItemStack item = sim.getItem();
             if(item!= null) {
-                System.out.println("IN GUI: " + item.getType());
 
                 explanationLore = List.of(Component.text("Current Item: " + item.getType().name()));
             } else {

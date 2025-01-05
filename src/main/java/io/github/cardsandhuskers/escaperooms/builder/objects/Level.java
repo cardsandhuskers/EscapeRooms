@@ -1,9 +1,17 @@
 package io.github.cardsandhuskers.escaperooms.builder.objects;
 
+import com.sk89q.worldedit.bukkit.BukkitWorld;
+import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
+import com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardWriter;
+import com.sk89q.worldedit.function.operation.ForwardExtentCopy;
+import com.sk89q.worldedit.function.operation.Operations;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import io.github.cardsandhuskers.escaperooms.EscapeRooms;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.Mechanic;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.MechanicMapper;
-import io.github.cardsandhuskers.escaperooms.builder.mechanics.StartingItemMechanic;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,6 +21,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,28 +40,64 @@ public class Level {
     private boolean pvpDamage = false;
     private int minPlayers = 1;
 
-    Vector spawnPointOffset;
-    //TODO: add pitch and yaw
+    private Vector spawnPointOffset;
+    private double spawnPitch = 0;
+
+    private double spawnYaw = 0;
 
     public Level(String name) {
         this.name = name;
-        writeData();
     }
 
-    public String getName() {
-        return name;
+    public boolean saveSchematic() {
+        System.out.println("SAVING!");
+
+        if (pos1 != null && pos2 != null) {
+            EscapeRooms plugin = JavaPlugin.getPlugin(EscapeRooms.class);
+
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                System.out.println("ASYNC!");
+
+                try {
+                    // Define the region
+                    BlockVector3 bot = BlockVector3.at(lowerX, lowerY, lowerZ);
+                    BlockVector3 top = BlockVector3.at(higherX, higherY, higherZ);
+                    CuboidRegion region = new CuboidRegion(new BukkitWorld(pos1.getWorld()), bot, top);
+
+                    System.out.println("Region: " + region);
+                    System.out.println("Region Size: " + region.getVolume() + " blocks");
+
+                    // Create the clipboard
+                    BlockArrayClipboard clipboard = new BlockArrayClipboard(region);
+                    ForwardExtentCopy forwardExtentCopy = new ForwardExtentCopy(
+                            new BukkitWorld(pos1.getWorld()), region, clipboard, region.getMinimumPoint()
+                    );
+                    forwardExtentCopy.setCopyingEntities(true);
+
+                    // Copy the blocks
+                    Operations.complete(forwardExtentCopy);
+                    System.out.println("Copied: " + clipboard.getRegion().getVolume() + " blocks to clipboard");
+
+                    // Save to .schem file
+                    File file = new File(plugin.getDataFolder(), getName() + ".schem");
+                    try (ClipboardWriter writer = BuiltInClipboardFormat.FAST_V3.getWriter(new FileOutputStream(file))) {
+                        writer.write(clipboard);
+                        System.out.println("Schematic saved to: " + file.getAbsolutePath());
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+
+            return true;
+        }
+        return false;
     }
 
-    public Location getPos1() {
-        return pos1;
-    }
-    public Location getPos2() {
-        return pos2;
-    }
 
     public void setPos1(Location pos) {
         pos1 = pos;
-        writeData();
 
         if(pos2 != null) {
             assignCorners();
@@ -61,30 +106,52 @@ public class Level {
 
     public void setPos2(Location pos) {
         pos2 = pos;
-        writeData();
 
         if(pos1 != null) {
             assignCorners();
         }
     }
 
+    public double getSpawnPitch() {
+        return spawnPitch;
+    }
+    public double getSpawnYaw() {
+        return spawnYaw;
+    }
+    public void setSpawnPitch(double spawnPitch) {
+        this.spawnPitch = spawnPitch;
+    }
+    public void setSpawnYaw(double spawnYaw) {
+        this.spawnYaw = spawnYaw;
+    }
+    public String getName() {
+        return name;
+    }
+    public Location getPos1() {
+        return pos1;
+    }
+    public Location getPos2() {
+        return pos2;
+    }
+    public void setSpawnPointOffset(Vector offset) {
+        spawnPointOffset = offset;
+    }
+    public List<Mechanic> getMechanics() {
+        return new ArrayList<>(levelMechanics);
+    }
     public void setGameMode(GameMode gameMode) {
         this.gameMode = gameMode;
-        writeData();
     }
-
     public GameMode getGameMode() {
         return gameMode;
     }
 
     public void setEnvDamage(boolean envDamage) {
         this.envDamage = envDamage;
-        writeData();
     }
 
     public void setPvpDamage(boolean pvpDamage) {
         this.pvpDamage = pvpDamage;
-        writeData();
     }
     public boolean isEnvDamage() {
         return envDamage;
@@ -133,6 +200,8 @@ public class Level {
             config.set("spawnPoint.y", spawnPointOffset.getY());
             config.set("spawnPoint.z", spawnPointOffset.getZ());
         }
+        config.set("spawnPoint.pitch", spawnPitch);
+        config.set("spawnPoint.yaw", spawnYaw);
 
         // Mechanics data saving logic
         List<Map<String, Object>> mechanicList = new ArrayList<>();
@@ -162,8 +231,9 @@ public class Level {
      */
     public Mechanic addMechanic(Material mat) {
         Mechanic mechanic = MechanicMapper.createTypedMechanic(mat, this);
-        levelMechanics.add(mechanic);
-
+        if(mechanic != null) {
+            levelMechanics.add(mechanic);
+        }
         return mechanic;
     }
 
@@ -173,21 +243,16 @@ public class Level {
             int yDiff = (int) (pos.getY() - lowerY);
             int zDiff = (int) (pos.getZ() - lowerZ);
             spawnPointOffset = new Vector(xDiff, yDiff, zDiff);
+            spawnPitch = pos.getPitch();
+            spawnYaw = pos.getYaw();
+
             return true;
         } else return false;
-    }
-
-    public void setSpawnPointOffset(Vector offset) {
-        spawnPointOffset = offset;
     }
 
     public Location getSpawnPoint() {
         if (spawnPointOffset != null && pos1 != null) return new Location(pos1.getWorld(), lowerX + spawnPointOffset.getX(), lowerY + spawnPointOffset.getY(), lowerZ + spawnPointOffset.getZ());
         else return null;
-    }
-
-    public List<Mechanic> getMechanics() {
-        return new ArrayList<>(levelMechanics);
     }
 
     private void assignCorners() {
@@ -202,4 +267,6 @@ public class Level {
     public void addMechanic(Mechanic mechanic) {
         levelMechanics.add(mechanic);
     }
+
+
 }

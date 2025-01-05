@@ -59,6 +59,7 @@ public class LevelHandler {
         Level level = new Level(levelName);
         levels.add(level);
         p.sendMessage(Component.text("Level created successfully").color(NamedTextColor.GREEN));
+        level.writeData();
 
         return true;
     }
@@ -94,8 +95,13 @@ public class LevelHandler {
                         double y = config.getDouble("spawnPoint.y");
                         double z = config.getDouble("spawnPoint.z");
 
+                        double pitch = config.getDouble("spawnPoint.pitch");
+                        double yaw = config.getDouble("spawnPoint.yaw");
+
                         Vector spawnOffset = new Vector(x, y, z);
                         level.setSpawnPointOffset(spawnOffset);
+                        level.setSpawnPitch(pitch);
+                        level.setSpawnYaw(yaw);
                     } catch (Exception e) {
                         // Handle missing or corrupted spawn point data
                     }
