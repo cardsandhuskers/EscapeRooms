@@ -3,6 +3,7 @@ package io.github.cardsandhuskers.escaperooms.builder.handlers;
 import io.github.cardsandhuskers.escaperooms.EscapeRooms;
 import io.github.cardsandhuskers.escaperooms.builder.listeners.PlayerClickListener;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.Mechanic;
+import io.github.cardsandhuskers.escaperooms.builder.mechanics.MechanicMapper;
 import io.github.cardsandhuskers.escaperooms.builder.objects.EditorGUI;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
 import net.kyori.adventure.text.Component;
@@ -108,7 +109,7 @@ public class EditorGUIHandler {
             }
         }
 
-        if(MechanicsHandler.getInstance().isValidMaterial(mat)) {
+        if(MechanicMapper.isValidMaterial(mat)) {
 
             ItemMeta itemMeta = clickedItem.getItemMeta();
             NamespacedKey namespacedKey = new NamespacedKey(plugin, "ID");

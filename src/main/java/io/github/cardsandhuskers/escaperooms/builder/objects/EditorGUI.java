@@ -4,6 +4,7 @@ import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.LevelHandler;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.MechanicsHandler;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.Mechanic;
+import io.github.cardsandhuskers.escaperooms.builder.mechanics.MechanicMapper;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.StartingItemMechanic;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -161,36 +162,7 @@ public class EditorGUI {
         //mechanics, need to add here when adding a new mechanic
         int i = 18;
         for(Mechanic m: level.getMechanics()) {
-            ItemStack mechanicStack;
-            List<Component> explanationLore;
-
-            if(m instanceof StartingItemMechanic sim) {
-                mechanicStack = new ItemStack(Material.BOOK);
-                ItemStack item = sim.getItem();
-                if(item!= null) {
-                    System.out.println("IN GUI: " + item.getType());
-
-                    explanationLore = List.of(Component.text("Current Item: " + item.getType().name()));
-                } else {
-                    explanationLore = List.of(Component.text("Current Item: None"));
-                }
-
-            }
-            else {
-                mechanicStack = new ItemStack(Material.OAK_BOAT);
-                explanationLore = List.of(Component.text("Empty"));
-            }
-            ItemMeta mechanicMeta = mechanicStack.getItemMeta();
-
-            //embed UUID
-            NamespacedKey namespacedKey = new NamespacedKey(plugin, "ID");
-            PersistentDataContainer container = mechanicMeta.getPersistentDataContainer();
-            container.set(namespacedKey, PersistentDataType.STRING, m.getID().toString());
-            //handle name and lore
-            mechanicMeta.displayName(Component.text(MechanicsHandler.getInstance().getMechanicName(mechanicStack.getType())).color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
-            mechanicMeta.lore(explanationLore);
-            mechanicStack.setItemMeta(mechanicMeta);
-            editInv.setItem(i, mechanicStack);
+            editInv.setItem(i, MechanicMapper.createMechanicItem(m, plugin));
             i++;
         }
 
@@ -249,7 +221,7 @@ public class EditorGUI {
                 .color(NamedTextColor.GREEN));
         fillSpacers(addMechanicMenu);
 
-        HashMap<String, Material> mechanics = MechanicsHandler.getInstance().getCustomMechanics();
+        HashMap<String, Material> mechanics = MechanicMapper.getMechanicTypes();
         int i = 9;
         for (String s: mechanics.keySet()) {
             ItemStack mechanic = new ItemStack(mechanics.get(s));

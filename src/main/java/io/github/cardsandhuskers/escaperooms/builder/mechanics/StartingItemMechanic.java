@@ -1,7 +1,6 @@
 package io.github.cardsandhuskers.escaperooms.builder.mechanics;
 
 import io.github.cardsandhuskers.escaperooms.EscapeRooms;
-import io.github.cardsandhuskers.escaperooms.builder.handlers.LevelHandler;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -9,8 +8,6 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -19,8 +16,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 public class StartingItemMechanic extends Mechanic{

@@ -2,6 +2,7 @@ package io.github.cardsandhuskers.escaperooms.builder.handlers;
 
 import io.github.cardsandhuskers.escaperooms.EscapeRooms;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.Mechanic;
+import io.github.cardsandhuskers.escaperooms.builder.mechanics.MechanicMapper;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.StartingItemMechanic;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
 import net.kyori.adventure.text.Component;
@@ -108,19 +109,9 @@ public class LevelHandler {
                                 Map<?, ?> attributes = (Map<?, ?>) entry.getValue();
 
                                 String type = (String) attributes.get("type");
-                                String itemString = (String) attributes.get("item");
-                                ItemStack item = null;
 
-                                // Deserialize the item if it exists
-                                if (itemString != null && !itemString.isEmpty()) {
-                                    item = Mechanic.deserializeItemStack(itemString);
-                                }
-
-                                if(type.equals("Give Item on Spawn")) {
-                                    // Create the Mechanic object and add it to the level
-                                    Mechanic mechanic = new StartingItemMechanic(mechanicID, item, level); // Assuming Mechanic has a constructor like this
-                                    level.addMechanic(mechanic); // Add mechanic to the level
-                                }
+                                Mechanic mechanic = MechanicMapper.createTypedMechanic(mechanicID, type, attributes, level);
+                                level.addMechanic(mechanic); // Add mechanic to the level
                             }
                         }
                     }

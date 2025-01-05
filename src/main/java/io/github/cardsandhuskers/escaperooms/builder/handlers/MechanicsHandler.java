@@ -22,10 +22,6 @@ public class MechanicsHandler {
 
     private HashMap<String, Material> mechanicTypes = new HashMap<>();
     private MechanicsHandler() {
-        mechanicTypes.put("Block Break Tool", Material.DIAMOND_PICKAXE);
-        mechanicTypes.put("Give Item on Spawn", Material.BOOK);
-        mechanicTypes.put("Make Block Placeable", Material.IRON_BLOCK);
-        mechanicTypes.put("Random Button Location", Material.STONE_BUTTON);
 
     }
 
@@ -86,23 +82,6 @@ public class MechanicsHandler {
             }
         }
         return null;
-    }
-
-    public HashMap<String, Material> getCustomMechanics() {
-        return mechanicTypes;
-    }
-
-    public String getMechanicName(Material mat) {
-        for (Map.Entry<String, Material> entry : mechanicTypes.entrySet()) {
-            if (entry.getValue().equals(mat)) {
-                return entry.getKey();
-            }
-        }
-        return null; // Return null if no matching value is found
-    }
-
-    public boolean isValidMaterial(Material mat) {
-        return mechanicTypes.values().contains(mat);
     }
 
 }

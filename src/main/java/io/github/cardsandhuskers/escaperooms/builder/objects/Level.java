@@ -2,6 +2,7 @@ package io.github.cardsandhuskers.escaperooms.builder.objects;
 
 import io.github.cardsandhuskers.escaperooms.EscapeRooms;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.Mechanic;
+import io.github.cardsandhuskers.escaperooms.builder.mechanics.MechanicMapper;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.StartingItemMechanic;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -14,7 +15,6 @@ import org.bukkit.util.Vector;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -161,13 +161,9 @@ public class Level {
      * @return
      */
     public Mechanic addMechanic(Material mat) {
-        Mechanic mechanic = null;
-        switch (mat) {
-            case BOOK -> {
-                mechanic = new StartingItemMechanic(this);
-                levelMechanics.add(mechanic);
-            }
-        }
+        Mechanic mechanic = MechanicMapper.createTypedMechanic(mat, this);
+        levelMechanics.add(mechanic);
+
         return mechanic;
     }
 
