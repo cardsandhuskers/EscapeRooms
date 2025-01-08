@@ -1,4 +1,4 @@
-package io.github.cardsandhuskers.escaperooms.builder.commands;
+package io.github.cardsandhuskers.escaperooms.commands;
 
 import io.github.cardsandhuskers.escaperooms.EscapeRooms;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
@@ -10,11 +10,10 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class EscapeRoomCommand implements CommandExecutor {
-    EscapeRooms plugin;
+    EscapeRooms plugin = EscapeRooms.getInstance();
     private EditorGUIHandler editorGUIHandler;
 
-    public EscapeRoomCommand(EscapeRooms plugin, EditorGUIHandler editorGUIHandler) {
-        this.plugin = plugin;
+    public EscapeRoomCommand(EditorGUIHandler editorGUIHandler) {
         this. editorGUIHandler = editorGUIHandler;
     }
 

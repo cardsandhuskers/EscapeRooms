@@ -24,11 +24,9 @@ import java.util.UUID;
 
 public class EditorGUIHandler {
     private HashMap<OfflinePlayer, EditorGUI> guiMap;
-    private EscapeRooms plugin;
+    private EscapeRooms plugin = EscapeRooms.getInstance();
 
-    public EditorGUIHandler(EscapeRooms plugin) {
-        guiMap = new HashMap<>();
-        this.plugin = plugin;
+    public EditorGUIHandler() {
     }
 
     public void onMainGUIOpen(Player p) {
@@ -156,7 +154,7 @@ public class EditorGUIHandler {
         if(playerGUI != null) {
             return playerGUI;
         } else {
-            playerGUI = new EditorGUI(p, plugin);
+            playerGUI = new EditorGUI(p);
             guiMap.put((OfflinePlayer) p, playerGUI);
             return playerGUI;
         }

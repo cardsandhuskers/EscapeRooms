@@ -13,7 +13,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
@@ -38,7 +37,7 @@ public class MechanicsHandler {
      * @param e
      */
     public void handleClick(InventoryClickEvent e, EditorGUIHandler editorGUIHandler) {
-        EscapeRooms plugin = JavaPlugin.getPlugin(EscapeRooms.class);
+        EscapeRooms plugin = EscapeRooms.getInstance();
         Player p = (Player) e.getInventory().getHolder();
         ItemStack titleItem = e.getInventory().getItem(4);
         ItemMeta titleMeta = titleItem.getItemMeta();

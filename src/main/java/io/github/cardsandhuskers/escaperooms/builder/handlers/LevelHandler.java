@@ -13,8 +13,6 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
 import java.io.File;
@@ -65,7 +63,7 @@ public class LevelHandler {
     }
 
     public void loadLevels() {
-        EscapeRooms plugin = JavaPlugin.getPlugin(EscapeRooms.class);
+        EscapeRooms plugin = EscapeRooms.getInstance();
 
         List<String> levelNames = plugin.getConfig().getStringList("levels");
 

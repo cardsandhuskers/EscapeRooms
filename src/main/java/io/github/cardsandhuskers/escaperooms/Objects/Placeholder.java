@@ -7,10 +7,10 @@ import org.bukkit.OfflinePlayer;
 import java.util.ArrayList;
 
 public class Placeholder extends PlaceholderExpansion{
-    private final EscapeRooms plugin;
+    private final EscapeRooms plugin = EscapeRooms.getInstance();
 
-    public Placeholder(EscapeRooms plugin) {
-        this.plugin = plugin;
+    public Placeholder() {
+
     }
     @Override
     public String getIdentifier() {

@@ -14,7 +14,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
@@ -56,7 +55,7 @@ public class StartingItemMechanic extends Mechanic{
 
     @Override
     public Inventory generateMechanicSettingsMenu(Player player) {
-        EscapeRooms plugin = JavaPlugin.getPlugin(EscapeRooms.class);
+        EscapeRooms plugin = EscapeRooms.getInstance();
         Inventory mechanicInv = Bukkit.createInventory(player, 27, Component.text("Mechanic: Give Item on Spawn")
                 .color(NamedTextColor.BLUE));
 

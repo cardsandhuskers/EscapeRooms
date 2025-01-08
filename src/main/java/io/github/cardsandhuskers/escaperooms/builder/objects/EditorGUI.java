@@ -31,13 +31,13 @@ public class EditorGUI {
     private Inventory mainInv;
     private Inventory editInv;
     private Player player;
-    private EscapeRooms plugin;
+    private EscapeRooms plugin = EscapeRooms.getInstance();
     private GUI currentGUI;
 
     private Level currentSelectedLevel;
     private boolean isOpen = false;
 
-    public EditorGUI(Player p, EscapeRooms plugin) {
+    public EditorGUI(Player p) {
         player = p;
 
         this.plugin = plugin;

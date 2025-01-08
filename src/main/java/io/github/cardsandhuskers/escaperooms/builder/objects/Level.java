@@ -17,7 +17,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
 import java.io.File;
@@ -53,7 +52,7 @@ public class Level {
         System.out.println("SAVING!");
 
         if (pos1 != null && pos2 != null) {
-            EscapeRooms plugin = JavaPlugin.getPlugin(EscapeRooms.class);
+            EscapeRooms plugin = EscapeRooms.getInstance();
 
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 System.out.println("ASYNC!");
@@ -170,7 +169,7 @@ public class Level {
     }
 
     public void writeData() {
-        EscapeRooms plugin = JavaPlugin.getPlugin(EscapeRooms.class);
+        EscapeRooms plugin = EscapeRooms.getInstance();
 
         // Load the config file
         File file = new File(plugin.getDataFolder(), name + ".yml");
