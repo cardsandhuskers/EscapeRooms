@@ -1,7 +1,7 @@
 package io.github.cardsandhuskers.escaperooms.builder.handlers;
 
 import io.github.cardsandhuskers.escaperooms.EscapeRooms;
-import io.github.cardsandhuskers.escaperooms.builder.listeners.PlayerClickListener;
+import io.github.cardsandhuskers.escaperooms.builder.listeners.CornerWandClickListener;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.Mechanic;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.MechanicMapper;
 import io.github.cardsandhuskers.escaperooms.builder.objects.EditorGUI;
@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class EditorGUIHandler {
-    private HashMap<OfflinePlayer, EditorGUI> guiMap;
-    private EscapeRooms plugin = EscapeRooms.getInstance();
+    private HashMap<OfflinePlayer, EditorGUI> guiMap = new HashMap<>();
+    private EscapeRooms plugin = EscapeRooms.getPlugin();
 
     public EditorGUIHandler() {
     }
@@ -72,7 +72,10 @@ public class EditorGUIHandler {
         switch (mat) {
             case BLAZE_ROD, BREEZE_ROD -> {
                 p.getInventory().addItem(new ItemStack(mat));
-                plugin.getServer().getPluginManager().registerEvents(new PlayerClickListener(this, currLevel, mat), plugin);
+
+                CornerWandClickListener cornerWandClickListener = new CornerWandClickListener(this, currLevel, mat, p);
+                cornerWandClickListener.startOperation();
+                plugin.getServer().getPluginManager().registerEvents(cornerWandClickListener, plugin);
                 p.closeInventory();
             }
             case BARRIER -> {}

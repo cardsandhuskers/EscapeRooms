@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +53,7 @@ public class Level {
         System.out.println("SAVING!");
 
         if (pos1 != null && pos2 != null) {
-            EscapeRooms plugin = EscapeRooms.getInstance();
+            EscapeRooms plugin = EscapeRooms.getPlugin();
 
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 System.out.println("ASYNC!");
@@ -169,7 +170,14 @@ public class Level {
     }
 
     public void writeData() {
-        EscapeRooms plugin = EscapeRooms.getInstance();
+        System.out.println("WRITING LEVEL DATA");
+
+        EscapeRooms plugin = EscapeRooms.getPlugin();
+
+        List<String> levelNames = plugin.getConfig().getStringList("levels");
+        if(! levelNames.contains(name)) levelNames.add(name);
+        plugin.getConfig().set("levels", levelNames);
+        plugin.saveConfig();
 
         // Load the config file
         File file = new File(plugin.getDataFolder(), name + ".yml");
@@ -203,18 +211,18 @@ public class Level {
         config.set("spawnPoint.yaw", spawnYaw);
 
         // Mechanics data saving logic
-        List<Map<String, Object>> mechanicList = new ArrayList<>();
+        Map<String, Object> mechanicMap = new HashMap<>();
 
         for (Mechanic m : levelMechanics) {
             // For each mechanic, create the mechanic entry
-            Map<String, Object> mechanicEntry = m.writeData();
+            Map<String, Object> mechanicEntry = m.getData();
 
             // Add the mechanic entry to the list
-            mechanicList.add(mechanicEntry);
+            mechanicMap.put(String.valueOf(m.getID()), mechanicEntry);
         }
 
         // Save the mechanics list to the config
-        config.set("mechanics", mechanicList);
+        config.set("mechanics", mechanicMap);
         try {
             config.save(file);
         } catch (IOException e) {
@@ -265,6 +273,26 @@ public class Level {
 
     public void addMechanic(Mechanic mechanic) {
         levelMechanics.add(mechanic);
+    }
+
+    public Vector getDiff(Vector pos) {
+        if(pos1 != null && pos2 != null) {
+            int xDiff = (int) (pos.getX() - lowerX);
+            int yDiff = (int) (pos.getY() - lowerY);
+            int zDiff = (int) (pos.getZ() - lowerZ);
+            return new Vector(xDiff, yDiff, zDiff);
+        }
+        return null;
+    }
+
+    public Vector getCoords(Vector offset) {
+        if(pos1 != null && pos2 != null) {
+            int x = (int) (offset.getX() + lowerX);
+            int y = (int) (offset.getY() + lowerY);
+            int z = (int) (offset.getZ() + lowerZ);
+            return new Vector(x, y, z);
+        }
+        return null;
     }
 
 

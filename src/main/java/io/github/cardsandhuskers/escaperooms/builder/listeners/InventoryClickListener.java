@@ -10,10 +10,10 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class EditorGUIListener implements Listener {
+public class InventoryClickListener implements Listener {
     private EditorGUIHandler editorGUIHandler;
 
-    public EditorGUIListener(EditorGUIHandler editorGUIHandler) {
+    public InventoryClickListener(EditorGUIHandler editorGUIHandler) {
         this.editorGUIHandler = editorGUIHandler;
     }
 

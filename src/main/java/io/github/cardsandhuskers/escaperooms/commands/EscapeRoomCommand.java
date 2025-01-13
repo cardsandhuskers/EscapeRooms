@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class EscapeRoomCommand implements CommandExecutor {
-    EscapeRooms plugin = EscapeRooms.getInstance();
+    EscapeRooms plugin = EscapeRooms.getPlugin();
     private EditorGUIHandler editorGUIHandler;
 
     public EscapeRoomCommand(EditorGUIHandler editorGUIHandler) {

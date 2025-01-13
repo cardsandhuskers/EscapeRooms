@@ -4,10 +4,8 @@ import io.github.cardsandhuskers.escaperooms.EscapeRooms;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 
-import java.util.ArrayList;
-
 public class Placeholder extends PlaceholderExpansion{
-    private final EscapeRooms plugin = EscapeRooms.getInstance();
+    private final EscapeRooms plugin = EscapeRooms.getPlugin();
 
     public Placeholder() {
 

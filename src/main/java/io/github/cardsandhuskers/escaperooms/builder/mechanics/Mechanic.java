@@ -1,12 +1,14 @@
 package io.github.cardsandhuskers.escaperooms.builder.mechanics;
 
+import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public abstract class Mechanic {
@@ -17,7 +19,7 @@ public abstract class Mechanic {
         generateUUID();
     }
 
-    public abstract HashMap<String, Object> writeData();
+    public abstract Map<String, Object> getData();
 
     public abstract Inventory generateMechanicSettingsMenu(Player player);
 
@@ -47,4 +49,5 @@ public abstract class Mechanic {
         return config.getItemStack("item");
     }
 
+    public abstract void handleClick(InventoryClickEvent e, EditorGUIHandler editorGUIHandler);
 }

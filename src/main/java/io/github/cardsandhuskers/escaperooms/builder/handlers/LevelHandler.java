@@ -3,13 +3,13 @@ package io.github.cardsandhuskers.escaperooms.builder.handlers;
 import io.github.cardsandhuskers.escaperooms.EscapeRooms;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.Mechanic;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.MechanicMapper;
-import io.github.cardsandhuskers.escaperooms.builder.mechanics.StartingItemMechanic;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -19,9 +19,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class LevelHandler {
 
@@ -63,11 +61,12 @@ public class LevelHandler {
     }
 
     public void loadLevels() {
-        EscapeRooms plugin = EscapeRooms.getInstance();
+        EscapeRooms plugin = EscapeRooms.getPlugin();
 
         List<String> levelNames = plugin.getConfig().getStringList("levels");
 
         for (String levelName : levelNames) {
+            System.out.println("TEST: " + levelName);
             try {
                 File file = new File(plugin.getDataFolder(), levelName + ".yml");
                 if (file.exists()) {
@@ -102,19 +101,21 @@ public class LevelHandler {
                         level.setSpawnYaw(yaw);
                     } catch (Exception e) {
                         // Handle missing or corrupted spawn point data
+                        e.printStackTrace();
                     }
 
-                    // Load mechanics
-                    List<Map<?, ?>> mechanicList = (List<Map<?, ?>>) config.getList("mechanics");
-                    if (mechanicList != null) {
-                        for (Map<?, ?> mechanicData : mechanicList) {
-                            for (Map.Entry<?, ?> entry : mechanicData.entrySet()) {
-                                String mechanicID = entry.getKey().toString();
-                                Map<?, ?> attributes = (Map<?, ?>) entry.getValue();
 
-                                String type = (String) attributes.get("type");
+                    // Load mechanics using getConfigurationSection
+                    ConfigurationSection mechanicSection = config.getConfigurationSection("mechanics");
+                    if (mechanicSection != null) {
+                        for (String mechanicID : mechanicSection.getKeys(false)) {  // Get all mechanic IDs
+                            ConfigurationSection attributesSection = mechanicSection.getConfigurationSection(mechanicID);
 
-                                Mechanic mechanic = MechanicMapper.createTypedMechanic(mechanicID, type, attributes, level);
+                            if (attributesSection != null) {
+                                String type = attributesSection.getString("type");
+
+                                // Use the attributesSection to retrieve other properties, like locations, etc.
+                                Mechanic mechanic = MechanicMapper.loadTypedMechanicFromFile(mechanicID, type, attributesSection, level);
                                 level.addMechanic(mechanic); // Add mechanic to the level
                             }
                         }

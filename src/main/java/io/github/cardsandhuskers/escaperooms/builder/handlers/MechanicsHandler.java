@@ -37,37 +37,19 @@ public class MechanicsHandler {
      * @param e
      */
     public void handleClick(InventoryClickEvent e, EditorGUIHandler editorGUIHandler) {
-        EscapeRooms plugin = EscapeRooms.getInstance();
+        EscapeRooms plugin = EscapeRooms.getPlugin();
         Player p = (Player) e.getInventory().getHolder();
         ItemStack titleItem = e.getInventory().getItem(4);
         ItemMeta titleMeta = titleItem.getItemMeta();
         NamespacedKey namespacedKey = new NamespacedKey(plugin, "ID");
         PersistentDataContainer container = titleMeta.getPersistentDataContainer();
         UUID id = UUID.fromString(container.get(namespacedKey, PersistentDataType.STRING));
-        Mechanic match = findMechanicFromID(id);
+        Mechanic mech = findMechanicFromID(id);
 
         if(e.getCurrentItem().getType() == Material.RED_CONCRETE) {
-            editorGUIHandler.getPlayerMenu(p).openEditInv(match.getLevel().getName());
-        }
-
-        if(match instanceof StartingItemMechanic startingItemMech) {
-            //do stuff for this mechanic here
-            //text: Place Item Here!
-            if (e.getClickedInventory() != null && e.getClickedInventory() != p.getInventory()) {
-                if(PlainTextComponentSerializer.plainText().serialize(e.getCurrentItem().displayName()).contains("Place Item Here!")) {
-                    ItemStack heldItem = e.getCursor();
-                    System.out.println("HELD ITEM: " + heldItem.getType());
-                    startingItemMech.setItem(heldItem);
-                    //should probably move refresh
-                    p.openInventory(match.generateMechanicSettingsMenu(p));
-
-                }
-
-                e.setCancelled(true);
-                startingItemMech.getLevel().writeData();
-            }
-
-
+            editorGUIHandler.getPlayerMenu(p).openEditInv(mech.getLevel().getName());
+        } else {
+            mech.handleClick(e, editorGUIHandler);
         }
 
     }

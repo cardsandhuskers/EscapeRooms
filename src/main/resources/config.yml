@@ -1,3 +1,4 @@
 world: EscapeRooms
-#levels to include in a course
+#num levels to include in a course
 courseLength: 10
+levels: []

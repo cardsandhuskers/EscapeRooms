@@ -1,14 +1,17 @@
 package io.github.cardsandhuskers.escaperooms.builder.mechanics;
 
 import io.github.cardsandhuskers.escaperooms.EscapeRooms;
+import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -33,8 +36,7 @@ public class StartingItemMechanic extends Mechanic{
     }
 
     @Override
-    public HashMap<String, Object> writeData() {
-        HashMap<String, Object> mechanicEntry = new HashMap<>();
+    public Map<String, Object> getData() {
 
         // Prepare attributes map
         Map<String, Object> attributes = new HashMap<>();
@@ -47,25 +49,25 @@ public class StartingItemMechanic extends Mechanic{
         attributes.put("type", "Give Item on Spawn");
 
         // Add the mechanic ID and its attributes to the mechanic entry
-        mechanicEntry.put(String.valueOf(getID()), attributes);
 
-        return mechanicEntry;
+        return attributes;
     }
 
 
     @Override
     public Inventory generateMechanicSettingsMenu(Player player) {
-        EscapeRooms plugin = EscapeRooms.getInstance();
+        EscapeRooms plugin = EscapeRooms.getPlugin();
         Inventory mechanicInv = Bukkit.createInventory(player, 27, Component.text("Mechanic: Give Item on Spawn")
                 .color(NamedTextColor.BLUE));
 
         ItemStack title = new ItemStack(Material.BOOK);
         ItemMeta titleMeta = title.getItemMeta();
         titleMeta.displayName(Component.text("").decoration(TextDecoration.ITALIC, false));
-
         NamespacedKey namespacedKey = new NamespacedKey(plugin, "ID");
         PersistentDataContainer container = titleMeta.getPersistentDataContainer();
         container.set(namespacedKey, PersistentDataType.STRING, mechanicID.toString());
+        title.setItemMeta(titleMeta);
+        mechanicInv.setItem(4, title);
 
         ItemStack explainer = new ItemStack(Material.ARROW);
         ItemMeta explainerMeta = explainer.getItemMeta();
@@ -103,9 +105,6 @@ public class StartingItemMechanic extends Mechanic{
             mechanicInv.setItem(15, getItem());
         }
 
-        title.setItemMeta(titleMeta);
-        mechanicInv.setItem(4, title);
-
         ItemStack back = new ItemStack(Material.RED_CONCRETE);
         ItemMeta backMeta = back.getItemMeta();
         backMeta.displayName(Component.text("Back").color(NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
@@ -125,5 +124,32 @@ public class StartingItemMechanic extends Mechanic{
         }
         return null;
 
+    }
+
+    @Override
+    public void handleClick(InventoryClickEvent e, EditorGUIHandler editorGUIHandler) {
+
+        Player p = (Player) e.getInventory().getHolder();
+
+        if (e.getClickedInventory() != null && e.getClickedInventory() != p.getInventory()) {
+            e.setCancelled(true);
+            String itemName = PlainTextComponentSerializer.plainText().serialize(e.getCurrentItem().displayName());
+
+            if(itemName.contains("Place Item Here!")) {
+                ItemStack heldItem = e.getCursor();
+
+                if(heldItem.getType() != Material.AIR) {
+                    setItem(heldItem);
+                    //should probably move refresh elsewhere, but this does the refresh
+                    p.openInventory(generateMechanicSettingsMenu(p));
+                    getLevel().writeData();
+                }
+
+            } else if (e.getSlot() == 15) {
+                if(getItem() != null) {
+                    p.getInventory().addItem(getItem());
+                }
+            }
+        }
     }
 }

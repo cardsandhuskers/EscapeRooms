@@ -1,12 +1,14 @@
 package io.github.cardsandhuskers.escaperooms;
 
 import io.github.cardsandhuskers.escaperooms.Objects.Placeholder;
+import io.github.cardsandhuskers.escaperooms.builder.mechanics.BlockLocation;
 import io.github.cardsandhuskers.escaperooms.commands.EscapeRoomCommand;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.LevelHandler;
-import io.github.cardsandhuskers.escaperooms.builder.listeners.EditorGUIListener;
+import io.github.cardsandhuskers.escaperooms.builder.listeners.InventoryClickListener;
 import io.github.cardsandhuskers.escaperooms.builder.listeners.InventoryCloseListener;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class EscapeRooms extends JavaPlugin {
@@ -34,6 +36,9 @@ public final class EscapeRooms extends JavaPlugin {
             //Bukkit.getPluginManager().disablePlugin(this);
         }
 
+        //register serializations
+        ConfigurationSerialization.registerClass(BlockLocation.class);
+
         getConfig().options().copyDefaults();
         saveDefaultConfig();
 
@@ -41,7 +46,7 @@ public final class EscapeRooms extends JavaPlugin {
 
         EditorGUIHandler editorGUIHandler = new EditorGUIHandler();
         getCommand("escapeRoom").setExecutor(new EscapeRoomCommand(editorGUIHandler));
-        getServer().getPluginManager().registerEvents(new EditorGUIListener(editorGUIHandler), this);
+        getServer().getPluginManager().registerEvents(new InventoryClickListener(editorGUIHandler), this);
         getServer().getPluginManager().registerEvents(new InventoryCloseListener(editorGUIHandler), this);
     }
 
@@ -50,7 +55,7 @@ public final class EscapeRooms extends JavaPlugin {
         // Plugin shutdown logic
     }
 
-    public static EscapeRooms getInstance() {
+    public static EscapeRooms getPlugin() {
         return plugin;
     }
 }

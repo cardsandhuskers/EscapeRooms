@@ -7,11 +7,13 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,14 +32,17 @@ public class MechanicMapper {
 
     public static HashMap<Class, Material> mechanicClassMap = new HashMap<>() {{
         put(StartingItemMechanic.class, Material.BOOK);
+        put(RandomButtonMechanic.class, Material.STONE_BUTTON);
     }};
 
 
-    public static Mechanic createTypedMechanic(String ID, String type, Map<?, ?> attributes, Level level) {
+    public static Mechanic loadTypedMechanicFromFile(String ID, String type, ConfigurationSection attributes, Level level) {
 
         Mechanic mechanic = null;
+
         if(type.equals("Give Item on Spawn")) {
-            String itemString = (String) attributes.get("item");
+            // Create the Mechanic object and add it to the level
+            String itemString = attributes.getString("item");
             ItemStack item = null;
 
             // Deserialize the item if it exists
@@ -45,8 +50,21 @@ public class MechanicMapper {
                 item = Mechanic.deserializeItemStack(itemString);
             }
 
-            // Create the Mechanic object and add it to the level
-            mechanic = new StartingItemMechanic(ID, item, level); // Assuming Mechanic has a constructor like this
+            mechanic = new StartingItemMechanic(ID, item, level);
+
+        } else if (type.equals("Random Button Location")) {
+
+            List<Map<?, ?>> locations = (List<Map<?, ?>>) attributes.getList("locations");
+            List<BlockLocation> blockLocations = new ArrayList<>();
+
+            if (locations != null) {
+                for (Map<?, ?> locationData : locations) {
+                    // Deserialize each location into a BlockLocation
+                    blockLocations.add(BlockLocation.deserialize((Map<String, Object>) locationData));
+                }
+            }
+
+            mechanic = new RandomButtonMechanic(ID, level, new ArrayList<>(blockLocations));
 
         }
 
@@ -59,27 +77,12 @@ public class MechanicMapper {
             case BOOK -> {
                 mechanic = new StartingItemMechanic(level);
             }
+            case STONE_BUTTON -> {
+                mechanic = new RandomButtonMechanic(level);
+            }
         }
         return mechanic;
     }
-
-    public static HashMap<String, Material> getMechanicTypes() {
-        return new HashMap<>(mechanicTypes);
-    }
-
-    public static String getMechanicName(Material mat) {
-        for (Map.Entry<String, Material> entry : mechanicTypes.entrySet()) {
-            if (entry.getValue().equals(mat)) {
-                return entry.getKey();
-            }
-        }
-        return null; // Return null if no matching value is found
-    }
-
-    public static boolean isValidMaterial(Material mat) {
-        return mechanicTypes.values().contains(mat);
-    }
-
 
     public static ItemStack createMechanicItem(Mechanic m, EscapeRooms plugin) {
         if(m == null) {
@@ -96,13 +99,11 @@ public class MechanicMapper {
         if(m instanceof StartingItemMechanic sim) {
 
             ItemStack item = sim.getItem();
-            if(item!= null) {
+            if(item!= null) explanationLore = List.of(Component.text("Current Item: " + item.getType().name()));
+            else explanationLore = List.of(Component.text("Current Item: None"));
 
-                explanationLore = List.of(Component.text("Current Item: " + item.getType().name()));
-            } else {
-                explanationLore = List.of(Component.text("Current Item: None"));
-            }
-
+        } else if (m instanceof RandomButtonMechanic rbm) {
+            explanationLore = List.of(Component.text("Sample Description Text"));
         }
         else {
             mechanicStack = new ItemStack(Material.OAK_BOAT);
@@ -122,4 +123,28 @@ public class MechanicMapper {
         return mechanicStack;
 
     }
+
+
+    /*
+     * Do not need to be updated below here
+     *
+     */
+
+    public static HashMap<String, Material> getMechanicTypes() {
+        return new HashMap<>(mechanicTypes);
+    }
+
+    public static String getMechanicName(Material mat) {
+        for (Map.Entry<String, Material> entry : mechanicTypes.entrySet()) {
+            if (entry.getValue().equals(mat)) {
+                return entry.getKey();
+            }
+        }
+        return null; // Return null if no matching value is found
+    }
+
+    public static boolean isValidMaterial(Material mat) {
+        return mechanicTypes.values().contains(mat);
+    }
+
 }

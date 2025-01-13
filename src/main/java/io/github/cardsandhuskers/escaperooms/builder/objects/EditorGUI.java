@@ -2,10 +2,8 @@ package io.github.cardsandhuskers.escaperooms.builder.objects;
 import io.github.cardsandhuskers.escaperooms.EscapeRooms;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.LevelHandler;
-import io.github.cardsandhuskers.escaperooms.builder.handlers.MechanicsHandler;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.Mechanic;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.MechanicMapper;
-import io.github.cardsandhuskers.escaperooms.builder.mechanics.StartingItemMechanic;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -16,8 +14,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +27,7 @@ public class EditorGUI {
     private Inventory mainInv;
     private Inventory editInv;
     private Player player;
-    private EscapeRooms plugin = EscapeRooms.getInstance();
+    private EscapeRooms plugin = EscapeRooms.getPlugin();
     private GUI currentGUI;
 
     private Level currentSelectedLevel;
