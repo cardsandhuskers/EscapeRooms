@@ -14,6 +14,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -78,7 +79,10 @@ public class EditorGUIHandler {
                 plugin.getServer().getPluginManager().registerEvents(cornerWandClickListener, plugin);
                 p.closeInventory();
             }
-            case BARRIER -> {}
+            case BARRIER -> {
+                gui.openDeleteLevelMenu(currLevel);
+
+            }
             case NETHER_STAR -> gui.openAddMechanicInv();
             case ENDER_PEARL -> currLevel.setSpawnPoint(p.getLocation());
             case GREEN_CONCRETE -> currLevel.saveSchematic();
@@ -142,6 +146,22 @@ public class EditorGUIHandler {
             gui.openEditMechanicInv(mechanic);
         }
 
+    }
+
+    public void onDeleteLevelClick(InventoryClickEvent e, ItemStack clickedItem) {
+
+        Component displayName = e.getClickedInventory().getItem(4).getItemMeta().displayName();
+        if(displayName == null) return;
+        String itemName = PlainTextComponentSerializer.plainText().serialize(displayName);
+        System.out.println(itemName);
+
+        if(clickedItem.getType() == Material.RED_CONCRETE) {
+            getPlayerMenu((Player) e.getInventory().getHolder()).openEditInv(itemName);
+
+        } else if (clickedItem.getType() == Material.LIME_CONCRETE) {
+            LevelHandler.getInstance().deleteLevel(itemName);
+            onMainGUIOpen((Player) e.getInventory().getHolder());
+        }
     }
 
     public void onGUIExit(Player p) {

@@ -109,13 +109,19 @@ public class StartingItemMechanic extends Mechanic{
         ItemMeta backMeta = back.getItemMeta();
         backMeta.displayName(Component.text("Back").color(NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
         back.setItemMeta(backMeta);
-        mechanicInv.setItem(26, back);
+        mechanicInv.setItem(24, back);
+
+        ItemStack delete = new ItemStack(Material.BARRIER);
+        ItemMeta deleteMeta = delete.getItemMeta();
+        deleteMeta.displayName(Component.text("Delete Mechanic").color(NamedTextColor.DARK_RED).decoration(TextDecoration.ITALIC, false));
+        delete.setItemMeta(deleteMeta);
+        mechanicInv.setItem(26, delete);
 
         return mechanicInv;
     }
 
     public void setItem(ItemStack item) {
-        this.item = item.clone();
+        if(item != null) this.item = item.clone();
     }
 
     public ItemStack getItem() {

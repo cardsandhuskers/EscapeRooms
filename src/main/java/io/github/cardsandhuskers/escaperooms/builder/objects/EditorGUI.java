@@ -237,6 +237,33 @@ public class EditorGUI {
         return addMechanicMenu;
     }
 
+
+    public void openDeleteLevelMenu(Level level) {
+        Inventory deleteLevelMenu = Bukkit.createInventory(player, 18, Component.text("Delete Level?").decoration(TextDecoration.ITALIC, false)
+                .color(NamedTextColor.GREEN));
+
+        ItemStack data = new ItemStack(Material.BOOK);
+        ItemMeta dataMeta = data.getItemMeta();
+        dataMeta.displayName(Component.text(level.getName()).color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
+        data.setItemMeta(dataMeta);
+        deleteLevelMenu.setItem(4, data);
+
+        ItemStack yes = new ItemStack(Material.LIME_CONCRETE);
+        ItemMeta yesMeta = data.getItemMeta();
+        yesMeta.displayName(Component.text("Yes").color(NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false));
+        yes.setItemMeta(yesMeta);
+        deleteLevelMenu.setItem(11, yes);
+
+        ItemStack no = new ItemStack(Material.RED_CONCRETE);
+        ItemMeta noMeta = data.getItemMeta();
+        noMeta.displayName(Component.text("No").color(NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
+        no.setItemMeta(noMeta);
+        deleteLevelMenu.setItem(15, no);
+
+        player.openInventory(deleteLevelMenu);
+
+    }
+
     public void openMainInv() {
         generateMainMenu();
 

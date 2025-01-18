@@ -132,6 +132,30 @@ public class LevelHandler {
         }
     }
 
+    public void deleteLevel(Level level) {
+        EscapeRooms plugin = EscapeRooms.getPlugin();
+
+        File file = new File(plugin.getDataFolder(), level.getName() + ".yml");
+        file.delete();
+
+        FileConfiguration config = plugin.getConfig();
+        List<String> configLevels = config.getStringList("levels");
+
+        // Remove the item (e.g., "asdf")
+        if (configLevels.contains(level.getName())) {
+            configLevels.remove(level.getName());
+            config.set("levels", configLevels); // Update the list in the config
+            plugin.saveConfig(); // Save the changes to the config.yml file
+            plugin.getLogger().info("'asdf' has been removed from the levels list.");
+        }
+
+        levels.remove(level);
+    }
+
+    public void deleteLevel(String levelName) {
+        deleteLevel(getLevel(levelName));
+    }
+
 
     public Level getLevel(String name) {
         for (Level level: levels) {

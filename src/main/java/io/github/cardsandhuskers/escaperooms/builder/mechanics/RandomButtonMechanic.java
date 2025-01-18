@@ -66,7 +66,7 @@ public class RandomButtonMechanic extends Mechanic{
         Vector diff = level.getDiff(buttonBlock);
         if(diff == null) return false;
 
-        BlockLocation bl = new BlockLocation(buttonBlock.getBlockX(), buttonBlock.getBlockY(), buttonBlock.getBlockZ(), blockFace);
+        BlockLocation bl = new BlockLocation(diff.getBlockX(), diff.getBlockY(), diff.getBlockZ(), blockFace);
         blockLocations.add(bl);
 
         return true;
@@ -108,14 +108,17 @@ public class RandomButtonMechanic extends Mechanic{
         //location list
         int i = 9;
         for(BlockLocation location: blockLocations) {
+
+            Vector position = level.getCoords(new Vector(location.getX(), location.getY(), location.getZ()));
+
             ItemStack item = new ItemStack(Material.ENDER_PEARL);
             ItemMeta itemMeta = item.getItemMeta();
             itemMeta.displayName(Component.text("").decoration(TextDecoration.ITALIC, false));
 
             itemMeta.lore(List.of(
-                    Component.text("X: " + location.getX()),
-                    Component.text("Y: " + location.getY()),
-                    Component.text("Z: " + location.getZ()),
+                    Component.text("X: " + position.getX()),
+                    Component.text("Y: " + position.getY()),
+                    Component.text("Z: " + position.getZ()),
                     Component.text("Face: " + location.getFace())
             ));
             item.setItemMeta(itemMeta);
@@ -133,7 +136,13 @@ public class RandomButtonMechanic extends Mechanic{
         ItemMeta backMeta = back.getItemMeta();
         backMeta.displayName(Component.text("Back").color(NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
         back.setItemMeta(backMeta);
-        mechanicInv.setItem(53, back);
+        mechanicInv.setItem(51, back);
+
+        ItemStack delete = new ItemStack(Material.BARRIER);
+        ItemMeta deleteMeta = delete.getItemMeta();
+        deleteMeta.displayName(Component.text("Delete Mechanic").color(NamedTextColor.DARK_RED).decoration(TextDecoration.ITALIC, false));
+        delete.setItemMeta(deleteMeta);
+        mechanicInv.setItem(53, delete);
 
         return mechanicInv;
     }

@@ -43,7 +43,7 @@
                             <relocations>
                                 <relocation>
                                     <pattern>net.wesjd.anvilgui</pattern>
-                                    <shadedPattern>io.github.cardsandhuskers.teams.anvilgui</shadedPattern>
+                                    <shadedPattern>io.github.cardsandhuskers.escaperooms.anvilgui</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>
@@ -51,7 +51,7 @@
                                     <artifact>*:*</artifact>
                                     <excludeDefaults>false</excludeDefaults>
                                     <includes>
-                                        <include>io.github.cardsandhuskers.teams.anvilgui</include>
+                                        <include>io.github.cardsandhuskers.escaperooms.anvilgui</include>
                                     </includes>
                                 </filter>
                             </filters>

@@ -244,6 +244,10 @@ public class Level {
         return mechanic;
     }
 
+    public void removeMechanic(Mechanic mech) {
+        levelMechanics.remove(mech);
+    }
+
     public boolean setSpawnPoint(Location pos) {
         if(pos1 != null && pos2 != null) {
             int xDiff = (int) (pos.getX() - lowerX);

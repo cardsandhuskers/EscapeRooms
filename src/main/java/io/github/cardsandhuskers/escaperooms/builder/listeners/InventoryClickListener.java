@@ -44,7 +44,11 @@ public class InventoryClickListener implements Listener {
                 editorGUIHandler.onMechanicGUIClick((Player) e.getInventory().getHolder(), clickedItem);
             } else if(title.contains("Mechanic:")) {
                 //e.setCancelled(true);
-                MechanicsHandler.getInstance().handleClick(e, editorGUIHandler);
+                MechanicsHandler.getInstance().onMechanicClick(e, editorGUIHandler);
+            } else if (title.contains("Delete Level")) {
+                editorGUIHandler.onDeleteLevelClick(e, clickedItem);
+            } else if (title.contains("Delete Mechanic")) {
+                MechanicsHandler.getInstance().onDeleteMechanicClick(e, clickedItem);
             }
         }
 
