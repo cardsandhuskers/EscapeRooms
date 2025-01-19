@@ -4,13 +4,9 @@ import io.github.cardsandhuskers.escaperooms.EscapeRooms;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.Mechanic;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
 
@@ -35,13 +31,9 @@ public class MechanicsHandler {
      * @param e
      */
     public void onMechanicClick(InventoryClickEvent e, EditorGUIHandler editorGUIHandler) {
-        EscapeRooms plugin = EscapeRooms.getPlugin();
         Player p = (Player) e.getInventory().getHolder();
         ItemStack titleItem = e.getInventory().getItem(4);
-        ItemMeta titleMeta = titleItem.getItemMeta();
-        NamespacedKey namespacedKey = new NamespacedKey(plugin, "ID");
-        PersistentDataContainer container = titleMeta.getPersistentDataContainer();
-        UUID id = UUID.fromString(container.get(namespacedKey, PersistentDataType.STRING));
+        UUID id = Mechanic.getUUIDFromItem(titleItem);
         Mechanic mech = findMechanicFromID(id);
 
         if(e.getCurrentItem().getType() == Material.RED_CONCRETE) {
@@ -56,14 +48,10 @@ public class MechanicsHandler {
     }
 
     public void onDeleteMechanicClick(InventoryClickEvent e, ItemStack clickedItem) {
-        EscapeRooms plugin = EscapeRooms.getPlugin();
         Player p = (Player)e.getInventory().getHolder();
 
         ItemStack titleItem = e.getInventory().getItem(4);
-        ItemMeta titleMeta = titleItem.getItemMeta();
-        NamespacedKey namespacedKey = new NamespacedKey(plugin, "ID");
-        PersistentDataContainer container = titleMeta.getPersistentDataContainer();
-        UUID id = UUID.fromString(container.get(namespacedKey, PersistentDataType.STRING));
+        UUID id = Mechanic.getUUIDFromItem(titleItem);
         Mechanic mech = findMechanicFromID(id);
 
         if(clickedItem.getType() == Material.RED_CONCRETE) {

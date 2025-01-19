@@ -158,7 +158,7 @@ public class EditorGUI {
         //mechanics, need to add here when adding a new mechanic
         int i = 18;
         for(Mechanic m: level.getMechanics()) {
-            editInv.setItem(i, MechanicMapper.createMechanicItem(m, plugin));
+            editInv.setItem(i, m.createItem());
             i++;
         }
 
@@ -217,12 +217,12 @@ public class EditorGUI {
                 .color(NamedTextColor.GREEN));
         fillSpacers(addMechanicMenu);
 
-        HashMap<String, Material> mechanics = MechanicMapper.getMechanicTypes();
+        ArrayList<MechanicMapper.MechanicDetails> detailsList = MechanicMapper.getMechanics();
         int i = 9;
-        for (String s: mechanics.keySet()) {
-            ItemStack mechanic = new ItemStack(mechanics.get(s));
+        for (MechanicMapper.MechanicDetails details: detailsList) {
+            ItemStack mechanic = new ItemStack(details.mat);
             ItemMeta mechanicMeta = mechanic.getItemMeta();
-            mechanicMeta.displayName(Component.text(s).color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
+            mechanicMeta.displayName(Component.text(details.name).color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
             mechanic.setItemMeta(mechanicMeta);
             addMechanicMenu.setItem(i, mechanic);
             i++;

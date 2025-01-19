@@ -10,13 +10,12 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
 
@@ -28,9 +27,18 @@ public class StartingItemMechanic extends Mechanic{
         this.level = level;
     }
 
-    public StartingItemMechanic(String mechanicID, ItemStack item, Level level) {
+    public StartingItemMechanic(String mechanicID, Level level, ConfigurationSection attributes) {
         this.mechanicID = UUID.fromString(mechanicID);
         this.level = level;
+
+        String itemString = attributes.getString("item");
+        ItemStack item = null;
+
+        // Deserialize the item if it exists
+        if (itemString != null && !itemString.isEmpty()) {
+            item = Mechanic.deserializeItemStack(itemString);
+        }
+
         setItem(item);
 
     }
@@ -46,28 +54,36 @@ public class StartingItemMechanic extends Mechanic{
         }
 
         // Set other attributes like "type"
-        attributes.put("type", "Give Item on Spawn");
-
-        // Add the mechanic ID and its attributes to the mechanic entry
+        attributes.put("type", MechanicMapper.getMechName(this.getClass()));
 
         return attributes;
+    }
+
+    @Override
+    public ItemStack createItem() {
+        Material mat = MechanicMapper.getMechMaterial(this.getClass());
+        ItemStack mechanicStack = new ItemStack(mat);
+
+        List<Component> explanationLore;
+        if(item!= null) explanationLore = List.of(Component.text("Current Item: " + item.getType().name()));
+        else explanationLore = List.of(Component.text("Current Item: None"));
+
+        ItemMeta mechanicMeta = mechanicStack.getItemMeta();
+        Mechanic.embedUUID(mechanicMeta, mechanicID);
+        mechanicMeta.displayName(Component.text(MechanicMapper.getMechName(this.getClass())).color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
+        mechanicMeta.lore(explanationLore);
+        mechanicStack.setItemMeta(mechanicMeta);
+
+        return mechanicStack;
     }
 
 
     @Override
     public Inventory generateMechanicSettingsMenu(Player player) {
-        EscapeRooms plugin = EscapeRooms.getPlugin();
-        Inventory mechanicInv = Bukkit.createInventory(player, 27, Component.text("Mechanic: Give Item on Spawn")
+        Inventory mechanicInv = Bukkit.createInventory(player, 27, Component.text("Mechanic: " + MechanicMapper.getMechName(this.getClass()))
                 .color(NamedTextColor.BLUE));
 
-        ItemStack title = new ItemStack(Material.BOOK);
-        ItemMeta titleMeta = title.getItemMeta();
-        titleMeta.displayName(Component.text("").decoration(TextDecoration.ITALIC, false));
-        NamespacedKey namespacedKey = new NamespacedKey(plugin, "ID");
-        PersistentDataContainer container = titleMeta.getPersistentDataContainer();
-        container.set(namespacedKey, PersistentDataType.STRING, mechanicID.toString());
-        title.setItemMeta(titleMeta);
-        mechanicInv.setItem(4, title);
+        mechanicInv.setItem(4, createIDItem(mechanicID, Material.BOOK));
 
         ItemStack explainer = new ItemStack(Material.ARROW);
         ItemMeta explainerMeta = explainer.getItemMeta();

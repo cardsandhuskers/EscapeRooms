@@ -1,9 +1,8 @@
-package io.github.cardsandhuskers.escaperooms.builder.mechanics;
+package io.github.cardsandhuskers.escaperooms.builder.mechanics.button;
 
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,8 +44,6 @@ public class BlockLocation implements ConfigurationSerializable {
     }
 
     public static BlockLocation deserialize(Map<String, Object> data) {
-
-        data.forEach((key, value) -> System.out.println(key + ": " + value));
 
         int x = (int) data.get("x");
         int y = (int) data.get("y");

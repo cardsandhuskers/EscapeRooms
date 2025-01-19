@@ -1,8 +1,10 @@
-package io.github.cardsandhuskers.escaperooms.builder.mechanics;
+package io.github.cardsandhuskers.escaperooms.builder.mechanics.button;
 
 import io.github.cardsandhuskers.escaperooms.EscapeRooms;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
 import io.github.cardsandhuskers.escaperooms.builder.listeners.ButtonMechanicClickListener;
+import io.github.cardsandhuskers.escaperooms.builder.mechanics.Mechanic;
+import io.github.cardsandhuskers.escaperooms.builder.mechanics.MechanicMapper;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -10,17 +12,14 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
 import java.util.*;
@@ -29,7 +28,7 @@ import java.util.*;
  * Used to select a series of locations that may have a button, then a button will be placed in one of them
  * Official type: Random Button Location
  */
-public class RandomButtonMechanic extends Mechanic{
+public class RandomButtonMechanic extends Mechanic {
 
     private ArrayList<BlockLocation> blockLocations = new ArrayList<>();
 
@@ -38,13 +37,35 @@ public class RandomButtonMechanic extends Mechanic{
         this.level = level;
     }
 
-    public RandomButtonMechanic(String mechanicID, Level level, ArrayList<BlockLocation> blockLocations) {
-        System.out.println("SIZE: " + blockLocations.size());
-        System.out.println(blockLocations);
+    public RandomButtonMechanic(String mechanicID, Level level, ConfigurationSection attributes) {
 
         this.mechanicID = UUID.fromString(mechanicID);
         this.level = level;
-        this.blockLocations = new ArrayList<>(blockLocations);
+
+
+        List<Map<?, ?>> locations = (List<Map<?, ?>>) attributes.getList("locations");
+        if (locations != null) {
+            for (Map<?, ?> locationData : locations) {
+                // Deserialize each location into a BlockLocation
+                blockLocations.add(BlockLocation.deserialize((Map<String, Object>) locationData));
+            }
+        }
+
+    }
+
+    @Override
+    public ItemStack createItem() {
+        Material mat = MechanicMapper.getMechMaterial(this.getClass());
+        ItemStack mechanicStack = new ItemStack(mat);
+
+        List<Component> explanationLore = List.of(Component.text("Currently " + blockLocations.size() + " saved locations."));
+        ItemMeta mechanicMeta = mechanicStack.getItemMeta();
+        Mechanic.embedUUID(mechanicMeta, mechanicID);
+        mechanicMeta.displayName(Component.text(MechanicMapper.getMechName(this.getClass())).color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
+        mechanicMeta.lore(explanationLore);
+        mechanicStack.setItemMeta(mechanicMeta);
+
+        return mechanicStack;
     }
 
     public boolean addLocation(Block block, BlockFace blockFace) {
@@ -83,7 +104,7 @@ public class RandomButtonMechanic extends Mechanic{
             serializedLocations.add(loc.serialize());
         }
 
-        attributes.put("type", "Random Button Location");
+        attributes.put("type", MechanicMapper.getMechName(this.getClass()));
         attributes.put("locations", serializedLocations);
 
         return attributes;
@@ -91,19 +112,12 @@ public class RandomButtonMechanic extends Mechanic{
 
     @Override
     public Inventory generateMechanicSettingsMenu(Player player) {
-        EscapeRooms plugin = EscapeRooms.getPlugin();
-        Inventory mechanicInv = Bukkit.createInventory(player, 54, Component.text("Mechanic: Random Button Location")
+
+        Inventory mechanicInv = Bukkit.createInventory(player, 54, Component.text("Mechanic: " + MechanicMapper.getMechName(this.getClass()))
                 .color(NamedTextColor.BLUE));
 
         //ID item
-        ItemStack title = new ItemStack(Material.BOOK);
-        ItemMeta titleMeta = title.getItemMeta();
-        titleMeta.displayName(Component.text("").decoration(TextDecoration.ITALIC, false));
-        NamespacedKey namespacedKey = new NamespacedKey(plugin, "ID");
-        PersistentDataContainer container = titleMeta.getPersistentDataContainer();
-        container.set(namespacedKey, PersistentDataType.STRING, mechanicID.toString());
-        title.setItemMeta(titleMeta);
-        mechanicInv.setItem(4, title);
+        mechanicInv.setItem(4, createIDItem(mechanicID, Material.STONE_BUTTON));
 
         //location list
         int i = 9;

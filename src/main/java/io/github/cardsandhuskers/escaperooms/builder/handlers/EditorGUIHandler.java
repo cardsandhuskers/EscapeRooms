@@ -16,9 +16,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -115,18 +112,10 @@ public class EditorGUIHandler {
         }
 
         if(MechanicMapper.isValidMaterial(mat)) {
-
-            ItemMeta itemMeta = clickedItem.getItemMeta();
-            NamespacedKey namespacedKey = new NamespacedKey(plugin, "ID");
-            PersistentDataContainer container = itemMeta.getPersistentDataContainer();
-            String idString = container.get(namespacedKey, PersistentDataType.STRING);
-            if(idString != null) {
-                UUID id = UUID.fromString(idString);
-
+            UUID id = Mechanic.getUUIDFromItem(clickedItem);
+            if (id != null) {
                 Mechanic mechanic = MechanicsHandler.getInstance().findMechanicFromID(id);
                 gui.openEditMechanicInv(mechanic);
-            } else {
-                //do nothing tbh
             }
         }
 

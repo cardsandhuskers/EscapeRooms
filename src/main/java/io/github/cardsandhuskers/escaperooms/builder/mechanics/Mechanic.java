@@ -34,6 +34,7 @@ public abstract class Mechanic {
     public abstract Map<String, Object> getData();
 
     public abstract Inventory generateMechanicSettingsMenu(Player player);
+    public abstract ItemStack createItem();
 
     public UUID getID() {
         return mechanicID;
@@ -75,23 +76,16 @@ public abstract class Mechanic {
         Inventory deleteLevelMenu = Bukkit.createInventory(player, 18, Component.text("Delete Mechanic?").decoration(TextDecoration.ITALIC, false)
                 .color(NamedTextColor.GREEN));
 
-        ItemStack data = new ItemStack(Material.BOOK);
-        ItemMeta dataMeta = data.getItemMeta();
-        dataMeta.displayName(Component.text("").color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
-        NamespacedKey namespacedKey = new NamespacedKey(plugin, "ID");
-        PersistentDataContainer container = dataMeta.getPersistentDataContainer();
-        container.set(namespacedKey, PersistentDataType.STRING, mechanicID.toString());
-        data.setItemMeta(dataMeta);
-        deleteLevelMenu.setItem(4, data);
+        deleteLevelMenu.setItem(4, createIDItem(mechanicID, MechanicMapper.getMechMaterial(this.getClass())));
 
         ItemStack yes = new ItemStack(Material.LIME_CONCRETE);
-        ItemMeta yesMeta = data.getItemMeta();
+        ItemMeta yesMeta = yes.getItemMeta();
         yesMeta.displayName(Component.text("Yes").color(NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false));
         yes.setItemMeta(yesMeta);
         deleteLevelMenu.setItem(11, yes);
 
         ItemStack no = new ItemStack(Material.RED_CONCRETE);
-        ItemMeta noMeta = data.getItemMeta();
+        ItemMeta noMeta = no.getItemMeta();
         noMeta.displayName(Component.text("No").color(NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
         no.setItemMeta(noMeta);
         deleteLevelMenu.setItem(15, no);
@@ -114,4 +108,39 @@ public abstract class Mechanic {
     }
 
     public abstract void handleClick(InventoryClickEvent e, EditorGUIHandler editorGUIHandler);
+
+    public static ItemStack createIDItem(UUID mechanicID, Material mat) {
+        EscapeRooms plugin = EscapeRooms.getPlugin();
+        ItemStack title = new ItemStack(mat);
+        ItemMeta titleMeta = title.getItemMeta();
+        titleMeta.displayName(Component.text("").decoration(TextDecoration.ITALIC, false));
+        NamespacedKey namespacedKey = new NamespacedKey(plugin, "ID");
+        PersistentDataContainer container = titleMeta.getPersistentDataContainer();
+        container.set(namespacedKey, PersistentDataType.STRING, mechanicID.toString());
+        title.setItemMeta(titleMeta);
+
+        return title;
+    }
+
+    public static UUID getUUIDFromItem(ItemStack clickedItem) {
+        EscapeRooms plugin = EscapeRooms.getPlugin();
+        ItemMeta itemMeta = clickedItem.getItemMeta();
+        NamespacedKey namespacedKey = new NamespacedKey(plugin, "ID");
+        PersistentDataContainer container = itemMeta.getPersistentDataContainer();
+        String idString = container.get(namespacedKey, PersistentDataType.STRING);
+        if(idString != null) {
+            return UUID.fromString(idString);
+        } else {
+            return null;
+        }
+    }
+
+    public static void embedUUID(ItemMeta itemMeta, UUID id) {
+        EscapeRooms plugin = EscapeRooms.getPlugin();
+
+        NamespacedKey namespacedKey = new NamespacedKey(plugin, "ID");
+        PersistentDataContainer container = itemMeta.getPersistentDataContainer();
+        container.set(namespacedKey, PersistentDataType.STRING, id.toString());
+
+    }
 }

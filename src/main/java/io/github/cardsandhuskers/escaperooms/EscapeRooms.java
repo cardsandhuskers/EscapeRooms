@@ -1,7 +1,8 @@
 package io.github.cardsandhuskers.escaperooms;
 
 import io.github.cardsandhuskers.escaperooms.Objects.Placeholder;
-import io.github.cardsandhuskers.escaperooms.builder.mechanics.BlockLocation;
+import io.github.cardsandhuskers.escaperooms.builder.mechanics.button.BlockLocation;
+import io.github.cardsandhuskers.escaperooms.builder.mechanics.potion.PotionInfo;
 import io.github.cardsandhuskers.escaperooms.commands.EscapeRoomCommand;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.LevelHandler;
@@ -38,6 +39,7 @@ public final class EscapeRooms extends JavaPlugin {
 
         //register serializations
         ConfigurationSerialization.registerClass(BlockLocation.class);
+        ConfigurationSerialization.registerClass(PotionInfo.class);
 
         getConfig().options().copyDefaults();
         saveDefaultConfig();

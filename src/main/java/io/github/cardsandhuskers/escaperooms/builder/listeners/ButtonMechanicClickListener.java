@@ -2,8 +2,7 @@ package io.github.cardsandhuskers.escaperooms.builder.listeners;
 
 import io.github.cardsandhuskers.escaperooms.EscapeRooms;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
-import io.github.cardsandhuskers.escaperooms.builder.mechanics.Mechanic;
-import io.github.cardsandhuskers.escaperooms.builder.mechanics.RandomButtonMechanic;
+import io.github.cardsandhuskers.escaperooms.builder.mechanics.button.RandomButtonMechanic;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -14,7 +13,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
