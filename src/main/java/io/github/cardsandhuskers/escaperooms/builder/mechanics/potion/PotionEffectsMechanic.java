@@ -26,14 +26,16 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 
-
+/**
+ * Allows for the application of 1 or more potion effects to start players with on a level
+ */
 public class PotionEffectsMechanic extends Mechanic {
 
     private HashMap<PotionEffectType, PotionInfo> potions = new HashMap<>();
 
     /**
      * Constructor for when instantiated brand new
-     * Should only pass level
+     * Should only pass level, must call super()
      * @param level
      */
     public PotionEffectsMechanic(Level level) {
@@ -49,10 +51,12 @@ public class PotionEffectsMechanic extends Mechanic {
 
     /**
      * Constructor for when read in from file.
+     * Assigns mechanic id and level, then parses the attributes ConfigurationSection to get the mechanic's data
      * Should always pass in those 3 things
-     * @param mechanicID
-     * @param level
-     * @param attributes
+     * does NOT call super()
+     * @param mechanicID - unique ID of the mechanic
+     * @param level - level mechanic is attached to
+     * @param attributes - list of attributes the mechanic has
      */
     public PotionEffectsMechanic(String mechanicID, Level level, ConfigurationSection attributes) {
 
@@ -89,7 +93,7 @@ public class PotionEffectsMechanic extends Mechanic {
 
     /**
      * Creates the lore for the item in the level editor menu
-     * @return
+     * @return - component list for the lore
      */
     @Override
     public List<Component> getLore() {

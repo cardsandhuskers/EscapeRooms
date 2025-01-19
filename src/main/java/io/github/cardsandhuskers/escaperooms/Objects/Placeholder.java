@@ -12,7 +12,7 @@ public class Placeholder extends PlaceholderExpansion{
     }
     @Override
     public String getIdentifier() {
-        return "Teams";
+        return "escaperooms";
     }
     @Override
     public String getAuthor() {

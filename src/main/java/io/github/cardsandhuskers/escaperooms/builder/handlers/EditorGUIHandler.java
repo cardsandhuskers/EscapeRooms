@@ -31,6 +31,12 @@ public class EditorGUIHandler {
         getPlayerMenu(p).openMainInv();
     }
 
+    /**
+     * Click handler for main GUI (one with list of levels and ability to add levels)
+     * @param p
+     * @param clickedItem
+     * @param clickType
+     */
     public void onMainGUIClick(Player p, ItemStack clickedItem, ClickType clickType) {
         //switch function for different items
         Component display = clickedItem.getItemMeta().displayName();
@@ -53,6 +59,14 @@ public class EditorGUIHandler {
         }
 
     }
+
+    /**
+     * Handler for a click on the level editor GUI
+     * @param p
+     * @param clickedItem
+     * @param clickType
+     * @param levelName
+     */
     public void onEditorGUIClick(Player p, ItemStack clickedItem, ClickType clickType, String levelName) {
         Component displayName = clickedItem.getItemMeta().displayName();
         if(displayName == null) return;
@@ -124,6 +138,11 @@ public class EditorGUIHandler {
 
     }
 
+    /**
+     * Handler for a click within the addMechanic GUI
+     * @param p
+     * @param clickedItem
+     */
     public void onMechanicGUIClick(Player p, ItemStack clickedItem) {
         EditorGUI gui = getPlayerMenu(p);
         Level currLevel = gui.getCurrentSelectedLevel();
@@ -137,6 +156,11 @@ public class EditorGUIHandler {
 
     }
 
+    /**
+     * Click handler for a click within the confirmation menu for deleting a level
+     * @param e
+     * @param clickedItem
+     */
     public void onDeleteLevelClick(InventoryClickEvent e, ItemStack clickedItem) {
 
         Component displayName = e.getClickedInventory().getItem(4).getItemMeta().displayName();
@@ -153,6 +177,10 @@ public class EditorGUIHandler {
         }
     }
 
+    /**
+     * called when GUI closes, triggers the close operation in the GUI object
+     * @param p
+     */
     public void onGUIExit(Player p) {
         EditorGUI gui = guiMap.get((OfflinePlayer) p);
 
@@ -161,6 +189,11 @@ public class EditorGUIHandler {
         }
     }
 
+    /**
+     * Returns a GUI for a specific player
+     * @param p
+     * @return
+     */
     public EditorGUI getPlayerMenu(Player p) {
         EditorGUI playerGUI = guiMap.get((OfflinePlayer) p);
         if(playerGUI != null) {
@@ -172,6 +205,9 @@ public class EditorGUIHandler {
         }
     }
 
+    /**
+     * Refreshes all menus
+     */
     public void refreshAll() {
         for (EditorGUI gui: guiMap.values()) {
             if (gui.isOpen()) {

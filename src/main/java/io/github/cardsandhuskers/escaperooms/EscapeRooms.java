@@ -37,7 +37,7 @@ public final class EscapeRooms extends JavaPlugin {
             //Bukkit.getPluginManager().disablePlugin(this);
         }
 
-        //register serializations
+        //register serializations here!
         ConfigurationSerialization.registerClass(BlockLocation.class);
         ConfigurationSerialization.registerClass(PotionInfo.class);
 

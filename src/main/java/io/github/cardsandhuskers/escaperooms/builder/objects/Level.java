@@ -162,6 +162,9 @@ public class Level {
         this.minPlayers = minPlayers;
     }
 
+    /**
+     * Saves the level's data and the data for the level's mechanics to the config files
+     */
     public void writeData() {
 
         EscapeRooms plugin = EscapeRooms.getPlugin();
@@ -240,6 +243,11 @@ public class Level {
         levelMechanics.remove(mech);
     }
 
+    /**
+     * sets the level spawnpoint data inside the object
+     * @param pos
+     * @return
+     */
     public boolean setSpawnPoint(Location pos) {
         if(pos1 != null && pos2 != null) {
             int xDiff = (int) (pos.getX() - lowerX);
@@ -253,6 +261,10 @@ public class Level {
         } else return false;
     }
 
+    /**
+     * Gets the absolute coordinates of the level spawnpoint
+     * @return
+     */
     public Location getSpawnPoint() {
         if (spawnPointOffset != null && pos1 != null) return new Location(pos1.getWorld(), lowerX + spawnPointOffset.getX(), lowerY + spawnPointOffset.getY(), lowerZ + spawnPointOffset.getZ());
         else return null;
@@ -271,6 +283,11 @@ public class Level {
         levelMechanics.add(mechanic);
     }
 
+    /**
+     * Gets the difference between the passed in Vector and the lower corner of the level
+     * @param pos
+     * @return - vector containing difference, null if pos1 or pos2 is unset
+     */
     public Vector getDiff(Vector pos) {
         if(pos1 != null && pos2 != null) {
             int xDiff = (int) (pos.getX() - lowerX);
@@ -281,6 +298,11 @@ public class Level {
         return null;
     }
 
+    /**
+     * Gets the absolute coordinates of an offset vector based on where the lower corner of the level is
+     * @param offset - vector of the stored offset
+     * @return - absolute coordinates, null if pos1 or pos2 is unset
+     */
     public Vector getCoords(Vector offset) {
         if(pos1 != null && pos2 != null) {
             int x = (int) (offset.getX() + lowerX);

@@ -36,7 +36,7 @@ public abstract class Mechanic {
 
     public abstract Inventory generateMechanicSettingsMenu(Player player);
     public abstract List<Component> getLore();
-
+    public abstract void handleClick(InventoryClickEvent e, EditorGUIHandler editorGUIHandler);
     public UUID getID() {
         return mechanicID;
     }
@@ -49,6 +49,9 @@ public abstract class Mechanic {
         mechanicID = UUID.randomUUID();
     }
 
+    /**
+     * Deletes the mechanic from memory and the file
+     */
     public void delete() {
         EscapeRooms plugin = EscapeRooms.getPlugin();
 
@@ -72,6 +75,10 @@ public abstract class Mechanic {
         level.removeMechanic(this);
     }
 
+    /**
+     * Generates and opens a menu to let the player confirm if they want to delete the mechanic or not
+     * @param player
+     */
     public void openDeleteMenu(Player player) {
         EscapeRooms plugin = EscapeRooms.getPlugin();
         Inventory deleteLevelMenu = Bukkit.createInventory(player, 18, Component.text("Delete Mechanic?").decoration(TextDecoration.ITALIC, false)
@@ -108,8 +115,13 @@ public abstract class Mechanic {
         return config.getItemStack("item");
     }
 
-    public abstract void handleClick(InventoryClickEvent e, EditorGUIHandler editorGUIHandler);
-
+    /**
+     * Creates the item at the top of the mechanic menu, contains the ID of the mechanic so that the mechanic the user
+     * is working with can be retreived
+     * @param mechanicID
+     * @param mat
+     * @return
+     */
     public static ItemStack createIDItem(UUID mechanicID, Material mat) {
         EscapeRooms plugin = EscapeRooms.getPlugin();
         ItemStack title = new ItemStack(mat);
@@ -123,6 +135,11 @@ public abstract class Mechanic {
         return title;
     }
 
+    /**
+     * Pulls the UUID from an ID item
+     * @param clickedItem
+     * @return
+     */
     public static UUID getUUIDFromItem(ItemStack clickedItem) {
         EscapeRooms plugin = EscapeRooms.getPlugin();
         ItemMeta itemMeta = clickedItem.getItemMeta();
@@ -136,6 +153,11 @@ public abstract class Mechanic {
         }
     }
 
+    /**
+     * embeds the UUID in the item passed in
+     * @param itemMeta - item data to embed UUID into
+     * @param id - UUID to embed
+     */
     public static void embedUUID(ItemMeta itemMeta, UUID id) {
         EscapeRooms plugin = EscapeRooms.getPlugin();
 
@@ -145,6 +167,10 @@ public abstract class Mechanic {
 
     }
 
+    /**
+     * Creates the item for the level editor page that will have the data about the mechanic
+     * @return
+     */
     public ItemStack createItem() {
         Material mat = MechanicMapper.getMechMaterial(this.getClass());
         ItemStack mechanicStack = new ItemStack(mat);

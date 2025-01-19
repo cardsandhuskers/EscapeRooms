@@ -10,6 +10,9 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * Main inventory click listener for the GUIs, calls appropriate functions based on which GUI the user clicks in
+ */
 public class InventoryClickListener implements Listener {
     private EditorGUIHandler editorGUIHandler;
 
@@ -46,9 +49,11 @@ public class InventoryClickListener implements Listener {
                 //e.setCancelled(true);
                 MechanicsHandler.getInstance().onMechanicClick(e, editorGUIHandler);
             } else if (title.contains("Delete Level")) {
+                e.setCancelled(true);
                 editorGUIHandler.onDeleteLevelClick(e, clickedItem);
             } else if (title.contains("Delete Mechanic")) {
-                MechanicsHandler.getInstance().onDeleteMechanicClick(e, clickedItem);
+                e.setCancelled(true);
+                MechanicsHandler.getInstance().onDeleteMechanicClick(e, clickedItem, editorGUIHandler);
             }
         }
 

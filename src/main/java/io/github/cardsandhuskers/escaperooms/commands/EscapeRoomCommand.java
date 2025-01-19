@@ -9,6 +9,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * basic command that just opens the GUI for the level editor
+ */
 public class EscapeRoomCommand implements CommandExecutor {
     EscapeRooms plugin = EscapeRooms.getPlugin();
     private EditorGUIHandler editorGUIHandler;

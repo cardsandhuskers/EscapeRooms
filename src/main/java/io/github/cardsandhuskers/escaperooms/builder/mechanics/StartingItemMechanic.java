@@ -19,6 +19,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 
+/**
+ * Mechanic to give an item to all players on level start
+ */
 public class StartingItemMechanic extends Mechanic{
 
     private ItemStack item = null;

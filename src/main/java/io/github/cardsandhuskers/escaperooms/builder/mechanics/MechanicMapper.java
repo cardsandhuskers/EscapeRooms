@@ -24,6 +24,9 @@ public class MechanicMapper {
             new MechanicDetails(ClearBlocksMechanic.class, "Clear Blocks", Material.STONE)
             ));
 
+    /**
+     * Subclass for mechanic details to hold the associations between classes, names, and identifier materials
+     */
     public static class MechanicDetails {
         public final Class<?> classType;
         public final String name;
@@ -59,6 +62,12 @@ public class MechanicMapper {
         return mechanic;
     }
 
+    /**
+     * Creates a typed mechanic based on the material clicked
+     * @param mat
+     * @param level
+     * @return
+     */
     public static Mechanic createTypedMechanic(Material mat, Level level) {
         Mechanic mechanic = null;
         Class<?> clazz = getMechClass(mat);
@@ -74,7 +83,7 @@ public class MechanicMapper {
 
 
     /*
-     * Do not need to be updated below here
+     * Series of simple getters for all combinations of associations in the MechanicDetails subclass
      *
      */
     public static Material getMechMaterial(Class<?> classType) {

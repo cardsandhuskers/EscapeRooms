@@ -9,6 +9,10 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Small serializable class to store potion data (type, whether or not it's enabled, and duration and amplifier)
+ * Duration is likely to be scrapped, all effects through this mechanic should be infinite
+ */
 public class PotionInfo implements ConfigurationSerializable {
 
     public int duration, amplifier;
