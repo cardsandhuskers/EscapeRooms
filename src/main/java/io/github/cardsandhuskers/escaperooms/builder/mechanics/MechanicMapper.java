@@ -20,7 +20,8 @@ public class MechanicMapper {
     private static ArrayList<MechanicDetails> mechanicDetails = new ArrayList<>(Arrays.asList(
             new MechanicDetails(StartingItemMechanic.class, "Give Item on Spawn", Material.BOOK),
             new MechanicDetails(RandomButtonMechanic.class, "Random Button Location", Material.STONE_BUTTON),
-            new MechanicDetails(PotionEffectsMechanic.class, "Apply Potion Effects", Material.POTION)
+            new MechanicDetails(PotionEffectsMechanic.class, "Apply Potion Effects", Material.POTION),
+            new MechanicDetails(ClearBlocksMechanic.class, "Clear Blocks", Material.STONE)
             ));
 
     public static class MechanicDetails {

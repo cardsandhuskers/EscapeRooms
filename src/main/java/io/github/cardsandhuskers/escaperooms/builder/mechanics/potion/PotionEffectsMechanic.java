@@ -31,6 +31,11 @@ public class PotionEffectsMechanic extends Mechanic {
 
     private HashMap<PotionEffectType, PotionInfo> potions = new HashMap<>();
 
+    /**
+     * Constructor for when instantiated brand new
+     * Should only pass level
+     * @param level
+     */
     public PotionEffectsMechanic(Level level) {
         super();
         this.level = level;
@@ -42,6 +47,13 @@ public class PotionEffectsMechanic extends Mechanic {
 
     }
 
+    /**
+     * Constructor for when read in from file.
+     * Should always pass in those 3 things
+     * @param mechanicID
+     * @param level
+     * @param attributes
+     */
     public PotionEffectsMechanic(String mechanicID, Level level, ConfigurationSection attributes) {
 
         this.mechanicID = UUID.fromString(mechanicID);
@@ -57,6 +69,10 @@ public class PotionEffectsMechanic extends Mechanic {
         }
     }
 
+    /**
+     * Serializes the data into a hashmap
+     * @return - the hashmap
+     */
     @Override
     public Map<String, Object> getData() {
         Map<String, Object> attributes = new HashMap<>();
@@ -71,6 +87,10 @@ public class PotionEffectsMechanic extends Mechanic {
         return attributes;
     }
 
+    /**
+     * Creates the mechanic item for the level editor menu
+     * @return
+     */
     @Override
     public ItemStack createItem() {
         Material mat = MechanicMapper.getMechMaterial(this.getClass());
@@ -92,6 +112,11 @@ public class PotionEffectsMechanic extends Mechanic {
         return mechanicStack;
     }
 
+    /**
+     * Generates the settings menu for the mechanic
+     * @param player
+     * @return
+     */
     @Override
     public Inventory generateMechanicSettingsMenu(Player player) {
 
@@ -132,12 +157,14 @@ public class PotionEffectsMechanic extends Mechanic {
             i++;
         }
 
+        //back button
         ItemStack back = new ItemStack(Material.RED_CONCRETE);
         ItemMeta backMeta = back.getItemMeta();
         backMeta.displayName(Component.text("Back").color(NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
         back.setItemMeta(backMeta);
         mechanicInv.setItem(51, back);
 
+        //delete button
         ItemStack delete = new ItemStack(Material.BARRIER);
         ItemMeta deleteMeta = delete.getItemMeta();
         deleteMeta.displayName(Component.text("Delete Mechanic").color(NamedTextColor.DARK_RED).decoration(TextDecoration.ITALIC, false));
@@ -148,6 +175,11 @@ public class PotionEffectsMechanic extends Mechanic {
 
     }
 
+    /**
+     * handles the click event when the clicked inventory is the one for this mechanic
+     * @param e
+     * @param editorGUIHandler
+     */
     @Override
     public void handleClick(InventoryClickEvent e, EditorGUIHandler editorGUIHandler) {
 
@@ -183,6 +215,11 @@ public class PotionEffectsMechanic extends Mechanic {
 
     }
 
+    /**
+     * Effect types to skip over when generating the potions
+     * @param type
+     * @return
+     */
     private boolean isSkip(PotionEffectType type) {
         if(type == PotionEffectType.INSTANT_DAMAGE ||
                 type == PotionEffectType.INSTANT_HEALTH ||
@@ -196,7 +233,11 @@ public class PotionEffectsMechanic extends Mechanic {
         }
     }
 
-    // Method to return a color based on the PotionEffectType
+    /**
+     * Returns a color based on the potion effect type
+     * @param type
+     * @return - color
+     */
     private static Color getPotionColorForEffect(PotionEffectType type) {
         if (type == PotionEffectType.SPEED) {
             return Color.fromRGB(51, 235, 255); // Blue
@@ -231,6 +272,12 @@ public class PotionEffectsMechanic extends Mechanic {
         }
     }
 
+
+    /**
+     * Formats the effect name in a nicer way
+     * @param type
+     * @return
+     */
     private static String parseEffectName(PotionEffectType type) {
         String[] words = type.getKey().getKey().split("_");
         StringBuilder readableName = new StringBuilder();
