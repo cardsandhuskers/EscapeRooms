@@ -1,0 +1,11 @@
+name: EscapeRooms
+version: '${project.version}'
+main: io.github.cardsandhuskers.escaperooms.EscapeRooms
+api-version: '1.21'
+authors: [ cardsandhuskers ]
+description: Escape Rooms builder and game manager
+depend: [Teams]
+softdepend: [Multiverse-Core, PlaceholderAPI]
+commands:
+  escapeRoom:
+    description: master command for all escape room commands
