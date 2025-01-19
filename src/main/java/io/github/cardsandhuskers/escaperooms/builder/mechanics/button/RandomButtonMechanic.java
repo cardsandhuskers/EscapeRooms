@@ -54,18 +54,9 @@ public class RandomButtonMechanic extends Mechanic {
     }
 
     @Override
-    public ItemStack createItem() {
-        Material mat = MechanicMapper.getMechMaterial(this.getClass());
-        ItemStack mechanicStack = new ItemStack(mat);
-
+    public List<Component> getLore() {
         List<Component> explanationLore = List.of(Component.text("Currently " + blockLocations.size() + " saved locations."));
-        ItemMeta mechanicMeta = mechanicStack.getItemMeta();
-        Mechanic.embedUUID(mechanicMeta, mechanicID);
-        mechanicMeta.displayName(Component.text(MechanicMapper.getMechName(this.getClass())).color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
-        mechanicMeta.lore(explanationLore);
-        mechanicStack.setItemMeta(mechanicMeta);
-
-        return mechanicStack;
+        return explanationLore;
     }
 
     public boolean addLocation(Block block, BlockFace blockFace) {

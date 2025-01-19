@@ -20,6 +20,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -34,7 +35,7 @@ public abstract class Mechanic {
     public abstract Map<String, Object> getData();
 
     public abstract Inventory generateMechanicSettingsMenu(Player player);
-    public abstract ItemStack createItem();
+    public abstract List<Component> getLore();
 
     public UUID getID() {
         return mechanicID;
@@ -142,5 +143,18 @@ public abstract class Mechanic {
         PersistentDataContainer container = itemMeta.getPersistentDataContainer();
         container.set(namespacedKey, PersistentDataType.STRING, id.toString());
 
+    }
+
+    public ItemStack createItem() {
+        Material mat = MechanicMapper.getMechMaterial(this.getClass());
+        ItemStack mechanicStack = new ItemStack(mat);
+
+        ItemMeta mechanicMeta = mechanicStack.getItemMeta();
+        Mechanic.embedUUID(mechanicMeta, mechanicID);
+        mechanicMeta.displayName(Component.text(MechanicMapper.getMechName(this.getClass())).color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
+        mechanicMeta.lore(getLore());
+        mechanicStack.setItemMeta(mechanicMeta);
+
+        return mechanicStack;
     }
 }

@@ -88,13 +88,11 @@ public class PotionEffectsMechanic extends Mechanic {
     }
 
     /**
-     * Creates the mechanic item for the level editor menu
+     * Creates the lore for the item in the level editor menu
      * @return
      */
     @Override
-    public ItemStack createItem() {
-        Material mat = MechanicMapper.getMechMaterial(this.getClass());
-        ItemStack mechanicStack = new ItemStack(mat);
+    public List<Component> getLore() {
 
         ArrayList<Component> explanationLore = new ArrayList<>();
 
@@ -103,13 +101,7 @@ public class PotionEffectsMechanic extends Mechanic {
             if(potionInfo.isEnabled) explanationLore.add(Component.text(parseEffectName(potionInfo.effectType)));
         }
 
-        ItemMeta mechanicMeta = mechanicStack.getItemMeta();
-        Mechanic.embedUUID(mechanicMeta, mechanicID);
-        mechanicMeta.displayName(Component.text(MechanicMapper.getMechName(this.getClass())).color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
-        mechanicMeta.lore(explanationLore);
-        mechanicStack.setItemMeta(mechanicMeta);
-
-        return mechanicStack;
+       return explanationLore;
     }
 
     /**

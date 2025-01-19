@@ -60,21 +60,11 @@ public class StartingItemMechanic extends Mechanic{
     }
 
     @Override
-    public ItemStack createItem() {
-        Material mat = MechanicMapper.getMechMaterial(this.getClass());
-        ItemStack mechanicStack = new ItemStack(mat);
-
+    public List<Component> getLore() {
         List<Component> explanationLore;
         if(item!= null) explanationLore = List.of(Component.text("Current Item: " + item.getType().name()));
         else explanationLore = List.of(Component.text("Current Item: None"));
-
-        ItemMeta mechanicMeta = mechanicStack.getItemMeta();
-        Mechanic.embedUUID(mechanicMeta, mechanicID);
-        mechanicMeta.displayName(Component.text(MechanicMapper.getMechName(this.getClass())).color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
-        mechanicMeta.lore(explanationLore);
-        mechanicStack.setItemMeta(mechanicMeta);
-
-        return mechanicStack;
+        return explanationLore;
     }
 
 
