@@ -99,7 +99,7 @@ public class EditorGUI {
         else gameModeLore.add(Component.text("Creative").color(NamedTextColor.RED));
         gameModeMeta.lore(gameModeLore);
         gameMode.setItemMeta(gameModeMeta);
-        editInv.setItem(11, gameMode);
+        editInv.setItem(10, gameMode);
 
         //min players selector
         ItemStack minPlayers = new ItemStack(Material.PURPLE_CONCRETE);
@@ -117,7 +117,7 @@ public class EditorGUI {
         else minPlayersLore.add(Component.text("4").color(NamedTextColor.RED));
         minPlayersMeta.lore(minPlayersLore);
         minPlayers.setItemMeta(minPlayersMeta);
-        editInv.setItem(12, minPlayers);
+        editInv.setItem(11, minPlayers);
 
         //environment damage toggle
         ItemStack envDamage;
@@ -136,7 +136,7 @@ public class EditorGUI {
         envLore.add(Component.text("and damage from mobs."));
         envMeta.lore(envLore);
         envDamage.setItemMeta(envMeta);
-        editInv.setItem(13, envDamage);
+        editInv.setItem(12, envDamage);
 
         //pvp damage toggle
         ItemStack pvpDamage;
@@ -153,7 +153,27 @@ public class EditorGUI {
         pvpLore.add(Component.text("damage from their teammates."));
         pvpMeta.lore(pvpLore);
         pvpDamage.setItemMeta(pvpMeta);
-        editInv.setItem(14, pvpDamage);
+        editInv.setItem(13, pvpDamage);
+
+        //set spawn
+        ItemStack spawnSet = new ItemStack(Material.ENDER_PEARL);
+        ItemMeta spawnSetMeta = spawnSet.getItemMeta();
+        spawnSetMeta.displayName(Component.text("Set Level Spawn").decoration(TextDecoration.ITALIC, false));
+        List<Component> spawnLore = new ArrayList<>(setPosLore(level.getSpawnPoint()));
+        spawnLore.add(0, Component.text("Sets the level's spawn to your current location"));
+        spawnSetMeta.lore(spawnLore);
+        spawnSet.setItemMeta(spawnSetMeta);
+        editInv.setItem(15, spawnSet);
+
+        //set end button
+        ItemStack endSet = new ItemStack(Material.OAK_BUTTON);
+        ItemMeta endSetMeta = endSet.getItemMeta();
+        endSetMeta.displayName(Component.text("Set Level End Button").decoration(TextDecoration.ITALIC, false));
+        List<Component> endLore = new ArrayList<>(setPosLore(level.getSpawnPoint()));
+        endLore.add(0, Component.text("Sets the level's spawn to your current location"));
+        endSetMeta.lore(endLore);
+        endSet.setItemMeta(endSetMeta);
+        editInv.setItem(16, endSet);
 
         //mechanics, need to add here when adding a new mechanic
         int i = 18;
@@ -175,16 +195,6 @@ public class EditorGUI {
         pos2RodMeta.lore(setPosLore(level.getPos2()));
         pos2Rod.setItemMeta(pos2RodMeta);
         editInv.setItem(46, pos2Rod);
-
-        //set spawn
-        ItemStack spawnSet = new ItemStack(Material.ENDER_PEARL);
-        ItemMeta spawnSetMeta = spawnSet.getItemMeta();
-        spawnSetMeta.displayName(Component.text("Set Level Spawn").decoration(TextDecoration.ITALIC, false));
-        List<Component> spawnLore = new ArrayList<>(setPosLore(level.getSpawnPoint()));
-        spawnLore.add(0, Component.text("Sets the level's spawn to your current location"));
-        spawnSetMeta.lore(spawnLore);
-        spawnSet.setItemMeta(spawnSetMeta);
-        editInv.setItem(47, spawnSet);
 
         ItemStack addMechanic = new ItemStack(Material.NETHER_STAR);
         ItemMeta addMechanicMeta = addMechanic.getItemMeta();

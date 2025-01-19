@@ -50,22 +50,17 @@ public class Level {
     }
 
     public boolean saveSchematic() {
-        System.out.println("SAVING!");
 
         if (pos1 != null && pos2 != null) {
             EscapeRooms plugin = EscapeRooms.getPlugin();
 
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                System.out.println("ASYNC!");
 
                 try {
                     // Define the region
                     BlockVector3 bot = BlockVector3.at(lowerX, lowerY, lowerZ);
                     BlockVector3 top = BlockVector3.at(higherX, higherY, higherZ);
                     CuboidRegion region = new CuboidRegion(new BukkitWorld(pos1.getWorld()), bot, top);
-
-                    System.out.println("Region: " + region);
-                    System.out.println("Region Size: " + region.getVolume() + " blocks");
 
                     // Create the clipboard
                     BlockArrayClipboard clipboard = new BlockArrayClipboard(region);
@@ -76,13 +71,11 @@ public class Level {
 
                     // Copy the blocks
                     Operations.complete(forwardExtentCopy);
-                    System.out.println("Copied: " + clipboard.getRegion().getVolume() + " blocks to clipboard");
 
                     // Save to .schem file
                     File file = new File(plugin.getDataFolder(), getName() + ".schem");
                     try (ClipboardWriter writer = BuiltInClipboardFormat.FAST_V3.getWriter(new FileOutputStream(file))) {
                         writer.write(clipboard);
-                        System.out.println("Schematic saved to: " + file.getAbsolutePath());
                     }
 
                 } catch (Exception e) {
@@ -170,7 +163,6 @@ public class Level {
     }
 
     public void writeData() {
-        System.out.println("WRITING LEVEL DATA");
 
         EscapeRooms plugin = EscapeRooms.getPlugin();
 
