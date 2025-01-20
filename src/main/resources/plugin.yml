@@ -9,3 +9,5 @@ softdepend: [Multiverse-Core, PlaceholderAPI]
 commands:
   escapeRoom:
     description: master command for all escape room commands
+  startEscapeRooms:
+    description: starts the game

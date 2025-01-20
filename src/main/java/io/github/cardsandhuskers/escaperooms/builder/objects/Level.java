@@ -265,8 +265,13 @@ public class Level {
      * Gets the absolute coordinates of the level spawnpoint
      * @return
      */
-    public Location getSpawnPoint() {
+    public Location getAbsoluteSpawnPoint() {
         if (spawnPointOffset != null && pos1 != null) return new Location(pos1.getWorld(), lowerX + spawnPointOffset.getX(), lowerY + spawnPointOffset.getY(), lowerZ + spawnPointOffset.getZ());
+        else return null;
+    }
+
+    public Vector getSpawnPoint() {
+        if(spawnPointOffset != null) return spawnPointOffset;
         else return null;
     }
 
@@ -311,6 +316,10 @@ public class Level {
             return new Vector(x, y, z);
         }
         return null;
+    }
+
+    public Vector getSize() {
+        return new Vector(higherX - lowerX, higherY - lowerY, higherZ - lowerZ);
     }
 
 

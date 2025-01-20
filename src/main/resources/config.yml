@@ -1,4 +1,7 @@
 world: EscapeRooms
 #num levels to include in a course
-courseLength: 10
+courseLength: 5
+#distance between course lines for each team
+teamDistance: 250
+
 levels: []

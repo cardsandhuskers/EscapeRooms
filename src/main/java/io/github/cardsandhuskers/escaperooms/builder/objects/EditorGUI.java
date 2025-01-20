@@ -16,7 +16,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -159,7 +158,7 @@ public class EditorGUI {
         ItemStack spawnSet = new ItemStack(Material.ENDER_PEARL);
         ItemMeta spawnSetMeta = spawnSet.getItemMeta();
         spawnSetMeta.displayName(Component.text("Set Level Spawn").decoration(TextDecoration.ITALIC, false));
-        List<Component> spawnLore = new ArrayList<>(setPosLore(level.getSpawnPoint()));
+        List<Component> spawnLore = new ArrayList<>(setPosLore(level.getAbsoluteSpawnPoint()));
         spawnLore.add(0, Component.text("Sets the level's spawn to your current location"));
         spawnSetMeta.lore(spawnLore);
         spawnSet.setItemMeta(spawnSetMeta);
@@ -169,7 +168,7 @@ public class EditorGUI {
         ItemStack endSet = new ItemStack(Material.OAK_BUTTON);
         ItemMeta endSetMeta = endSet.getItemMeta();
         endSetMeta.displayName(Component.text("Set Level End Button").decoration(TextDecoration.ITALIC, false));
-        List<Component> endLore = new ArrayList<>(setPosLore(level.getSpawnPoint()));
+        List<Component> endLore = new ArrayList<>(setPosLore(level.getAbsoluteSpawnPoint()));
         endLore.add(0, Component.text("Sets the level's spawn to your current location"));
         endSetMeta.lore(endLore);
         endSet.setItemMeta(endSetMeta);

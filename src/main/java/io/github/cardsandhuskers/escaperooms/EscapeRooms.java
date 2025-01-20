@@ -8,6 +8,7 @@ import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.LevelHandler;
 import io.github.cardsandhuskers.escaperooms.builder.listeners.InventoryClickListener;
 import io.github.cardsandhuskers.escaperooms.builder.listeners.InventoryCloseListener;
+import io.github.cardsandhuskers.escaperooms.commands.StartGameCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -48,6 +49,8 @@ public final class EscapeRooms extends JavaPlugin {
 
         EditorGUIHandler editorGUIHandler = new EditorGUIHandler();
         getCommand("escapeRoom").setExecutor(new EscapeRoomCommand(editorGUIHandler));
+        getCommand("startEscapeRooms").setExecutor(new StartGameCommand());
+
         getServer().getPluginManager().registerEvents(new InventoryClickListener(editorGUIHandler), this);
         getServer().getPluginManager().registerEvents(new InventoryCloseListener(editorGUIHandler), this);
     }
