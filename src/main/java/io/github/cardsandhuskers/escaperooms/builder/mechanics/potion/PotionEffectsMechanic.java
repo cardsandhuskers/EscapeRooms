@@ -4,6 +4,7 @@ import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.Mechanic;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.MechanicMapper;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
+import io.github.cardsandhuskers.escaperooms.game.objects.TeamInstance;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -14,6 +15,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -208,6 +210,16 @@ public class PotionEffectsMechanic extends Mechanic {
                 e.getWhoClicked().sendMessage("Right Click!");
             }
         }
+
+    }
+
+    @Override
+    public void eventHandler(TeamInstance teamInstance, Event e) {
+
+    }
+
+    @Override
+    public void levelStartExecution(TeamInstance teamInstance) {
 
     }
 

@@ -1,6 +1,6 @@
 package io.github.cardsandhuskers.escaperooms;
 
-import io.github.cardsandhuskers.escaperooms.Objects.Placeholder;
+import io.github.cardsandhuskers.escaperooms.game.objects.Placeholder;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.button.BlockLocation;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.potion.PotionInfo;
 import io.github.cardsandhuskers.escaperooms.commands.EscapeRoomCommand;
@@ -16,6 +16,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class EscapeRooms extends JavaPlugin {
 
     private static EscapeRooms plugin;
+    public static int timeVar;
+    public static double multiplier;
 
     @Override
     public void onEnable() {

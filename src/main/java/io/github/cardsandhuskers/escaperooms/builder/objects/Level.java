@@ -275,6 +275,18 @@ public class Level {
         else return null;
     }
 
+    /**
+     * Calculates where the spawn point should be based on the given level corner.
+     * Useful for during games
+     * @param loc - corner
+     * @return spawn point to teleport players to
+     */
+    public Location calculateSpawnPoint(Location loc) {
+        return new Location(loc.getWorld(), loc.getX() + spawnPointOffset.getX(), loc.getY() + spawnPointOffset.getY(), loc.getZ() + spawnPointOffset.getZ(), (float) spawnYaw, (float) spawnPitch);
+
+
+    }
+
     private void assignCorners() {
         lowerX = (int) Math.min(pos1.getX(), pos2.getX());
         higherX = (int) Math.max(pos1.getX(), pos2.getX());

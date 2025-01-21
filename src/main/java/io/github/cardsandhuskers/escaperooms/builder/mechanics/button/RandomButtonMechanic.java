@@ -6,6 +6,7 @@ import io.github.cardsandhuskers.escaperooms.builder.listeners.ButtonMechanicCli
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.Mechanic;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.MechanicMapper;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
+import io.github.cardsandhuskers.escaperooms.game.objects.TeamInstance;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -16,6 +17,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -156,16 +158,13 @@ public class RandomButtonMechanic extends Mechanic {
     public void handleClick(InventoryClickEvent e, EditorGUIHandler editorGUIHandler) {
         Player p = (Player) e.getInventory().getHolder();
         EscapeRooms plugin = EscapeRooms.getPlugin();
-        System.out.println("HANDLING CLICK");
 
         if (e.getClickedInventory() != null) {
             e.setCancelled(true);
             String itemName = PlainTextComponentSerializer.plainText().serialize(e.getCurrentItem().displayName());
             itemName = itemName.replaceAll("\\[|\\]", ""); // Removes "[" and "]"
-            System.out.println(itemName);
 
             if(itemName.equalsIgnoreCase("Add Button Locations")) {
-                System.out.println("TEST A");
 
                 p.getInventory().addItem(new ItemStack(Material.BLAZE_ROD));
 
@@ -177,6 +176,16 @@ public class RandomButtonMechanic extends Mechanic {
 
             }
         }
+    }
+
+    @Override
+    public void eventHandler(TeamInstance teamInstance, Event e) {
+
+    }
+
+    @Override
+    public void levelStartExecution(TeamInstance teamInstance) {
+
     }
 
 }

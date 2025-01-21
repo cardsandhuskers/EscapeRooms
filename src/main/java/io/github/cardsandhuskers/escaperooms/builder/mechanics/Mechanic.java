@@ -3,6 +3,7 @@ package io.github.cardsandhuskers.escaperooms.builder.mechanics;
 import io.github.cardsandhuskers.escaperooms.EscapeRooms;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
+import io.github.cardsandhuskers.escaperooms.game.objects.TeamInstance;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -12,6 +13,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -20,6 +22,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -28,15 +31,51 @@ public abstract class Mechanic {
     protected UUID mechanicID;
     protected Level level;
 
+    /**
+     * Constructor, should be called by the constructor that makes a brand new mechanic
+     */
     public Mechanic() {
         generateUUID();
     }
 
+    /**
+     * Returns the data for the mechanic in a serializable format to write to the config
+     * @return
+     */
     public abstract Map<String, Object> getData();
 
+    /**
+     * Generates the settings menu for the mechanic
+     * @param player - player that's opening the inventory
+     * @return
+     */
     public abstract Inventory generateMechanicSettingsMenu(Player player);
+
+    /**
+     * Gets the lore for the mechanic item in the level editor inventory
+     * @return
+     */
     public abstract List<Component> getLore();
+
+    /**
+     * handles the click event for the mechanic's settings menu
+     * @param e
+     * @param editorGUIHandler
+     */
     public abstract void handleClick(InventoryClickEvent e, EditorGUIHandler editorGUIHandler);
+
+    /**
+     * handle game time events (listeners pass through this to the mechanic
+     * @param e
+     */
+    public abstract void eventHandler(TeamInstance teamInstance, Event e);
+
+    /**
+     * Implement behaviors for when the level starts
+     * e.g. giving items or teleports
+     */
+    public abstract void levelStartExecution(TeamInstance teamInstance);
+
     public UUID getID() {
         return mechanicID;
     }
@@ -101,15 +140,22 @@ public abstract class Mechanic {
         player.openInventory(deleteLevelMenu);
     }
 
-    //stolen from ChatGPT
-    // Serialize ItemStack to YAML string
+    /**
+     * serialize itemStack into a string
+     * @param itemStack - stack to serialize
+     * @return serialized string
+     */
     public static String serializeItemStack(ItemStack itemStack) {
         YamlConfiguration config = new YamlConfiguration();
         config.set("item", itemStack);
         return config.saveToString();
     }
 
-    // Deserialize ItemStack from YAML string
+    /**
+     * deserialize itemStack
+     * @param yamlString - String to deserialize
+     * @return - deserialized ItemStack object
+     */
     public static ItemStack deserializeItemStack(String yamlString) {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader(yamlString));
         return config.getItemStack("item");
@@ -183,4 +229,5 @@ public abstract class Mechanic {
 
         return mechanicStack;
     }
+
 }

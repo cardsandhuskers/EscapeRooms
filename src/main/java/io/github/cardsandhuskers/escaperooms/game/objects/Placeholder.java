@@ -1,4 +1,4 @@
-package io.github.cardsandhuskers.escaperooms.Objects;
+package io.github.cardsandhuskers.escaperooms.game.objects;
 
 import io.github.cardsandhuskers.escaperooms.EscapeRooms;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;

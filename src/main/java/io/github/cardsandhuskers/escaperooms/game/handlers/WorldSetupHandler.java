@@ -3,8 +3,6 @@ package io.github.cardsandhuskers.escaperooms.game.handlers;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.bukkit.BukkitWorld;
-import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
@@ -13,21 +11,23 @@ import com.sk89q.worldedit.function.operation.Operation;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.session.ClipboardHolder;
-import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.entity.EntityType;
 import io.github.cardsandhuskers.escaperooms.EscapeRooms;
-import io.github.cardsandhuskers.escaperooms.Objects.TeamInstance;
+import io.github.cardsandhuskers.escaperooms.game.objects.TeamInstance;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.LevelHandler;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
 import io.github.cardsandhuskers.teams.handlers.TeamHandler;
 import io.github.cardsandhuskers.teams.objects.Team;
-import net.kyori.adventure.key.Key;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Painting;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ItemType;
 import org.enginehub.linbus.tree.LinCompoundTag;
@@ -36,12 +36,10 @@ import org.enginehub.linbus.tree.LinTagType;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
-public class WorldSetupHandler {
+public class WorldSetupHandler implements Listener {
 
     private World world;
     private EscapeRooms plugin = EscapeRooms.getPlugin();
@@ -52,9 +50,30 @@ public class WorldSetupHandler {
 
 
     public void setupWorld() {
-        List<Level> levelsToUse = selectLevels();
-        generateCourses(levelsToUse);
 
+        //register listener
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
+
+        //reset world
+        CommandSender console = Bukkit.getConsoleSender();
+        // Dispatch the command as the console
+        Bukkit.dispatchCommand(console, "mvregen " + world.getName());
+
+    }
+
+    @EventHandler
+    public void onWorldLoad(WorldLoadEvent e) {
+        if(e.getWorld() == world) {
+            System.out.println("CORRECT WORLD LOADED");
+
+            HandlerList.unregisterAll(this);
+
+            List<Level> levelsToUse = selectLevels();
+            List<TeamInstance> teamInstances = generateCourses(levelsToUse);
+
+            GameStageHandler gameStageHandler = new GameStageHandler(teamInstances);
+            gameStageHandler.startPregame();
+        }
     }
 
     /**
@@ -86,13 +105,7 @@ public class WorldSetupHandler {
 
     }
 
-    public void generateCourses(List<Level> levels) {
-        //reset world
-        CommandSender console = Bukkit.getConsoleSender();
-
-        // Dispatch the command as the console
-        Bukkit.dispatchCommand(console, "mvregen " + world.getName());
-
+    public List<TeamInstance> generateCourses(List<Level> levels) {
 
         int teamDist = plugin.getConfig().getInt("teamDistance");
 
@@ -110,7 +123,6 @@ public class WorldSetupHandler {
             for (Level level : levels) {
 
                 Location levelCorner = new Location(world, x, y, z);
-                System.out.println(levelCorner);
 
                 levelCorners.put(level, levelCorner);
                 allPastes.put(levelCorner, level);
@@ -125,6 +137,7 @@ public class WorldSetupHandler {
             pasteSchematic(allPastes.get(l).getName(), l.getBlockX(), l.getBlockY(), l.getBlockZ());
         }
 
+        return teamInstances;
     }
 
     private void pasteSchematic(String levelName, int x, int y, int z) {
