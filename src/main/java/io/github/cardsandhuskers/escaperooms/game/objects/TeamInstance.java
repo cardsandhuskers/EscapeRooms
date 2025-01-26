@@ -28,6 +28,8 @@ public class TeamInstance {
         this.levels = levels;
         this.team = team;
         this.levelCorners = levelCorners;
+
+        Placeholder.currentLevelName.put(team, getCurrentLevel().getName());
     }
 
     public void teleportToCurrentLevel() {
@@ -57,12 +59,6 @@ public class TeamInstance {
         return levels.get(currentLevel - 1);
     }
 
-
-
-    public void onLevelFinish() {
-        currentLevel++;
-    }
-
     public void executeLevelMechanics() {
 
         for(Mechanic mechanic: getCurrentLevel().getMechanics()) {
@@ -79,12 +75,10 @@ public class TeamInstance {
     }
 
     public boolean isLevelEndPressed(PlayerInteractEvent e) {
-        Location loc = e.getClickedBlock().getLocation();
-        System.out.println("All corners: " + levelCorners.values());
-        Location corner = getCurrentLevelCorner();
-        System.out.println("CORNER: " + corner);
-        System.out.println("TESTA");
+        if(e.getClickedBlock() == null) return false;
 
+        Location loc = e.getClickedBlock().getLocation();
+        Location corner = getCurrentLevelCorner();
 
         if (getCurrentLevel().isEndButton(corner, loc)) {
             startNextLevel();
@@ -95,11 +89,9 @@ public class TeamInstance {
     }
 
     public void startNextLevel() {
-        System.out.println("STARTING NEXT LEVEL");
 
         if(currentLevel == levels.size()) {
             //GAME OVER
-            System.out.println("YOU WIN");
             for(Player p: team.getOnlinePlayers()) {
                 p.setGameMode(GameMode.SPECTATOR);
             }
@@ -108,6 +100,9 @@ public class TeamInstance {
         }
 
         currentLevel++;
+
+        Placeholder.currentLevelCount.put(team, currentLevel);
+        Placeholder.currentLevelName.put(team, getCurrentLevel().getName());
         teleportToCurrentLevel();
         executeLevelMechanics();
     }

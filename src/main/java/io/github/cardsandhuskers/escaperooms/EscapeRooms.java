@@ -19,7 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class EscapeRooms extends JavaPlugin {
 
     private static EscapeRooms plugin;
-    public static int timeVar;
+
     public static double multiplier;
 
     @Override

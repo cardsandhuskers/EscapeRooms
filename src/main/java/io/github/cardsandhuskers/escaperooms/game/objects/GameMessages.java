@@ -9,7 +9,6 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -21,13 +20,46 @@ import java.util.Comparator;
 public class GameMessages {
 
 
-    public static TextComponent getDescription() {
-        return Component.text("NOT Implemented");
+    public static TextComponent getDescription(int num_puzzles) {
+        return Component.text("----------------------------------------\n")
+                    .color(NamedTextColor.DARK_GREEN)
+                    .decorate(TextDecoration.STRIKETHROUGH)
+                .append(Component.text("          Temple Run          ")
+                        .color(NamedTextColor.YELLOW)
+                        .decorate(TextDecoration.BOLD)
+                        .decoration(TextDecoration.STRIKETHROUGH, false))
+                .append(Component.text("\nHow to Play:")
+                        .color(NamedTextColor.DARK_AQUA)
+                        .decorate(TextDecoration.BOLD))
+                        .decoration(TextDecoration.STRIKETHROUGH, false)
+                .append(Component.text("\nWork Together with your team to complete a series of ")
+                        .color(NamedTextColor.WHITE)
+                        .decoration(TextDecoration.STRIKETHROUGH, false)) // Reset strikethrough
+                .append(Component.text(num_puzzles)
+                        .color(NamedTextColor.YELLOW)
+                        .decorate(TextDecoration.BOLD))
+                        .decoration(TextDecoration.STRIKETHROUGH, false)
+                .append(Component.text(" puzzles. Each puzzle will be unique," +
+                                "\nrequiring collaboration and communication from your team to complete them in a timely manner." +
+                                "\nComplete each puzzle before the other teams to score more points!")
+                        .color(NamedTextColor.WHITE)
+                        .decoration(TextDecoration.STRIKETHROUGH, false)) // Reset strikethrough
+                .append(Component.text("\n----------------------------------------")
+                        .color(NamedTextColor.DARK_GREEN)
+                        .decorate(TextDecoration.STRIKETHROUGH));
     }
 
 
     public static TextComponent getPointsDescription() {
-        return Component.text("NOT Implemented");
+        return Component.text("----------------------------------------")
+                    .color(NamedTextColor.DARK_GREEN)
+                    .decorate(TextDecoration.STRIKETHROUGH)
+                .append(Component.text("\nHow The Game is Scored:"))
+                    .color(NamedTextColor.WHITE)
+                    .decoration(TextDecoration.STRIKETHROUGH, TextDecoration.State.NOT_SET)
+                .append(Component.text("\nFor Completing a Level: YOU GET POINTS!!!!!!"))
+                    .color(NamedTextColor.WHITE)
+                    .decoration(TextDecoration.STRIKETHROUGH, TextDecoration.State.NOT_SET);
     }
 
 

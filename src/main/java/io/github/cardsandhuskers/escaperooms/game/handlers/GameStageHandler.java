@@ -5,6 +5,7 @@ import io.github.cardsandhuskers.escaperooms.game.listeners.PlayerInteractListen
 import io.github.cardsandhuskers.escaperooms.game.listeners.PlayerJoinListener;
 import io.github.cardsandhuskers.escaperooms.game.objects.Countdown;
 import io.github.cardsandhuskers.escaperooms.game.objects.GameMessages;
+import io.github.cardsandhuskers.escaperooms.game.objects.Placeholder;
 import io.github.cardsandhuskers.escaperooms.game.objects.TeamInstance;
 import io.github.cardsandhuskers.teams.handlers.TeamHandler;
 import io.github.cardsandhuskers.teams.objects.Team;
@@ -49,7 +50,7 @@ public class GameStageHandler {
 
                 //Timer End
                 () -> {
-                    EscapeRooms.timeVar = 0;
+                    Placeholder.timeVar = 0;
                     startGame();
 
 
@@ -57,9 +58,9 @@ public class GameStageHandler {
 
                 //Each Second
                 (t) -> {
-                    EscapeRooms.timeVar = t.getSecondsLeft();
+                    Placeholder.timeVar = t.getSecondsLeft();
 
-                    if (t.getSecondsLeft() == t.getTotalSeconds() - 1) EscapeRooms.getPlugin().getServer().broadcast(GameMessages.getDescription());
+                    if (t.getSecondsLeft() == t.getTotalSeconds() - 1) EscapeRooms.getPlugin().getServer().broadcast(GameMessages.getDescription(plugin.getConfig().getInt("courseLength")));
                     if (t.getSecondsLeft() == t.getTotalSeconds() - 11) EscapeRooms.getPlugin().getServer().broadcast(GameMessages.getPointsDescription());
                 }
         );
@@ -111,7 +112,7 @@ public class GameStageHandler {
 
                 //Timer End
                 () -> {
-                    EscapeRooms.timeVar = 0;
+                    Placeholder.timeVar = 0;
 
 
 
@@ -119,7 +120,7 @@ public class GameStageHandler {
 
                 //Each Second
                 (t) -> {
-                    EscapeRooms.timeVar = t.getSecondsLeft();
+                    Placeholder.timeVar = t.getSecondsLeft();
 
 
 
