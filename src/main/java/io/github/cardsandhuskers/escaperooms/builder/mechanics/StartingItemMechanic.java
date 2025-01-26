@@ -15,9 +15,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerEggThrowEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerShearEntityEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -52,7 +50,7 @@ public class StartingItemMechanic extends Mechanic{
     }
 
     @Override
-    public Map<String, Object> getData() {
+    public Map<String, Object> serialize() {
 
         // Prepare attributes map
         Map<String, Object> attributes = new HashMap<>();
@@ -175,11 +173,15 @@ public class StartingItemMechanic extends Mechanic{
 
     @Override
     public void eventHandler(TeamInstance teamInstance, Event e) {
-
+        if (e instanceof PlayerJoinEvent pje) {
+            pje.getPlayer().getInventory().addItem(item);
+        }
     }
 
     @Override
     public void levelStartExecution(TeamInstance teamInstance) {
-
+        for(Player p: teamInstance.getTeam().getOnlinePlayers()) {
+            p.getInventory().addItem(item);
+        }
     }
 }

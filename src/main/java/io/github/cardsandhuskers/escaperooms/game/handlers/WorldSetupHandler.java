@@ -39,7 +39,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
-public class WorldSetupHandler implements Listener {
+public class WorldSetupHandler {
 
     private World world;
     private EscapeRooms plugin = EscapeRooms.getPlugin();
@@ -52,18 +52,29 @@ public class WorldSetupHandler implements Listener {
     public void setupWorld() {
 
         //register listener
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        //plugin.getServer().getPluginManager().registerEvents(this, plugin);
 
         //reset world
-        CommandSender console = Bukkit.getConsoleSender();
+        //resetting world is causing a lot of issues
+        //CommandSender console = Bukkit.getConsoleSender();
         // Dispatch the command as the console
-        Bukkit.dispatchCommand(console, "mvregen " + world.getName());
+        //Bukkit.dispatchCommand(console, "mvregen " + world.getName());
+        //Bukkit.dispatchCommand(console, "mvconfirm");
+        List<Level> levelsToUse = selectLevels();
+        List<TeamInstance> teamInstances = generateCourses(levelsToUse);
+
+        GameStageHandler gameStageHandler = new GameStageHandler(teamInstances);
+        gameStageHandler.startPregame();
 
     }
 
-    @EventHandler
+    /*@EventHandler
     public void onWorldLoad(WorldLoadEvent e) {
-        if(e.getWorld() == world) {
+        System.out.println("EVENT TRIGGERED");
+        System.out.println(e.getWorld().getName());
+        System.out.println(world.getName());
+
+        if(e.getWorld().getName().equals(world.getName())) {
             System.out.println("CORRECT WORLD LOADED");
 
             HandlerList.unregisterAll(this);
@@ -74,7 +85,7 @@ public class WorldSetupHandler implements Listener {
             GameStageHandler gameStageHandler = new GameStageHandler(teamInstances);
             gameStageHandler.startPregame();
         }
-    }
+    }*/
 
     /**
      * Prunes levels that require more players than are available, then randomly removes levels until the length
@@ -193,7 +204,7 @@ public class WorldSetupHandler implements Listener {
                                 if (spawnedEntity instanceof ItemFrame itemFrame) {
                                     // Set the facing direction and item (if available)
                                     LinCompoundTag nbtData = entity.getState().getNbt();
-                                    System.out.println("Item Frame NBT: " + nbtData);
+                                    //System.out.println("Item Frame NBT: " + nbtData);
 
                                     //get a BlockFace from the Facing byte
                                     LinTag<Byte> facingTag = nbtData.getTag("Facing", LinTagType.byteTag());
@@ -214,7 +225,7 @@ public class WorldSetupHandler implements Listener {
                                         LinCompoundTag itemTag = nbtData.getTag("Item", LinTagType.compoundTag());
                                         generateItemFromNBT(itemTag);
 
-                                        System.out.println(itemTag);
+                                        //System.out.println(itemTag);
                                         String type = itemTag.getTag("id", LinTagType.stringTag()).value();
 
                                         String[] parts = type.split(":", 2);

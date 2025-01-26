@@ -111,6 +111,18 @@ public class LevelHandler {
                         e.printStackTrace();
                     }
 
+                    //level end button
+                    try {
+                        double x = config.getDouble("levelEnd.x");
+                        double y = config.getDouble("levelEnd.y");
+                        double z = config.getDouble("levelEnd.z");
+
+                        Vector levelEndOffset = new Vector(x, y, z);
+                        level.setLevelEndButtonOffset(levelEndOffset);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
 
                     // Load mechanics using getConfigurationSection
                     ConfigurationSection mechanicSection = config.getConfigurationSection("mechanics");

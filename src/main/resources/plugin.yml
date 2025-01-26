@@ -11,3 +11,7 @@ commands:
     description: master command for all escape room commands
   startEscapeRooms:
     description: starts the game
+  reloadEscapeRooms:
+    description: reloads config
+  setEscapeRoomsLobby:
+    description: sets the lobby location

@@ -21,13 +21,13 @@ import java.util.Comparator;
 public class GameMessages {
 
 
-    public static String getDescription() {
-        return "NOT Implemented";
+    public static TextComponent getDescription() {
+        return Component.text("NOT Implemented");
     }
 
 
-    public static String getPointsDescription() {
-        return "NOT Implemented";
+    public static TextComponent getPointsDescription() {
+        return Component.text("NOT Implemented");
     }
 
 

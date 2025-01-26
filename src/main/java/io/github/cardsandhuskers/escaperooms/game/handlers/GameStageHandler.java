@@ -1,13 +1,19 @@
 package io.github.cardsandhuskers.escaperooms.game.handlers;
 
 import io.github.cardsandhuskers.escaperooms.EscapeRooms;
+import io.github.cardsandhuskers.escaperooms.game.listeners.PlayerInteractListener;
+import io.github.cardsandhuskers.escaperooms.game.listeners.PlayerJoinListener;
 import io.github.cardsandhuskers.escaperooms.game.objects.Countdown;
 import io.github.cardsandhuskers.escaperooms.game.objects.GameMessages;
 import io.github.cardsandhuskers.escaperooms.game.objects.TeamInstance;
 import io.github.cardsandhuskers.teams.handlers.TeamHandler;
+import io.github.cardsandhuskers.teams.objects.Team;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class GameStageHandler {
@@ -53,16 +59,13 @@ public class GameStageHandler {
                 (t) -> {
                     EscapeRooms.timeVar = t.getSecondsLeft();
 
-                    if (t.getSecondsLeft() == t.getTotalSeconds() - 1) Bukkit.broadcastMessage(GameMessages.getDescription());
-
-                    if (t.getSecondsLeft() == t.getTotalSeconds() - 11) Bukkit.broadcastMessage(GameMessages.getPointsDescription());
+                    if (t.getSecondsLeft() == t.getTotalSeconds() - 1) EscapeRooms.getPlugin().getServer().broadcast(GameMessages.getDescription());
+                    if (t.getSecondsLeft() == t.getTotalSeconds() - 11) EscapeRooms.getPlugin().getServer().broadcast(GameMessages.getPointsDescription());
                 }
         );
 
         // Start scheduling, don't use the "run" method unless you want to skip a second
         pregameTimer.scheduleTimer();
-
-
 
     }
 
@@ -75,24 +78,33 @@ public class GameStageHandler {
         }
 
         for(TeamInstance instance: teamInstances) {
-
+            instance.teleportToCurrentLevel();
         }
 
+        for(TeamInstance instance: teamInstances) {
+            instance.executeLevelMechanics();
+        }
 
-        int pregameTime = plugin.getConfig().getInt("pregameTime");
+        HashMap<Team, TeamInstance> teamInstanceMap = new HashMap<>();
+        for(TeamInstance t: teamInstances) {
+            teamInstanceMap.put(t.getTeam(), t);
+        }
+
+        List<Listener> listeners = new ArrayList<>();
+        Listener playerInteractListener = new PlayerInteractListener(teamInstanceMap);
+        listeners.add(playerInteractListener);
+        Listener playerJoinListener = new PlayerJoinListener(teamInstanceMap);
+        listeners.add(playerJoinListener);
+        plugin.getServer().getPluginManager().registerEvents(playerInteractListener, plugin);
+        plugin.getServer().getPluginManager().registerEvents(playerJoinListener, plugin);
+
+        int gameTime = plugin.getConfig().getInt("gameTime");
         gameTimer = new Countdown(plugin,
 
-                pregameTime,
+                gameTime,
                 //Timer Start
                 () -> {
-                    Location lobby = plugin.getConfig().getLocation("lobby");
-                    if(lobby != null) {
-                        for (Player p : Bukkit.getOnlinePlayers()) {
-                            p.teleport(lobby);
-                        }
-                    } else {
-                        plugin.getLogger().severe("No lobby location set!");
-                    }
+
 
 
                 },
@@ -109,9 +121,8 @@ public class GameStageHandler {
                 (t) -> {
                     EscapeRooms.timeVar = t.getSecondsLeft();
 
-                    if (t.getSecondsLeft() == t.getTotalSeconds() - 1) Bukkit.broadcastMessage(GameMessages.getDescription());
 
-                    if (t.getSecondsLeft() == t.getTotalSeconds() - 11) Bukkit.broadcastMessage(GameMessages.getPointsDescription());
+
                 }
         );
 

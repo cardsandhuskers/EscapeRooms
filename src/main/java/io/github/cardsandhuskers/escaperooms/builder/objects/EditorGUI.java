@@ -168,8 +168,8 @@ public class EditorGUI {
         ItemStack endSet = new ItemStack(Material.OAK_BUTTON);
         ItemMeta endSetMeta = endSet.getItemMeta();
         endSetMeta.displayName(Component.text("Set Level End Button").decoration(TextDecoration.ITALIC, false));
-        List<Component> endLore = new ArrayList<>(setPosLore(level.getAbsoluteSpawnPoint()));
-        endLore.add(0, Component.text("Sets the level's spawn to your current location"));
+        List<Component> endLore = new ArrayList<>(setPosLore(level.getAbsoluteEndButtonPoint()));
+        endLore.add(0, Component.text("Sets the level's button end to your current location"));
         endSetMeta.lore(endLore);
         endSet.setItemMeta(endSetMeta);
         editInv.setItem(16, endSet);

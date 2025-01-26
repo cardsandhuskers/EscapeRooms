@@ -1,10 +1,14 @@
 package io.github.cardsandhuskers.escaperooms.game.objects;
 
+import io.github.cardsandhuskers.escaperooms.EscapeRooms;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.LevelHandler;
+import io.github.cardsandhuskers.escaperooms.builder.mechanics.Mechanic;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
 import io.github.cardsandhuskers.teams.objects.Team;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
 
 
@@ -32,7 +36,21 @@ public class TeamInstance {
         Location spawnPoint = level.calculateSpawnPoint(levelCorners.get(level));
         for(Player p:team.getOnlinePlayers()) {
             p.teleport(spawnPoint);
+
+            EscapeRooms.getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(EscapeRooms.getPlugin(), ()->{
+                p.setGameMode(level.getGameMode());
+            }, 20L);
         }
+    }
+
+    public void teleportPlayer(Player p) {
+        Level level = levels.get(currentLevel - 1);
+        Location spawnPoint = level.calculateSpawnPoint(getCurrentLevelCorner());
+        p.teleport(spawnPoint);
+
+        EscapeRooms.getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(EscapeRooms.getPlugin(), ()->{
+            p.setGameMode(level.getGameMode());
+        }, 20L);
     }
 
     public Level getCurrentLevel() {
@@ -43,6 +61,55 @@ public class TeamInstance {
 
     public void onLevelFinish() {
         currentLevel++;
+    }
+
+    public void executeLevelMechanics() {
+
+        for(Mechanic mechanic: getCurrentLevel().getMechanics()) {
+            mechanic.levelStartExecution(this);
+        }
+    }
+
+    public Location getCurrentLevelCorner() {
+        return levelCorners.get(levels.get(currentLevel - 1)).clone();
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public boolean isLevelEndPressed(PlayerInteractEvent e) {
+        Location loc = e.getClickedBlock().getLocation();
+        System.out.println("All corners: " + levelCorners.values());
+        Location corner = getCurrentLevelCorner();
+        System.out.println("CORNER: " + corner);
+        System.out.println("TESTA");
+
+
+        if (getCurrentLevel().isEndButton(corner, loc)) {
+            startNextLevel();
+            return true;
+        }
+
+        return false;
+    }
+
+    public void startNextLevel() {
+        System.out.println("STARTING NEXT LEVEL");
+
+        if(currentLevel == levels.size()) {
+            //GAME OVER
+            System.out.println("YOU WIN");
+            for(Player p: team.getOnlinePlayers()) {
+                p.setGameMode(GameMode.SPECTATOR);
+            }
+
+            return;
+        }
+
+        currentLevel++;
+        teleportToCurrentLevel();
+        executeLevelMechanics();
     }
 
 }

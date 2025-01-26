@@ -80,7 +80,7 @@ public class PotionEffectsMechanic extends Mechanic {
      * @return - the hashmap
      */
     @Override
-    public Map<String, Object> getData() {
+    public Map<String, Object> serialize() {
         Map<String, Object> attributes = new HashMap<>();
         attributes.put("type", MechanicMapper.getMechName(this.getClass()));
 
@@ -220,7 +220,14 @@ public class PotionEffectsMechanic extends Mechanic {
 
     @Override
     public void levelStartExecution(TeamInstance teamInstance) {
-
+        for(Player p: teamInstance.getTeam().getOnlinePlayers()) {
+            for(PotionEffectType effect:potions.keySet()) {
+                PotionInfo info = potions.get(effect);
+                if(info.isEnabled) {
+                    p.addPotionEffect(new PotionEffect(info.effectType, PotionEffect.INFINITE_DURATION, info.amplifier));
+                }
+            }
+        }
     }
 
     /**

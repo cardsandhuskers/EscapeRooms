@@ -12,9 +12,12 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Switch;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -77,7 +80,7 @@ public class RandomButtonMechanic extends Mechanic {
             System.out.println("BUTTON BLOCK IS NULL????");
             return false;
         }
-        Vector diff = level.getDiff(buttonBlock);
+        Vector diff = level.getDiffFromSchem(buttonBlock);
         if(diff == null) return false;
 
         BlockLocation bl = new BlockLocation(diff.getBlockX(), diff.getBlockY(), diff.getBlockZ(), blockFace);
@@ -88,7 +91,7 @@ public class RandomButtonMechanic extends Mechanic {
     }
 
     @Override
-    public Map<String, Object> getData() {
+    public Map<String, Object> serialize() {
         HashMap<String, Object> attributes = new HashMap<>();
 
         List<Map<String, Object>> serializedLocations = new ArrayList<>();
@@ -116,7 +119,7 @@ public class RandomButtonMechanic extends Mechanic {
         int i = 9;
         for(BlockLocation location: blockLocations) {
 
-            Vector position = level.getCoords(new Vector(location.getX(), location.getY(), location.getZ()));
+            Vector position = level.getCoordsFromSchem(new Vector(location.getX(), location.getY(), location.getZ()));
 
             ItemStack item = new ItemStack(Material.ENDER_PEARL);
             ItemMeta itemMeta = item.getItemMeta();
@@ -183,8 +186,25 @@ public class RandomButtonMechanic extends Mechanic {
 
     }
 
+    /**
+     * Picks a random block from the list and sets a button at it, then faces it correctly
+     * @param teamInstance
+     */
     @Override
     public void levelStartExecution(TeamInstance teamInstance) {
+        Location corner = teamInstance.getCurrentLevelCorner();
+
+        BlockLocation loc = blockLocations.get(new Random().nextInt(blockLocations.size()));
+
+        corner.add(loc.getX(), loc.getY(), loc.getZ());
+
+        Block block = corner.getBlock();
+        block.setType(Material.STONE_BUTTON);
+        BlockData data = block.getBlockData();
+        Switch buttonData = (Switch) data;
+        buttonData.setFacing(loc.getFace());
+        block.setBlockData(buttonData);
+
 
     }
 

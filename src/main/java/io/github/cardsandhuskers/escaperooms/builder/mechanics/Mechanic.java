@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -27,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public abstract class Mechanic {
+public abstract class Mechanic implements ConfigurationSerializable {
     protected UUID mechanicID;
     protected Level level;
 
@@ -37,12 +38,6 @@ public abstract class Mechanic {
     public Mechanic() {
         generateUUID();
     }
-
-    /**
-     * Returns the data for the mechanic in a serializable format to write to the config
-     * @return
-     */
-    public abstract Map<String, Object> getData();
 
     /**
      * Generates the settings menu for the mechanic
@@ -75,6 +70,9 @@ public abstract class Mechanic {
      * e.g. giving items or teleports
      */
     public abstract void levelStartExecution(TeamInstance teamInstance);
+
+    @Override
+    public abstract Map<String, Object> serialize();
 
     public UUID getID() {
         return mechanicID;

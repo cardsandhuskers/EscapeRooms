@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class ClearBlocksMechanic extends Mechanic{
     @Override
-    public Map<String, Object> getData() {
+    public Map<String, Object> serialize() {
         return null;
     }
 

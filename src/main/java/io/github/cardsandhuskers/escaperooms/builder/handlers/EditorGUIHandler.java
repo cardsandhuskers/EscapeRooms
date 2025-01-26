@@ -7,6 +7,7 @@ import io.github.cardsandhuskers.escaperooms.builder.mechanics.MechanicMapper;
 import io.github.cardsandhuskers.escaperooms.builder.objects.EditorGUI;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -95,7 +96,14 @@ public class EditorGUIHandler {
 
             }
             case NETHER_STAR -> gui.openAddMechanicInv();
-            case ENDER_PEARL -> currLevel.setSpawnPoint(p.getLocation());
+            case ENDER_PEARL -> {
+                boolean result = currLevel.setSpawnPoint(p.getLocation());
+                if(!result) p.sendMessage(Component.text("Level positions are not set.").color(NamedTextColor.RED));
+            }
+            case OAK_BUTTON -> {
+                boolean result = currLevel.setLevelEndButton(p.getLocation());
+                if(!result) p.sendMessage(Component.text("Either Level positions are not set or block at your head is not a button.").color(NamedTextColor.RED));
+            }
             case GREEN_CONCRETE -> currLevel.saveSchematic();
         }
         switch(itemName) {
