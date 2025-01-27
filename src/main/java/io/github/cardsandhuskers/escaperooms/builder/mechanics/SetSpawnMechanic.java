@@ -1,12 +1,9 @@
 package io.github.cardsandhuskers.escaperooms.builder.mechanics;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
@@ -21,12 +18,11 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
-import io.github.cardsandhuskers.escaperooms.builder.mechanics.potion.PotionInfo;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
@@ -115,11 +111,17 @@ public class SetSpawnMechanic extends Mechanic{
         clickedItemMeta.addEnchant(Enchantment.LURE, 1, enabled);
         clickedItem.setItemMeta(clickedItemMeta);
 
+        Player p = (Player) e.getWhoClicked();
+        Location location = p.getLocation();
+        Vector vector = new Vector(location.getX(), location.getY(), location.getZ());
+
+        Vector relativeVector = level.getDiff(vector);
+
         //level.getDiff -> vector(x,y,z); gets diff vector between corner of schedmatic and where you've put it
       }
     }
 
-    // Player p = (Player) e.getWhoClicked();
+    //
     // p.setRespawnLocation(p.getLocation());
     // p.sendMessage("Spawn Point Set!");
   }
