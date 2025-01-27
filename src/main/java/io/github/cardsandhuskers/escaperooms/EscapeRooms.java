@@ -1,6 +1,9 @@
 package io.github.cardsandhuskers.escaperooms;
 
-import io.github.cardsandhuskers.escaperooms.Objects.Placeholder;
+import io.github.cardsandhuskers.escaperooms.builder.mechanics.Mechanic;
+import io.github.cardsandhuskers.escaperooms.commands.ReloadConfigCommand;
+import io.github.cardsandhuskers.escaperooms.commands.SetLobbyCommand;
+import io.github.cardsandhuskers.escaperooms.game.objects.Placeholder;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.button.BlockLocation;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.potion.PotionInfo;
 import io.github.cardsandhuskers.escaperooms.commands.EscapeRoomCommand;
@@ -8,6 +11,7 @@ import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.LevelHandler;
 import io.github.cardsandhuskers.escaperooms.builder.listeners.InventoryClickListener;
 import io.github.cardsandhuskers.escaperooms.builder.listeners.InventoryCloseListener;
+import io.github.cardsandhuskers.escaperooms.commands.StartGameCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -15,6 +19,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class EscapeRooms extends JavaPlugin {
 
     private static EscapeRooms plugin;
+
+    public static double multiplier;
 
     @Override
     public void onEnable() {
@@ -37,9 +43,10 @@ public final class EscapeRooms extends JavaPlugin {
             //Bukkit.getPluginManager().disablePlugin(this);
         }
 
-        //register serializations
+        //register serializations here!
         ConfigurationSerialization.registerClass(BlockLocation.class);
         ConfigurationSerialization.registerClass(PotionInfo.class);
+        ConfigurationSerialization.registerClass(Mechanic.class);
 
         getConfig().options().copyDefaults();
         saveDefaultConfig();
@@ -48,6 +55,10 @@ public final class EscapeRooms extends JavaPlugin {
 
         EditorGUIHandler editorGUIHandler = new EditorGUIHandler();
         getCommand("escapeRoom").setExecutor(new EscapeRoomCommand(editorGUIHandler));
+        getCommand("startEscapeRooms").setExecutor(new StartGameCommand());
+        getCommand("reloadEscapeRooms").setExecutor(new ReloadConfigCommand());
+        getCommand("setEscapeRoomsLobby").setExecutor(new SetLobbyCommand());
+
         getServer().getPluginManager().registerEvents(new InventoryClickListener(editorGUIHandler), this);
         getServer().getPluginManager().registerEvents(new InventoryCloseListener(editorGUIHandler), this);
     }

@@ -3,6 +3,7 @@ package io.github.cardsandhuskers.escaperooms.builder.mechanics;
 import io.github.cardsandhuskers.escaperooms.EscapeRooms;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
+import io.github.cardsandhuskers.escaperooms.game.objects.TeamInstance;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -11,7 +12,9 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -20,21 +23,56 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public abstract class Mechanic {
+public abstract class Mechanic implements ConfigurationSerializable {
     protected UUID mechanicID;
     protected Level level;
 
+    /**
+     * Constructor, should be called by the constructor that makes a brand new mechanic
+     */
     public Mechanic() {
         generateUUID();
     }
 
-    public abstract Map<String, Object> getData();
-
+    /**
+     * Generates the settings menu for the mechanic
+     * @param player - player that's opening the inventory
+     * @return
+     */
     public abstract Inventory generateMechanicSettingsMenu(Player player);
-    public abstract ItemStack createItem();
+
+    /**
+     * Gets the lore for the mechanic item in the level editor inventory
+     * @return
+     */
+    public abstract List<Component> getLore();
+
+    /**
+     * handles the click event for the mechanic's settings menu
+     * @param e
+     * @param editorGUIHandler
+     */
+    public abstract void handleClick(InventoryClickEvent e, EditorGUIHandler editorGUIHandler);
+
+    /**
+     * handle game time events (listeners pass through this to the mechanic
+     * @param e
+     */
+    public abstract void eventHandler(TeamInstance teamInstance, Event e);
+
+    /**
+     * Implement behaviors for when the level starts
+     * e.g. giving items or teleports
+     */
+    public abstract void levelStartExecution(TeamInstance teamInstance);
+
+    @Override
+    public abstract Map<String, Object> serialize();
 
     public UUID getID() {
         return mechanicID;
@@ -48,6 +86,9 @@ public abstract class Mechanic {
         mechanicID = UUID.randomUUID();
     }
 
+    /**
+     * Deletes the mechanic from memory and the file
+     */
     public void delete() {
         EscapeRooms plugin = EscapeRooms.getPlugin();
 
@@ -71,6 +112,10 @@ public abstract class Mechanic {
         level.removeMechanic(this);
     }
 
+    /**
+     * Generates and opens a menu to let the player confirm if they want to delete the mechanic or not
+     * @param player
+     */
     public void openDeleteMenu(Player player) {
         EscapeRooms plugin = EscapeRooms.getPlugin();
         Inventory deleteLevelMenu = Bukkit.createInventory(player, 18, Component.text("Delete Mechanic?").decoration(TextDecoration.ITALIC, false)
@@ -93,22 +138,34 @@ public abstract class Mechanic {
         player.openInventory(deleteLevelMenu);
     }
 
-    //stolen from ChatGPT
-    // Serialize ItemStack to YAML string
+    /**
+     * serialize itemStack into a string
+     * @param itemStack - stack to serialize
+     * @return serialized string
+     */
     public static String serializeItemStack(ItemStack itemStack) {
         YamlConfiguration config = new YamlConfiguration();
         config.set("item", itemStack);
         return config.saveToString();
     }
 
-    // Deserialize ItemStack from YAML string
+    /**
+     * deserialize itemStack
+     * @param yamlString - String to deserialize
+     * @return - deserialized ItemStack object
+     */
     public static ItemStack deserializeItemStack(String yamlString) {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader(yamlString));
         return config.getItemStack("item");
     }
 
-    public abstract void handleClick(InventoryClickEvent e, EditorGUIHandler editorGUIHandler);
-
+    /**
+     * Creates the item at the top of the mechanic menu, contains the ID of the mechanic so that the mechanic the user
+     * is working with can be retreived
+     * @param mechanicID
+     * @param mat
+     * @return
+     */
     public static ItemStack createIDItem(UUID mechanicID, Material mat) {
         EscapeRooms plugin = EscapeRooms.getPlugin();
         ItemStack title = new ItemStack(mat);
@@ -122,6 +179,11 @@ public abstract class Mechanic {
         return title;
     }
 
+    /**
+     * Pulls the UUID from an ID item
+     * @param clickedItem
+     * @return
+     */
     public static UUID getUUIDFromItem(ItemStack clickedItem) {
         EscapeRooms plugin = EscapeRooms.getPlugin();
         ItemMeta itemMeta = clickedItem.getItemMeta();
@@ -135,6 +197,11 @@ public abstract class Mechanic {
         }
     }
 
+    /**
+     * embeds the UUID in the item passed in
+     * @param itemMeta - item data to embed UUID into
+     * @param id - UUID to embed
+     */
     public static void embedUUID(ItemMeta itemMeta, UUID id) {
         EscapeRooms plugin = EscapeRooms.getPlugin();
 
@@ -143,4 +210,22 @@ public abstract class Mechanic {
         container.set(namespacedKey, PersistentDataType.STRING, id.toString());
 
     }
+
+    /**
+     * Creates the item for the level editor page that will have the data about the mechanic
+     * @return
+     */
+    public ItemStack createItem() {
+        Material mat = MechanicMapper.getMechMaterial(this.getClass());
+        ItemStack mechanicStack = new ItemStack(mat);
+
+        ItemMeta mechanicMeta = mechanicStack.getItemMeta();
+        Mechanic.embedUUID(mechanicMeta, mechanicID);
+        mechanicMeta.displayName(Component.text(MechanicMapper.getMechName(this.getClass())).color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
+        mechanicMeta.lore(getLore());
+        mechanicStack.setItemMeta(mechanicMeta);
+
+        return mechanicStack;
+    }
+
 }

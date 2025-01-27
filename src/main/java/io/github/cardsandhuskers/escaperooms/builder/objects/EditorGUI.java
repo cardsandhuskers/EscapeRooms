@@ -16,7 +16,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -159,21 +158,21 @@ public class EditorGUI {
         ItemStack spawnSet = new ItemStack(Material.ENDER_PEARL);
         ItemMeta spawnSetMeta = spawnSet.getItemMeta();
         spawnSetMeta.displayName(Component.text("Set Level Spawn").decoration(TextDecoration.ITALIC, false));
-        List<Component> spawnLore = new ArrayList<>(setPosLore(level.getSpawnPoint()));
+        List<Component> spawnLore = new ArrayList<>(setPosLore(level.getAbsoluteSpawnPoint()));
         spawnLore.add(0, Component.text("Sets the level's spawn to your current location"));
         spawnSetMeta.lore(spawnLore);
         spawnSet.setItemMeta(spawnSetMeta);
-        editInv.setItem(15, spawnSet);
+        editInv.setItem(7, spawnSet);
 
         //set end button
         ItemStack endSet = new ItemStack(Material.OAK_BUTTON);
         ItemMeta endSetMeta = endSet.getItemMeta();
         endSetMeta.displayName(Component.text("Set Level End Button").decoration(TextDecoration.ITALIC, false));
-        List<Component> endLore = new ArrayList<>(setPosLore(level.getSpawnPoint()));
-        endLore.add(0, Component.text("Sets the level's spawn to your current location"));
+        List<Component> endLore = new ArrayList<>(setPosLore(level.getAbsoluteEndButtonPoint()));
+        endLore.add(0, Component.text("Sets the level's button end to your current location"));
         endSetMeta.lore(endLore);
         endSet.setItemMeta(endSetMeta);
-        editInv.setItem(16, endSet);
+        editInv.setItem(8, endSet);
 
         //mechanics, need to add here when adding a new mechanic
         int i = 18;
@@ -189,32 +188,32 @@ public class EditorGUI {
         pos1RodMeta.displayName(Component.text("Set Position 1").decoration(TextDecoration.ITALIC, false));
         pos1RodMeta.lore(setPosLore(level.getPos1()));
         pos1Rod.setItemMeta(pos1RodMeta);
-        editInv.setItem(45, pos1Rod);
+        editInv.setItem(1, pos1Rod);
 
         ItemStack pos2Rod = new ItemStack(Material.BLAZE_ROD);
         ItemMeta pos2RodMeta = pos2Rod.getItemMeta();
         pos2RodMeta.displayName(Component.text("Set Position 2").decoration(TextDecoration.ITALIC, false));
         pos2RodMeta.lore(setPosLore(level.getPos2()));
         pos2Rod.setItemMeta(pos2RodMeta);
-        editInv.setItem(46, pos2Rod);
+        editInv.setItem(2, pos2Rod);
 
         ItemStack addMechanic = new ItemStack(Material.NETHER_STAR);
         ItemMeta addMechanicMeta = addMechanic.getItemMeta();
         addMechanicMeta.displayName(Component.text("Add Mechanic").color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
         addMechanic.setItemMeta(addMechanicMeta);
-        editInv.setItem(49, addMechanic);
+        editInv.setItem(15, addMechanic);
 
         ItemStack back = new ItemStack(Material.RED_CONCRETE);
         ItemMeta backMeta = back.getItemMeta();
         backMeta.displayName(Component.text("Back").color(NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
         back.setItemMeta(backMeta);
-        editInv.setItem(50, back);
+        editInv.setItem(51, back);
 
         ItemStack save = new ItemStack(Material.GREEN_CONCRETE);
         ItemMeta saveMeta = save.getItemMeta();
         saveMeta.displayName(Component.text("Save Level Schematic").color(NamedTextColor.DARK_GREEN).decoration(TextDecoration.ITALIC, false));
         save.setItemMeta(saveMeta);
-        editInv.setItem(52, save);
+        editInv.setItem(49, save);
 
         ItemStack delete = new ItemStack(Material.BARRIER);
         ItemMeta deleteMeta = delete.getItemMeta();

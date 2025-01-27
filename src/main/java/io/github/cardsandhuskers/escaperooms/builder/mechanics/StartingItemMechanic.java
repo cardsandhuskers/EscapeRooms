@@ -3,6 +3,7 @@ package io.github.cardsandhuskers.escaperooms.builder.mechanics;
 import io.github.cardsandhuskers.escaperooms.EscapeRooms;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
+import io.github.cardsandhuskers.escaperooms.game.objects.TeamInstance;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -12,13 +13,18 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 
+/**
+ * Mechanic to give an item to all players on level start
+ */
 public class StartingItemMechanic extends Mechanic{
 
     private ItemStack item = null;
@@ -44,7 +50,7 @@ public class StartingItemMechanic extends Mechanic{
     }
 
     @Override
-    public Map<String, Object> getData() {
+    public Map<String, Object> serialize() {
 
         // Prepare attributes map
         Map<String, Object> attributes = new HashMap<>();
@@ -60,21 +66,11 @@ public class StartingItemMechanic extends Mechanic{
     }
 
     @Override
-    public ItemStack createItem() {
-        Material mat = MechanicMapper.getMechMaterial(this.getClass());
-        ItemStack mechanicStack = new ItemStack(mat);
-
+    public List<Component> getLore() {
         List<Component> explanationLore;
         if(item!= null) explanationLore = List.of(Component.text("Current Item: " + item.getType().name()));
         else explanationLore = List.of(Component.text("Current Item: None"));
-
-        ItemMeta mechanicMeta = mechanicStack.getItemMeta();
-        Mechanic.embedUUID(mechanicMeta, mechanicID);
-        mechanicMeta.displayName(Component.text(MechanicMapper.getMechName(this.getClass())).color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
-        mechanicMeta.lore(explanationLore);
-        mechanicStack.setItemMeta(mechanicMeta);
-
-        return mechanicStack;
+        return explanationLore;
     }
 
 
@@ -172,6 +168,20 @@ public class StartingItemMechanic extends Mechanic{
                     p.getInventory().addItem(getItem());
                 }
             }
+        }
+    }
+
+    @Override
+    public void eventHandler(TeamInstance teamInstance, Event e) {
+        if (e instanceof PlayerJoinEvent pje) {
+            pje.getPlayer().getInventory().addItem(item);
+        }
+    }
+
+    @Override
+    public void levelStartExecution(TeamInstance teamInstance) {
+        for(Player p: teamInstance.getTeam().getOnlinePlayers()) {
+            p.getInventory().addItem(item);
         }
     }
 }

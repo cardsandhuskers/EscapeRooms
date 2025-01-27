@@ -7,6 +7,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
+/**
+ * Listener for when an inventory is closed, used to toggle if the user's GUI is considered open for when GUIs are refreshed
+ */
 public class InventoryCloseListener implements Listener {
     EditorGUIHandler editorGUIHandler;
 

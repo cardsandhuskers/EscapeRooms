@@ -7,6 +7,8 @@ import io.github.cardsandhuskers.escaperooms.builder.mechanics.MechanicMapper;
 import io.github.cardsandhuskers.escaperooms.builder.objects.EditorGUI;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -16,8 +18,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class EditorGUIHandler {
@@ -31,6 +35,12 @@ public class EditorGUIHandler {
         getPlayerMenu(p).openMainInv();
     }
 
+    /**
+     * Click handler for main GUI (one with list of levels and ability to add levels)
+     * @param p
+     * @param clickedItem
+     * @param clickType
+     */
     public void onMainGUIClick(Player p, ItemStack clickedItem, ClickType clickType) {
         //switch function for different items
         Component display = clickedItem.getItemMeta().displayName();
@@ -53,6 +63,14 @@ public class EditorGUIHandler {
         }
 
     }
+
+    /**
+     * Handler for a click on the level editor GUI
+     * @param p
+     * @param clickedItem
+     * @param clickType
+     * @param levelName
+     */
     public void onEditorGUIClick(Player p, ItemStack clickedItem, ClickType clickType, String levelName) {
         Component displayName = clickedItem.getItemMeta().displayName();
         if(displayName == null) return;
@@ -69,7 +87,13 @@ public class EditorGUIHandler {
 
         switch (mat) {
             case BLAZE_ROD, BREEZE_ROD -> {
-                p.getInventory().addItem(new ItemStack(mat));
+                ItemStack wand = new ItemStack(mat);
+                ItemMeta wandMeta = wand.getItemMeta();
+                wandMeta.displayName(Component.text("Set Level Corner").decoration(TextDecoration.ITALIC, false));
+                wandMeta.lore(List.of(Component.text("Sets the level's corner wherever you click"), Component.text("Expires in 30 seconds if you do not click anywhere.")));
+                wand.setItemMeta(wandMeta);
+
+                p.getInventory().addItem(wand);
 
                 CornerWandClickListener cornerWandClickListener = new CornerWandClickListener(this, currLevel, mat, p);
                 cornerWandClickListener.startOperation();
@@ -81,7 +105,14 @@ public class EditorGUIHandler {
 
             }
             case NETHER_STAR -> gui.openAddMechanicInv();
-            case ENDER_PEARL -> currLevel.setSpawnPoint(p.getLocation());
+            case ENDER_PEARL -> {
+                boolean result = currLevel.setSpawnPoint(p.getLocation());
+                if(!result) p.sendMessage(Component.text("Level positions are not set.").color(NamedTextColor.RED));
+            }
+            case OAK_BUTTON -> {
+                boolean result = currLevel.setLevelEndButton(p.getLocation());
+                if(!result) p.sendMessage(Component.text("Either Level positions are not set or block at your head is not a button.").color(NamedTextColor.RED));
+            }
             case GREEN_CONCRETE -> currLevel.saveSchematic();
         }
         switch(itemName) {
@@ -127,6 +158,11 @@ public class EditorGUIHandler {
 
     }
 
+    /**
+     * Handler for a click within the addMechanic GUI
+     * @param p
+     * @param clickedItem
+     */
     public void onMechanicGUIClick(Player p, ItemStack clickedItem) {
         EditorGUI gui = getPlayerMenu(p);
         Level currLevel = gui.getCurrentSelectedLevel();
@@ -140,6 +176,11 @@ public class EditorGUIHandler {
 
     }
 
+    /**
+     * Click handler for a click within the confirmation menu for deleting a level
+     * @param e
+     * @param clickedItem
+     */
     public void onDeleteLevelClick(InventoryClickEvent e, ItemStack clickedItem) {
 
         Component displayName = e.getClickedInventory().getItem(4).getItemMeta().displayName();
@@ -156,6 +197,10 @@ public class EditorGUIHandler {
         }
     }
 
+    /**
+     * called when GUI closes, triggers the close operation in the GUI object
+     * @param p
+     */
     public void onGUIExit(Player p) {
         EditorGUI gui = guiMap.get((OfflinePlayer) p);
 
@@ -164,6 +209,11 @@ public class EditorGUIHandler {
         }
     }
 
+    /**
+     * Returns a GUI for a specific player
+     * @param p
+     * @return
+     */
     public EditorGUI getPlayerMenu(Player p) {
         EditorGUI playerGUI = guiMap.get((OfflinePlayer) p);
         if(playerGUI != null) {
@@ -175,6 +225,9 @@ public class EditorGUIHandler {
         }
     }
 
+    /**
+     * Refreshes all menus
+     */
     public void refreshAll() {
         for (EditorGUI gui: guiMap.values()) {
             if (gui.isOpen()) {

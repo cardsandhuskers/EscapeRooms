@@ -27,7 +27,6 @@ public class MechanicsHandler {
 
     /**
      * gets the mechanic clicked using the item in the inventory title slot (slot 4)
-     * switch matches Level.addMechanic()
      * @param e
      */
     public void onMechanicClick(InventoryClickEvent e, EditorGUIHandler editorGUIHandler) {
@@ -47,7 +46,13 @@ public class MechanicsHandler {
 
     }
 
-    public void onDeleteMechanicClick(InventoryClickEvent e, ItemStack clickedItem) {
+    /**
+     * Handles a click within the GUI to confirm deletion of a
+     * @param e - click event
+     * @param clickedItem - clicked item
+     * @param editorGUIHandler - GUI handler so that the level editor can be returned to
+     */
+    public void onDeleteMechanicClick(InventoryClickEvent e, ItemStack clickedItem, EditorGUIHandler editorGUIHandler) {
         Player p = (Player)e.getInventory().getHolder();
 
         ItemStack titleItem = e.getInventory().getItem(4);
@@ -57,13 +62,19 @@ public class MechanicsHandler {
         if(clickedItem.getType() == Material.RED_CONCRETE) {
              p.openInventory(mech.generateMechanicSettingsMenu(p));
         } else if (clickedItem.getType() == Material.LIME_CONCRETE) {
-            Level level = mech.getLevel(); //TODO should open level inv but can't because this code is ass
+            Level level = mech.getLevel();
+            editorGUIHandler.getPlayerMenu(p).openEditInv(level.getName());
             mech.delete();
 
             p.closeInventory();
         }
     }
 
+    /**
+     * Returns mechanic object from it's UUID
+     * @param id - mechanic's UUID
+     * @return - Mechanic object
+     */
     public Mechanic findMechanicFromID(UUID id) {
         if(id == null)
             return null;

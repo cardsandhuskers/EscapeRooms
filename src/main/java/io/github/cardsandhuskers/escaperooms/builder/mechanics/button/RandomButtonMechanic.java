@@ -6,16 +6,22 @@ import io.github.cardsandhuskers.escaperooms.builder.listeners.ButtonMechanicCli
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.Mechanic;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.MechanicMapper;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
+import io.github.cardsandhuskers.escaperooms.game.objects.TeamInstance;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Switch;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -54,18 +60,9 @@ public class RandomButtonMechanic extends Mechanic {
     }
 
     @Override
-    public ItemStack createItem() {
-        Material mat = MechanicMapper.getMechMaterial(this.getClass());
-        ItemStack mechanicStack = new ItemStack(mat);
-
+    public List<Component> getLore() {
         List<Component> explanationLore = List.of(Component.text("Currently " + blockLocations.size() + " saved locations."));
-        ItemMeta mechanicMeta = mechanicStack.getItemMeta();
-        Mechanic.embedUUID(mechanicMeta, mechanicID);
-        mechanicMeta.displayName(Component.text(MechanicMapper.getMechName(this.getClass())).color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
-        mechanicMeta.lore(explanationLore);
-        mechanicStack.setItemMeta(mechanicMeta);
-
-        return mechanicStack;
+        return explanationLore;
     }
 
     public boolean addLocation(Block block, BlockFace blockFace) {
@@ -84,7 +81,7 @@ public class RandomButtonMechanic extends Mechanic {
             System.out.println("BUTTON BLOCK IS NULL????");
             return false;
         }
-        Vector diff = level.getDiff(buttonBlock);
+        Vector diff = level.getDiffFromSchem(buttonBlock);
         if(diff == null) return false;
 
         BlockLocation bl = new BlockLocation(diff.getBlockX(), diff.getBlockY(), diff.getBlockZ(), blockFace);
@@ -95,7 +92,7 @@ public class RandomButtonMechanic extends Mechanic {
     }
 
     @Override
-    public Map<String, Object> getData() {
+    public Map<String, Object> serialize() {
         HashMap<String, Object> attributes = new HashMap<>();
 
         List<Map<String, Object>> serializedLocations = new ArrayList<>();
@@ -123,17 +120,18 @@ public class RandomButtonMechanic extends Mechanic {
         int i = 9;
         for(BlockLocation location: blockLocations) {
 
-            Vector position = level.getCoords(new Vector(location.getX(), location.getY(), location.getZ()));
+            Vector position = level.getCoordsFromSchem(new Vector(location.getX(), location.getY(), location.getZ()));
 
             ItemStack item = new ItemStack(Material.ENDER_PEARL);
             ItemMeta itemMeta = item.getItemMeta();
-            itemMeta.displayName(Component.text("").decoration(TextDecoration.ITALIC, false));
+            itemMeta.displayName(Component.text("Location " + (i - 8)).decoration(TextDecoration.ITALIC, false));
 
             itemMeta.lore(List.of(
                     Component.text("X: " + position.getX()),
                     Component.text("Y: " + position.getY()),
                     Component.text("Z: " + position.getZ()),
-                    Component.text("Face: " + location.getFace())
+                    Component.text("Face: " + location.getFace()),
+                    Component.text("Right Click to Delete")
             ));
             item.setItemMeta(itemMeta);
             mechanicInv.setItem(i, item);
@@ -165,16 +163,13 @@ public class RandomButtonMechanic extends Mechanic {
     public void handleClick(InventoryClickEvent e, EditorGUIHandler editorGUIHandler) {
         Player p = (Player) e.getInventory().getHolder();
         EscapeRooms plugin = EscapeRooms.getPlugin();
-        System.out.println("HANDLING CLICK");
 
         if (e.getClickedInventory() != null) {
             e.setCancelled(true);
             String itemName = PlainTextComponentSerializer.plainText().serialize(e.getCurrentItem().displayName());
             itemName = itemName.replaceAll("\\[|\\]", ""); // Removes "[" and "]"
-            System.out.println(itemName);
 
             if(itemName.equalsIgnoreCase("Add Button Locations")) {
-                System.out.println("TEST A");
 
                 p.getInventory().addItem(new ItemStack(Material.BLAZE_ROD));
 
@@ -182,10 +177,41 @@ public class RandomButtonMechanic extends Mechanic {
                 buttonMechanicClickListener.startOperation();
                 plugin.getServer().getPluginManager().registerEvents(buttonMechanicClickListener, plugin);
 
+            } else if (e.getClick() == ClickType.RIGHT && e.getCurrentItem().getType() == Material.ENDER_PEARL) {
+                int locIdx = itemName.charAt(itemName.length() - 1) - '0';
+                blockLocations.remove(locIdx - 1);
 
-
+                p.openInventory(generateMechanicSettingsMenu(p));
             }
         }
+    }
+
+    @Override
+    public void eventHandler(TeamInstance teamInstance, Event e) {
+
+    }
+
+    /**
+     * Picks a random block from the list and sets a button at it, then faces it correctly
+     * @param teamInstance
+     */
+    @Override
+    public void levelStartExecution(TeamInstance teamInstance) {
+        Location corner = teamInstance.getCurrentLevelCorner();
+
+        BlockLocation loc = blockLocations.get(new Random().nextInt(blockLocations.size()));
+
+        corner.add(loc.getX(), loc.getY(), loc.getZ());
+
+        Block block = corner.getBlock();
+        block.setType(Material.STONE_BUTTON);
+        BlockData data = block.getBlockData();
+        Switch buttonData = (Switch) data;
+        buttonData.setFacing(loc.getFace());
+        block.setBlockData(buttonData);
+
+        //just set the level offset directly, it won't save to a file and that way I don't need to do any listening or anything
+        level.setLevelEndButtonOffset(new Vector(loc.getX(), loc.getY(), loc.getZ()));
     }
 
 }
