@@ -6,13 +6,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import io.github.cardsandhuskers.escaperooms.game.objects.TeamInstance;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -53,7 +56,7 @@ public class SetSpawnMechanic extends Mechanic{
   }
 
   @Override
-  public Map<String, Object> getData() {
+  public Map<String, Object> serialize() {
     Map<String,Object> map = new HashMap<String, Object>();
     map.put("enabled",enabled);
 
@@ -87,19 +90,10 @@ public class SetSpawnMechanic extends Mechanic{
   }
 
   @Override
-  public ItemStack createItem() {
-
-    Material mat = MechanicMapper.getMechMaterial(this.getClass());
-    ItemStack mechanicStack = new ItemStack(mat);
+  public List<Component> getLore() {
 
     List<Component> explanationLore = List.of(Component.text("Select to set spawn point."));
-    ItemMeta mechanicMeta = mechanicStack.getItemMeta();
-    Mechanic.embedUUID(mechanicMeta, mechanicID);
-    mechanicMeta.displayName(Component.text(MechanicMapper.getMechName(this.getClass())).color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
-    mechanicMeta.lore(explanationLore);
-    mechanicStack.setItemMeta(mechanicMeta);
-
-    return mechanicStack;
+    return explanationLore;
   }
 
   @Override
@@ -122,6 +116,16 @@ public class SetSpawnMechanic extends Mechanic{
     // Player p = (Player) e.getWhoClicked();
     // p.setRespawnLocation(p.getLocation());
     // p.sendMessage("Spawn Point Set!");
+  }
+
+  @Override
+  public void eventHandler(TeamInstance teamInstance, Event e) {
+
+  }
+
+  @Override
+  public void levelStartExecution(TeamInstance teamInstance) {
+
   }
   
 }
