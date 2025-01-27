@@ -178,8 +178,10 @@ public class EditorGUI {
         //mechanics, need to add here when adding a new mechanic
         int i = 18;
         for(Mechanic m: level.getMechanics()) {
-            editInv.setItem(i, m.createItem());
-            i++;
+            if(m != null) {
+                editInv.setItem(i, m.createItem());
+                i++;
+            }
         }
 
         ItemStack pos1Rod = new ItemStack(Material.BREEZE_ROD);
@@ -298,6 +300,7 @@ public class EditorGUI {
     }
 
     public void openEditMechanicInv(Mechanic mechanic) {
+        System.out.println("mechanic" + mechanic);
         Inventory mechanicMenu = mechanic.generateMechanicSettingsMenu(player);
         player.openInventory(mechanicMenu);
         isOpen = true;

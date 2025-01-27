@@ -65,6 +65,8 @@ public class MechanicsHandler {
     }
 
     public Mechanic findMechanicFromID(UUID id) {
+        if(id == null)
+            return null;
         for (Level l : LevelHandler.getInstance().getLevels()) {
             for (Mechanic m : l.getMechanics()) {
                 if (m.getID().equals(id)) {
