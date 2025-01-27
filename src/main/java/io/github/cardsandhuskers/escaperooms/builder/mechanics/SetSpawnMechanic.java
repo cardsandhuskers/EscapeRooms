@@ -65,27 +65,6 @@ public class SetSpawnMechanic extends Mechanic{
     Inventory mechanicInv = Bukkit.createInventory(player, 54, Component.text("Mechanic: " + 
       MechanicMapper.getMechName(this.getClass())).color(NamedTextColor.BLUE));
 
-
-//    ItemStack bed = new ItemStack(Material.BLUE_BED);
-//    ItemMeta bedMeta = bed.getItemMeta();
-////    container.set(namespacedKey, PersistentDataType.STRING, mechanicID.toString());
-//
-//
-//    List<TextComponent> lore = new ArrayList<>();
-//    if(enabled) {
-//        bedMeta.addEnchant(Enchantment.LURE, 1, false);
-//        bedMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-//        lore.add(Component.text("Selected").color(NamedTextColor.GREEN));
-//
-//    } else {
-//        lore.add(Component.text("Not Selected").color(NamedTextColor.RED));
-//    }
-//
-//    bedMeta.lore(lore);
-//
-//    bed.setItemMeta(bedMeta);
-//    mechanicInv.setItem(4, bed);
-
     mechanicInv.setItem(4, createIDItem(mechanicID, Material.BLUE_BED));
 
 
@@ -109,19 +88,6 @@ public class SetSpawnMechanic extends Mechanic{
 
   @Override
   public ItemStack createItem() {
-//    Material mat = MechanicMapper.getMechMaterial(this.getClass());
-//    ItemStack mechanicStack = new ItemStack(mat);
-//
-//    ArrayList<Component> explanationLore = new ArrayList<>();
-//
-//    explanationLore.add(Component.text("Select to set spawn point."));
-//
-//    ItemMeta mechanicMeta = mechanicStack.getItemMeta();
-//    Mechanic.embedUUID(mechanicMeta, mechanicID);
-//    mechanicMeta.displayName(Component.text(MechanicMapper.getMechName(this.getClass())).
-//      color(NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
-//    mechanicMeta.lore(explanationLore);
-//    mechanicStack.setItemMeta(mechanicMeta);
 
     Material mat = MechanicMapper.getMechMaterial(this.getClass());
     ItemStack mechanicStack = new ItemStack(mat);
@@ -152,8 +118,6 @@ public class SetSpawnMechanic extends Mechanic{
         //level.getDiff -> vector(x,y,z); gets diff vector between corner of schedmatic and where you've put it
       }
     }
-
-
 
     // Player p = (Player) e.getWhoClicked();
     // p.setRespawnLocation(p.getLocation());
