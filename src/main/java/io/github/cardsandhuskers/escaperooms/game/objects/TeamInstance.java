@@ -49,10 +49,8 @@ public class TeamInstance {
         Level level = levels.get(currentLevel - 1);
         Location spawnPoint = level.calculateSpawnPoint(getCurrentLevelCorner());
         p.teleport(spawnPoint);
+        p.setGameMode(level.getGameMode());
 
-        EscapeRooms.getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(EscapeRooms.getPlugin(), ()->{
-            p.setGameMode(level.getGameMode());
-        }, 20L);
     }
 
     public Level getCurrentLevel() {

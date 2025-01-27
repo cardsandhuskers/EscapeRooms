@@ -44,6 +44,7 @@ public class GameStageHandler {
                     } else {
                         plugin.getLogger().severe("No lobby location set!");
                     }
+                    Placeholder.gameState = Placeholder.GameState.GAME_STARTING;
 
 
                 },
@@ -105,7 +106,7 @@ public class GameStageHandler {
                 gameTime,
                 //Timer Start
                 () -> {
-
+                    Placeholder.gameState = Placeholder.GameState.GAME_ACTIVE;
 
 
                 },

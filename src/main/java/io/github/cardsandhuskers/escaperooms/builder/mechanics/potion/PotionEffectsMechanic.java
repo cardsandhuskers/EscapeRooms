@@ -46,7 +46,7 @@ public class PotionEffectsMechanic extends Mechanic {
 
         for (PotionEffectType type : PotionEffectType.values()) {
             if(isSkip(type)) continue;
-            potions.put(type, new PotionInfo(type, 30, 0, false));
+            potions.put(type, new PotionInfo(type, 0, false));
         }
 
     }
@@ -135,7 +135,7 @@ public class PotionEffectsMechanic extends Mechanic {
             PotionMeta potionMeta = (PotionMeta) potion.getItemMeta();
 
             potionMeta.displayName(Component.text(parseEffectName(potionInfo.effectType)).decoration(TextDecoration.ITALIC, false));
-            PotionEffect potionEffect = new PotionEffect(potionInfo.effectType, 600, 0);  // 600 ticks (30 seconds) with amplifier 1
+            PotionEffect potionEffect = new PotionEffect(potionInfo.effectType, -1, 0);  // default to amplifier 1
             potionMeta.addCustomEffect(potionEffect, true);
             potionMeta.setColor(getPotionColorForEffect(potionInfo.effectType));
 

@@ -8,6 +8,7 @@ import io.github.cardsandhuskers.escaperooms.builder.objects.EditorGUI;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -17,8 +18,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class EditorGUIHandler {
@@ -84,7 +87,13 @@ public class EditorGUIHandler {
 
         switch (mat) {
             case BLAZE_ROD, BREEZE_ROD -> {
-                p.getInventory().addItem(new ItemStack(mat));
+                ItemStack wand = new ItemStack(mat);
+                ItemMeta wandMeta = wand.getItemMeta();
+                wandMeta.displayName(Component.text("Set Level Corner").decoration(TextDecoration.ITALIC, false));
+                wandMeta.lore(List.of(Component.text("Sets the level's corner wherever you click"), Component.text("Expires in 30 seconds if you do not click anywhere.")));
+                wand.setItemMeta(wandMeta);
+
+                p.getInventory().addItem(wand);
 
                 CornerWandClickListener cornerWandClickListener = new CornerWandClickListener(this, currLevel, mat, p);
                 cornerWandClickListener.startOperation();

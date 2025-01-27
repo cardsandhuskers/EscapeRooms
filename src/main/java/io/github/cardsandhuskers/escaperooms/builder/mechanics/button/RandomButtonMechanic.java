@@ -21,6 +21,7 @@ import org.bukkit.block.data.type.Switch;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -123,13 +124,14 @@ public class RandomButtonMechanic extends Mechanic {
 
             ItemStack item = new ItemStack(Material.ENDER_PEARL);
             ItemMeta itemMeta = item.getItemMeta();
-            itemMeta.displayName(Component.text("").decoration(TextDecoration.ITALIC, false));
+            itemMeta.displayName(Component.text("Location " + (i - 8)).decoration(TextDecoration.ITALIC, false));
 
             itemMeta.lore(List.of(
                     Component.text("X: " + position.getX()),
                     Component.text("Y: " + position.getY()),
                     Component.text("Z: " + position.getZ()),
-                    Component.text("Face: " + location.getFace())
+                    Component.text("Face: " + location.getFace()),
+                    Component.text("Right Click to Delete")
             ));
             item.setItemMeta(itemMeta);
             mechanicInv.setItem(i, item);
@@ -175,8 +177,11 @@ public class RandomButtonMechanic extends Mechanic {
                 buttonMechanicClickListener.startOperation();
                 plugin.getServer().getPluginManager().registerEvents(buttonMechanicClickListener, plugin);
 
+            } else if (e.getClick() == ClickType.RIGHT && e.getCurrentItem().getType() == Material.ENDER_PEARL) {
+                int locIdx = itemName.charAt(itemName.length() - 1) - '0';
+                blockLocations.remove(locIdx - 1);
 
-
+                p.openInventory(generateMechanicSettingsMenu(p));
             }
         }
     }
@@ -205,7 +210,8 @@ public class RandomButtonMechanic extends Mechanic {
         buttonData.setFacing(loc.getFace());
         block.setBlockData(buttonData);
 
-
+        //just set the level offset directly, it won't save to a file and that way I don't need to do any listening or anything
+        level.setLevelEndButtonOffset(new Vector(loc.getX(), loc.getY(), loc.getZ()));
     }
 
 }
