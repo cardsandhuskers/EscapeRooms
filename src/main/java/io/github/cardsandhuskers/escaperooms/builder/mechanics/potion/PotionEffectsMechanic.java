@@ -4,6 +4,7 @@ import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.Mechanic;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.MechanicMapper;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
+import io.github.cardsandhuskers.escaperooms.game.objects.TeamInstance;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -14,6 +15,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -26,14 +28,16 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 
-
+/**
+ * Allows for the application of 1 or more potion effects to start players with on a level
+ */
 public class PotionEffectsMechanic extends Mechanic {
 
     private HashMap<PotionEffectType, PotionInfo> potions = new HashMap<>();
 
     /**
      * Constructor for when instantiated brand new
-     * Should only pass level
+     * Should only pass level, must call super()
      * @param level
      */
     public PotionEffectsMechanic(Level level) {
@@ -42,17 +46,19 @@ public class PotionEffectsMechanic extends Mechanic {
 
         for (PotionEffectType type : PotionEffectType.values()) {
             if(isSkip(type)) continue;
-            potions.put(type, new PotionInfo(type, 30, 0, false));
+            potions.put(type, new PotionInfo(type, 0, false));
         }
 
     }
 
     /**
      * Constructor for when read in from file.
+     * Assigns mechanic id and level, then parses the attributes ConfigurationSection to get the mechanic's data
      * Should always pass in those 3 things
-     * @param mechanicID
-     * @param level
-     * @param attributes
+     * does NOT call super()
+     * @param mechanicID - unique ID of the mechanic
+     * @param level - level mechanic is attached to
+     * @param attributes - list of attributes the mechanic has
      */
     public PotionEffectsMechanic(String mechanicID, Level level, ConfigurationSection attributes) {
 
@@ -74,7 +80,7 @@ public class PotionEffectsMechanic extends Mechanic {
      * @return - the hashmap
      */
     @Override
-    public Map<String, Object> getData() {
+    public Map<String, Object> serialize() {
         Map<String, Object> attributes = new HashMap<>();
         attributes.put("type", MechanicMapper.getMechName(this.getClass()));
 
@@ -88,13 +94,11 @@ public class PotionEffectsMechanic extends Mechanic {
     }
 
     /**
-     * Creates the mechanic item for the level editor menu
-     * @return
+     * Creates the lore for the item in the level editor menu
+     * @return - component list for the lore
      */
     @Override
-    public ItemStack createItem() {
-        Material mat = MechanicMapper.getMechMaterial(this.getClass());
-        ItemStack mechanicStack = new ItemStack(mat);
+    public List<Component> getLore() {
 
         ArrayList<Component> explanationLore = new ArrayList<>();
 
@@ -103,13 +107,7 @@ public class PotionEffectsMechanic extends Mechanic {
             if(potionInfo.isEnabled) explanationLore.add(Component.text(parseEffectName(potionInfo.effectType)));
         }
 
-        ItemMeta mechanicMeta = mechanicStack.getItemMeta();
-        Mechanic.embedUUID(mechanicMeta, mechanicID);
-        mechanicMeta.displayName(Component.text(MechanicMapper.getMechName(this.getClass())).color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
-        mechanicMeta.lore(explanationLore);
-        mechanicStack.setItemMeta(mechanicMeta);
-
-        return mechanicStack;
+       return explanationLore;
     }
 
     /**
@@ -137,7 +135,7 @@ public class PotionEffectsMechanic extends Mechanic {
             PotionMeta potionMeta = (PotionMeta) potion.getItemMeta();
 
             potionMeta.displayName(Component.text(parseEffectName(potionInfo.effectType)).decoration(TextDecoration.ITALIC, false));
-            PotionEffect potionEffect = new PotionEffect(potionInfo.effectType, 600, 0);  // 600 ticks (30 seconds) with amplifier 1
+            PotionEffect potionEffect = new PotionEffect(potionInfo.effectType, -1, 0);  // default to amplifier 1
             potionMeta.addCustomEffect(potionEffect, true);
             potionMeta.setColor(getPotionColorForEffect(potionInfo.effectType));
 
@@ -213,6 +211,23 @@ public class PotionEffectsMechanic extends Mechanic {
             }
         }
 
+    }
+
+    @Override
+    public void eventHandler(TeamInstance teamInstance, Event e) {
+
+    }
+
+    @Override
+    public void levelStartExecution(TeamInstance teamInstance) {
+        for(Player p: teamInstance.getTeam().getOnlinePlayers()) {
+            for(PotionEffectType effect:potions.keySet()) {
+                PotionInfo info = potions.get(effect);
+                if(info.isEnabled) {
+                    p.addPotionEffect(new PotionEffect(info.effectType, PotionEffect.INFINITE_DURATION, info.amplifier));
+                }
+            }
+        }
     }
 
     /**

@@ -30,6 +30,10 @@ public class LevelHandler {
 
     }
 
+    /**
+     * Gets the instance of this Singleton class
+     * @return
+     */
     public static LevelHandler getInstance() {
         if (levelHandler == null) {
             levelHandler = new LevelHandler();
@@ -40,7 +44,7 @@ public class LevelHandler {
 
 
     /**
-     * Creates a new Map object
+     * Creates a new Level object and adds it to the level list
      * @param levelName
      * @return - is creation successful
      */
@@ -60,6 +64,9 @@ public class LevelHandler {
         return true;
     }
 
+    /**
+     * Loads all levels from config files
+     */
     public void loadLevels() {
         EscapeRooms plugin = EscapeRooms.getPlugin();
 
@@ -104,6 +111,18 @@ public class LevelHandler {
                         e.printStackTrace();
                     }
 
+                    //level end button
+                    try {
+                        double x = config.getDouble("levelEnd.x");
+                        double y = config.getDouble("levelEnd.y");
+                        double z = config.getDouble("levelEnd.z");
+
+                        Vector levelEndOffset = new Vector(x, y, z);
+                        level.setLevelEndButtonOffset(levelEndOffset);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
 
                     // Load mechanics using getConfigurationSection
                     ConfigurationSection mechanicSection = config.getConfigurationSection("mechanics");
@@ -132,6 +151,10 @@ public class LevelHandler {
         }
     }
 
+    /**
+     * Deletes a level from the list and the configs
+     * @param level
+     */
     public void deleteLevel(Level level) {
         EscapeRooms plugin = EscapeRooms.getPlugin();
 
@@ -152,11 +175,19 @@ public class LevelHandler {
         levels.remove(level);
     }
 
+    /**
+     * Deletes a level from the list and the configs
+     * @param levelName
+     */
     public void deleteLevel(String levelName) {
         deleteLevel(getLevel(levelName));
     }
 
-
+    /**
+     * Gets a Level object based on the name
+     * @param name
+     * @return
+     */
     public Level getLevel(String name) {
         for (Level level: levels) {
             if(level.getName().equals(name)) {
@@ -166,6 +197,13 @@ public class LevelHandler {
         return null;
     }
 
+    /**
+     * Sets a level's corner coordinates
+     * @param pos
+     * @param level
+     * @param mat
+     * @return
+     */
     public boolean setLevelPos(Location pos, Level level, Material mat) {
         if(mat == Material.BREEZE_ROD) {
             level.setPos1(pos);

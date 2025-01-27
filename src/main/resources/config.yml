@@ -1,4 +1,12 @@
 world: EscapeRooms
 #num levels to include in a course
-courseLength: 10
+courseLength: 5
+#distance between course lines for each team
+teamDistance: 250
+
+# timers for sections of the game
+pregameTime: 45
+gameTime: 840
+postgameTime: 30
+
 levels: []

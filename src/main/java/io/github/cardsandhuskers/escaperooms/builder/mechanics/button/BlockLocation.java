@@ -6,6 +6,10 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Small serializable class that contains BlockLocation data (x,y,z, and blockface)
+ * Used for the buttons in the RandomButtonMechanic
+ */
 public class BlockLocation implements ConfigurationSerializable {
 
     private final int x, y, z;

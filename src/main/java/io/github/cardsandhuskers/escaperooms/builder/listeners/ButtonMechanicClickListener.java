@@ -16,6 +16,10 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * Listens for player interacting with the world using the blaze rod to select locations for the random button mechanic
+ * Unregisters itself 30 seconds after being registered
+ */
 public class ButtonMechanicClickListener implements Listener, Runnable {
     private RandomButtonMechanic mechanic;
     private Integer assignedTaskId;
