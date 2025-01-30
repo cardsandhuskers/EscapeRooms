@@ -10,8 +10,12 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
@@ -31,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class SetSpawnMechanic extends Mechanic{
   private Boolean enabled;
-  private Vector respawnVector;
+  private Vector relativeRespawn;
 
 /**
    * Constructor for when mechannic is read in from file.
@@ -44,22 +48,22 @@ public class SetSpawnMechanic extends Mechanic{
     this.mechanicID = UUID.fromString(mechanicID);
     this.level = level;
     this.enabled = false;
-    this.respawnVector = new Vector(0,0,0);
+    this.relativeRespawn = new Vector(0,0,0);
 
     String itemStringX = attributes.getString("x");
     String itemStringY = attributes.getString("y");
     String itemStringZ = attributes.getString("z");
 
     if(itemStringX != null && !itemStringX.isEmpty()) {
-      this.respawnVector.setX(Double.parseDouble(itemStringX));
+      this.relativeRespawn.setX(Double.parseDouble(itemStringX));
     }
 
     if(itemStringY != null && !itemStringY.isEmpty()) {
-      this.respawnVector.setY(Double.parseDouble(itemStringY));
+      this.relativeRespawn.setY(Double.parseDouble(itemStringY));
     }
 
     if(itemStringZ != null && !itemStringZ.isEmpty()) {
-      this.respawnVector.setZ(Double.parseDouble(itemStringZ));
+      this.relativeRespawn.setZ(Double.parseDouble(itemStringZ));
     }
   }
 
@@ -71,7 +75,7 @@ public class SetSpawnMechanic extends Mechanic{
     super();
     this.level = level;
     this.enabled = false;
-    this.respawnVector = new Vector(0,0,0);
+    this.relativeRespawn = new Vector(0,0,0);
   }
 
   /**
@@ -80,10 +84,10 @@ public class SetSpawnMechanic extends Mechanic{
    */
   @Override
   public @NotNull Map<String, Object> serialize() {
-    if(this.respawnVector == null) {
+    if(this.relativeRespawn == null) {
       return new Vector(0,0,0).serialize();
     }
-    return this.respawnVector.serialize();
+    return this.relativeRespawn.serialize();
   }
 
   /**
@@ -112,7 +116,7 @@ public class SetSpawnMechanic extends Mechanic{
     ItemStack delete = new ItemStack(Material.BARRIER);
     ItemMeta deleteMeta = delete.getItemMeta();
     deleteMeta.displayName(Component.text("Delete Mechanic").
-            color(NamedTextColor.DARK_RED).decoration(TextDecoration.ITALIC, false));
+        color(NamedTextColor.DARK_RED).decoration(TextDecoration.ITALIC, false));
     delete.setItemMeta(deleteMeta);
     mechanicInv.setItem(53, delete);
 
@@ -137,8 +141,8 @@ public class SetSpawnMechanic extends Mechanic{
     //relative respawn point from level corners
     Player p = (Player) e.getWhoClicked();
     Location location = p.getLocation();
-    Vector vector = new Vector(location.getX(), location.getY(), location.getZ());
-    this.respawnVector = level.getDiffFromSchem(vector);
+    Vector vector = new Vector((int)location.getX(), (int)location.getY(), (int)location.getZ());
+    this.relativeRespawn = level.getDiffFromSchem(vector);
     addSpawnMeta(clickedItem);
   }
 
@@ -148,11 +152,13 @@ public class SetSpawnMechanic extends Mechanic{
    * @return
    */
   private ItemStack addSpawnMeta(ItemStack item) {
-    if(this.respawnVector == null) return item;
+    if(this.relativeRespawn == null) return item;
 
     ItemMeta itemMeta = item.getItemMeta();
-    itemMeta.setDisplayName("Respawn Point: " + level.getCoordsFromSchem(this.respawnVector).toString());
+    itemMeta.displayName(Component.text("Respawn Point: " +
+        level.getCoordsFromSchem(this.relativeRespawn).toString()));
     itemMeta.addEnchant(Enchantment.LURE, 1, enabled);
+    itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
     item.setItemMeta(itemMeta);
 
     return item;
@@ -160,15 +166,59 @@ public class SetSpawnMechanic extends Mechanic{
 
   @Override
   public void eventHandler(TeamInstance teamInstance, Event e) {
-      for(Player p: teamInstance.getTeam().getOnlinePlayers()) {
-        p.setRespawnLocation(level.getCoordsFromSchem(this.respawnVector).toLocation(p.getWorld()));
+    if(e instanceof PlayerMoveEvent playerMoveEvent) {
+      Player p = playerMoveEvent.getPlayer();
+
+      Vector actualCheckpoint = teamInstance.getCurrentLevelCorner().toVector();
+      level.getCoordsFromSchem(relativeRespawn);
+      actualCheckpoint.setX(actualCheckpoint.getX() + relativeRespawn.getX());
+      actualCheckpoint.setY(actualCheckpoint.getY() + relativeRespawn.getY());
+      actualCheckpoint.setZ(actualCheckpoint.getZ() + relativeRespawn.getZ());
+
+      Vector playerVector = p.getLocation().toVector();
+      boolean check = true;
+
+      if(playerVector.getX() > (actualCheckpoint.getX() + 1.5) ||
+          playerVector.getX() < (actualCheckpoint.getX() - 0.5)) {
+        check = false;
+      } else if(playerVector.getZ() > (actualCheckpoint.getZ() + 1.5) ||
+              playerVector.getZ() < (actualCheckpoint.getZ() - 0.5)) {
+        check = false;
       }
+
+      if(check) {
+        p.setRespawnLocation(actualCheckpoint.toLocation(p.getWorld()));
+      }
+
+    } else if(e instanceof PlayerRespawnEvent deathEvent) {
+      System.out.println("Damn, that sucks...");
+      Vector actualCheckpoint = teamInstance.getCurrentLevelCorner().toVector();
+      level.getCoordsFromSchem(relativeRespawn);
+      actualCheckpoint.setX(actualCheckpoint.getX() + relativeRespawn.getX());
+      actualCheckpoint.setY(actualCheckpoint.getY() + relativeRespawn.getY());
+      actualCheckpoint.setZ(actualCheckpoint.getZ() + relativeRespawn.getZ());
+
+      ((PlayerRespawnEvent) e).getPlayer().setRespawnLocation(actualCheckpoint.toLocation(((PlayerRespawnEvent) e).getPlayer().getWorld()));
+
+
+    } else {
+      System.out.println(e.toString());
+    }
+
+    //player death event]
+    //check where standing to change checkpoint
+    //check location of death for respawn
+
+
+    /*
+    grab the team instance, .getlevelcornercurrent (current), add offsets to that (from saved get diff function val)
+    move event to see if player is in checkpoint region, then update player val
+    save if player is in region
+     */
   }
 
   @Override
   public void levelStartExecution(TeamInstance teamInstance) {
-    for(Player p: teamInstance.getTeam().getOnlinePlayers()) {
-      p.setRespawnLocation(level.getCoordsFromSchem(this.respawnVector).toLocation(p.getWorld()));
-    }
+    return;
   }
 }

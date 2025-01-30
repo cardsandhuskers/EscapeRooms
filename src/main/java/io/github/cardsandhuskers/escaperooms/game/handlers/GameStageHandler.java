@@ -1,8 +1,10 @@
 package io.github.cardsandhuskers.escaperooms.game.handlers;
 
 import io.github.cardsandhuskers.escaperooms.EscapeRooms;
+import io.github.cardsandhuskers.escaperooms.game.listeners.PlayerDeathListener;
 import io.github.cardsandhuskers.escaperooms.game.listeners.PlayerInteractListener;
 import io.github.cardsandhuskers.escaperooms.game.listeners.PlayerJoinListener;
+import io.github.cardsandhuskers.escaperooms.game.listeners.PlayerMovementListener;
 import io.github.cardsandhuskers.escaperooms.game.objects.Countdown;
 import io.github.cardsandhuskers.escaperooms.game.objects.GameMessages;
 import io.github.cardsandhuskers.escaperooms.game.objects.Placeholder;
@@ -97,8 +99,15 @@ public class GameStageHandler {
         listeners.add(playerInteractListener);
         Listener playerJoinListener = new PlayerJoinListener(teamInstanceMap);
         listeners.add(playerJoinListener);
+        Listener playerMovementListener = new PlayerMovementListener(teamInstanceMap);
+        listeners.add(playerMovementListener);
+        Listener playerDeathListener = new PlayerDeathListener(teamInstanceMap);
+        listeners.add(playerDeathListener);
+
         plugin.getServer().getPluginManager().registerEvents(playerInteractListener, plugin);
         plugin.getServer().getPluginManager().registerEvents(playerJoinListener, plugin);
+        plugin.getServer().getPluginManager().registerEvents(playerMovementListener, plugin);
+        plugin.getServer().getPluginManager().registerEvents(playerDeathListener, plugin);
 
         int gameTime = plugin.getConfig().getInt("gameTime");
         gameTimer = new Countdown(plugin,
