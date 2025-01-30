@@ -393,4 +393,29 @@ public class EditorGUI {
         ADD_MECHANIC,
         MECHANIC_SETTINGS
     }
+
+    /**
+     * Creates a generic back button for GUI.
+     * @return back button
+     */
+    public static ItemStack createBackButton() {
+        ItemStack back = new ItemStack(Material.RED_CONCRETE);
+        ItemMeta backMeta = back.getItemMeta();
+        backMeta.displayName(Component.text("Back").color(NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
+        back.setItemMeta(backMeta);
+        return back;
+    }
+
+    /**
+     * Creates a generic delete button for GUI.
+     * @return delete button
+     */
+    public static ItemStack createDeleteButton() {
+        ItemStack delete = new ItemStack(Material.BARRIER);
+        ItemMeta deleteMeta = delete.getItemMeta();
+        deleteMeta.displayName(Component.text("Delete Mechanic").
+                color(NamedTextColor.DARK_RED).decoration(TextDecoration.ITALIC, false));
+        delete.setItemMeta(deleteMeta);
+        return delete;
+    }
 }

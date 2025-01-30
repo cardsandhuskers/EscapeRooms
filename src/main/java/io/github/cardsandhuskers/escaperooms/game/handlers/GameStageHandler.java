@@ -1,7 +1,7 @@
 package io.github.cardsandhuskers.escaperooms.game.handlers;
 
 import io.github.cardsandhuskers.escaperooms.EscapeRooms;
-import io.github.cardsandhuskers.escaperooms.game.listeners.PlayerDeathListener;
+import io.github.cardsandhuskers.escaperooms.game.listeners.PlayerRespawnListener;
 import io.github.cardsandhuskers.escaperooms.game.listeners.PlayerInteractListener;
 import io.github.cardsandhuskers.escaperooms.game.listeners.PlayerJoinListener;
 import io.github.cardsandhuskers.escaperooms.game.listeners.PlayerMovementListener;
@@ -101,7 +101,7 @@ public class GameStageHandler {
         listeners.add(playerJoinListener);
         Listener playerMovementListener = new PlayerMovementListener(teamInstanceMap);
         listeners.add(playerMovementListener);
-        Listener playerDeathListener = new PlayerDeathListener(teamInstanceMap);
+        Listener playerDeathListener = new PlayerRespawnListener(teamInstanceMap);
         listeners.add(playerDeathListener);
 
         plugin.getServer().getPluginManager().registerEvents(playerInteractListener, plugin);

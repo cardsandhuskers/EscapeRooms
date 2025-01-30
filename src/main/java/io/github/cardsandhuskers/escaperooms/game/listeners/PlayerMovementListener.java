@@ -13,6 +13,11 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Listens for player movement event
+ * @author jscotty
+ */
+
 public class PlayerMovementListener implements Listener {
     Map<Team, TeamInstance> teamInstances;
 
@@ -20,6 +25,12 @@ public class PlayerMovementListener implements Listener {
          this.teamInstances = teamInstances;
     }
 
+    /**
+     * Listens for player movement and calls mechanic event
+     * handler. Ignores player movement from players in
+     * irrelevant game-modes.
+     * @param e player movement event
+     */
     @EventHandler
     public void onPlayerMovement(PlayerMoveEvent e) {
         Player p = e.getPlayer();
