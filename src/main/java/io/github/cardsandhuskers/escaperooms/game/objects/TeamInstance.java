@@ -4,7 +4,12 @@ import io.github.cardsandhuskers.escaperooms.EscapeRooms;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.LevelHandler;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.Mechanic;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
+import io.github.cardsandhuskers.teams.handlers.TeamHandler;
 import io.github.cardsandhuskers.teams.objects.Team;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -22,6 +27,8 @@ public class TeamInstance {
     HashMap<Level, Location> levelCorners;
     List<Level> levels;
 
+    HashMap<Level, Integer> levelStartTime, levelElapsedTime;
+
     int currentLevel = 1;
 
     public TeamInstance(Team team, List<Level> levels, HashMap<Level, Location> levelCorners) {
@@ -30,6 +37,8 @@ public class TeamInstance {
         this.levelCorners = levelCorners;
 
         Placeholder.currentLevelName.put(team, getCurrentLevel().getName());
+        levelStartTime = new HashMap<>();
+        levelElapsedTime = new HashMap<>();
     }
 
     public void teleportToCurrentLevel() {
@@ -50,6 +59,8 @@ public class TeamInstance {
         Location spawnPoint = level.calculateSpawnPoint(getCurrentLevelCorner());
         p.teleport(spawnPoint);
         p.setGameMode(level.getGameMode());
+
+        levelStartTime.put(level, Placeholder.timeVar);
 
     }
 
@@ -87,6 +98,35 @@ public class TeamInstance {
     }
 
     public void startNextLevel() {
+        Level finishedLevel = getCurrentLevel();
+        levelElapsedTime.put(finishedLevel, levelStartTime.get(finishedLevel) - Placeholder.timeVar);
+
+        int time = levelElapsedTime.get(finishedLevel);
+        int mins = time / 60;
+        String seconds = String.format("%02d", time - (mins * 60));
+        String timeString =  mins + ":" + seconds;
+
+        for(Player p: Bukkit.getOnlinePlayers()) {
+            Component teamMessage = Component.text("Congratulations! You finished level ").color(NamedTextColor.GREEN)
+                    .append(Component.text(currentLevel)).color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD)
+                    .append(Component.text(" in ")).color(NamedTextColor.GREEN)
+                    .append(Component.text(timeString)).color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD)
+                    .append(Component.text("! [+")).color(NamedTextColor.GREEN)
+                    .append(Component.text(42)).color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD)
+                    .append(Component.text("] points.")).color(NamedTextColor.GREEN);
+            Component allMessage = Component.text(team.getTeamName() + " has completed level ").color(NamedTextColor.GRAY)
+                    .append(Component.text(currentLevel).color(NamedTextColor.GRAY).decorate(TextDecoration.BOLD))
+                    .append(Component.text(" in ")).color(NamedTextColor.GRAY)
+                    .append(Component.text(timeString).color(NamedTextColor.GRAY).decorate(TextDecoration.BOLD))
+                    .append(Component.text(".")).color(NamedTextColor.GRAY);
+
+            if(TeamHandler.getInstance().getPlayerTeam(p) == team) {
+
+            } else {
+
+            }
+
+        }
 
         if(currentLevel == levels.size()) {
             //GAME OVER
