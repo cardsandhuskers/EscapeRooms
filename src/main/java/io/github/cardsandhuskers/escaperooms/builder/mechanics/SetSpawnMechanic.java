@@ -84,10 +84,17 @@ public class SetSpawnMechanic extends Mechanic{
    */
   @Override
   public @NotNull Map<String, Object> serialize() {
+    Map<String, Object> attributes = new HashMap<>();
+
     if(this.relativeRespawn == null) {
-      return new Vector(0,0,0).serialize();
+      attributes.put("spawnLocation", new Vector(0,0,0).serialize());
     }
-    return this.relativeRespawn.serialize();
+
+    attributes.put("spawnLocation", this.relativeRespawn.serialize());
+
+    attributes.put("type", MechanicMapper.getMechName(this.getClass()));
+
+    return attributes;
   }
 
   /**
