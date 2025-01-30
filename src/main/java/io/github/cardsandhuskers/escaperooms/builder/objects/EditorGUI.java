@@ -177,8 +177,10 @@ public class EditorGUI {
         //mechanics, need to add here when adding a new mechanic
         int i = 18;
         for(Mechanic m: level.getMechanics()) {
-            editInv.setItem(i, m.createItem());
-            i++;
+            if(m != null) {
+                editInv.setItem(i, m.createItem());
+                i++;
+            }
         }
 
         ItemStack pos1Rod = new ItemStack(Material.BREEZE_ROD);
@@ -297,6 +299,7 @@ public class EditorGUI {
     }
 
     public void openEditMechanicInv(Mechanic mechanic) {
+        System.out.println("mechanic" + mechanic);
         Inventory mechanicMenu = mechanic.generateMechanicSettingsMenu(player);
         player.openInventory(mechanicMenu);
         isOpen = true;
@@ -389,5 +392,30 @@ public class EditorGUI {
         LEVEL_EDITOR,
         ADD_MECHANIC,
         MECHANIC_SETTINGS
+    }
+
+    /**
+     * Creates a generic back button for GUI.
+     * @return back button
+     */
+    public static ItemStack createBackButton() {
+        ItemStack back = new ItemStack(Material.RED_CONCRETE);
+        ItemMeta backMeta = back.getItemMeta();
+        backMeta.displayName(Component.text("Back").color(NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
+        back.setItemMeta(backMeta);
+        return back;
+    }
+
+    /**
+     * Creates a generic delete button for GUI.
+     * @return delete button
+     */
+    public static ItemStack createDeleteButton() {
+        ItemStack delete = new ItemStack(Material.BARRIER);
+        ItemMeta deleteMeta = delete.getItemMeta();
+        deleteMeta.displayName(Component.text("Delete Mechanic").
+                color(NamedTextColor.DARK_RED).decoration(TextDecoration.ITALIC, false));
+        delete.setItemMeta(deleteMeta);
+        return delete;
     }
 }

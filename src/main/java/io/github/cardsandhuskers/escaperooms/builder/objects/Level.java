@@ -360,7 +360,11 @@ public class Level {
     }
 
     public void addMechanic(Mechanic mechanic) {
-        levelMechanics.add(mechanic);
+        if(mechanic != null) {
+            levelMechanics.add(mechanic);
+        } else {
+            System.out.println("Mechanic is null");
+        }
     }
 
     /**

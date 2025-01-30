@@ -21,7 +21,8 @@ public class MechanicMapper {
             new MechanicDetails(StartingItemMechanic.class, "Give Item on Spawn", Material.BOOK),
             new MechanicDetails(RandomButtonMechanic.class, "Random Button Location", Material.STONE_BUTTON),
             new MechanicDetails(PotionEffectsMechanic.class, "Apply Potion Effects", Material.POTION),
-            new MechanicDetails(ClearBlocksMechanic.class, "Clear Blocks", Material.STONE)
+            new MechanicDetails(ClearBlocksMechanic.class, "Clear Blocks", Material.STONE),
+            new MechanicDetails(CheckpointMechanic.class, "Set Spawn", Material.RED_BED)
             ));
 
     /**

@@ -142,8 +142,11 @@ public class EditorGUIHandler {
             }
         }
 
+        // plugin.getComponentLogger().debug(Component.text("idk"));
+
         if(MechanicMapper.isValidMaterial(mat)) {
             UUID id = Mechanic.getUUIDFromItem(clickedItem);
+            System.out.println("id: " + id);
             if (id != null) {
                 Mechanic mechanic = MechanicsHandler.getInstance().findMechanicFromID(id);
                 gui.openEditMechanicInv(mechanic);
