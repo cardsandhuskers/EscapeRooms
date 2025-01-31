@@ -4,6 +4,11 @@ courseLength: 5
 #distance between course lines for each team
 teamDistance: 250
 
+# points for first place
+maxPoints: 1140
+# points lost for each team that finished a level before you
+dropoff: 120
+
 # timers for sections of the game
 pregameTime: 45
 gameTime: 840

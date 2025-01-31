@@ -1,8 +1,6 @@
-package io.github.cardsandhuskers.escaperooms.builder.mechanics.potion;
+package io.github.cardsandhuskers.escaperooms.builder.mechanics.potionmechanic;
 
-import io.github.cardsandhuskers.escaperooms.builder.mechanics.button.BlockLocation;
 import org.bukkit.NamespacedKey;
-import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.potion.PotionEffectType;
 

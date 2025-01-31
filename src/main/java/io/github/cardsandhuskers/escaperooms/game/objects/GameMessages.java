@@ -4,6 +4,7 @@ import io.github.cardsandhuskers.escaperooms.EscapeRooms;
 import io.github.cardsandhuskers.teams.handlers.TeamHandler;
 import io.github.cardsandhuskers.teams.objects.Team;
 import io.github.cardsandhuskers.teams.objects.TempPointsHolder;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -56,10 +57,10 @@ public class GameMessages {
                     .decorate(TextDecoration.STRIKETHROUGH)
                 .append(Component.text("\nHow The Game is Scored:")
                     .color(NamedTextColor.WHITE)
-                    .decoration(TextDecoration.STRIKETHROUGH, TextDecoration.State.NOT_SET))
+                    .decoration(TextDecoration.STRIKETHROUGH, false))
                 .append(Component.text("\nFor Completing a Level: YOU GET POINTS!!!!!!")
                     .color(NamedTextColor.WHITE)
-                    .decoration(TextDecoration.STRIKETHROUGH, TextDecoration.State.NOT_SET));
+                    .decoration(TextDecoration.STRIKETHROUGH, false));
     }
 
 
@@ -87,7 +88,7 @@ public class GameMessages {
         }
 
         server.broadcast(Component.text("Top 5 Players:").color(NamedTextColor.RED).decoration(TextDecoration.BOLD, true));
-        server.broadcast(Component.text("------------------------------").color(NamedTextColor.DARK_RED));
+        server.broadcast(Component.text("------------------------------").color(NamedTextColor.DARK_RED).decorate(TextDecoration.STRIKETHROUGH));
 
         int number = 1;
         for(int i = 0; i <= max; i++) {
@@ -99,7 +100,7 @@ public class GameMessages {
 
             number++;
         }
-        server.broadcast(Component.text("------------------------------").color(NamedTextColor.DARK_RED));
+        server.broadcast(Component.text("------------------------------").color(NamedTextColor.DARK_RED).decorate(TextDecoration.STRIKETHROUGH));
     }
 
     /**
@@ -113,7 +114,7 @@ public class GameMessages {
         Collections.reverse(teamList);
 
         server.broadcast(Component.text("Team Leaderboard").color(NamedTextColor.BLUE).decoration(TextDecoration.BOLD, true));
-        server.broadcast(Component.text("------------------------------").color(NamedTextColor.GREEN));
+        server.broadcast(Component.text("------------------------------").color(NamedTextColor.GREEN).decorate(TextDecoration.STRIKETHROUGH));
 
         int counter = 1;
         for(Team team:teamList) {
@@ -126,7 +127,7 @@ public class GameMessages {
             counter++;
         }
 
-        server.broadcast(Component.text("------------------------------").color(NamedTextColor.GREEN));
+        server.broadcast(Component.text("------------------------------").color(NamedTextColor.GREEN).decorate(TextDecoration.STRIKETHROUGH));
         for(Player p: Bukkit.getOnlinePlayers()) {
             p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
         }

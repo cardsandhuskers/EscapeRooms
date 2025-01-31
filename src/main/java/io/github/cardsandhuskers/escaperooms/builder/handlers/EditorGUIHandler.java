@@ -113,7 +113,11 @@ public class EditorGUIHandler {
                 boolean result = currLevel.setLevelEndButton(p.getLocation());
                 if(!result) p.sendMessage(Component.text("Either Level positions are not set or block at your head is not a button.").color(NamedTextColor.RED));
             }
-            case GREEN_CONCRETE -> currLevel.saveSchematic();
+            case GREEN_CONCRETE -> {
+                boolean result = currLevel.saveSchematic();
+                if(result) p.sendMessage(Component.text("Successfully Saved Level Schematic").color(NamedTextColor.GREEN));
+                else p.sendMessage(Component.text("Error Saving Level Schematic").color(NamedTextColor.RED));
+            }
         }
         switch(itemName) {
             case "Back"-> gui.openMainInv();

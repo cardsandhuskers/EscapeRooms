@@ -180,6 +180,8 @@ public class StartingItemMechanic extends Mechanic{
 
     @Override
     public void levelStartExecution(TeamInstance teamInstance) {
+        if(item == null) return;
+
         for(Player p: teamInstance.getTeam().getOnlinePlayers()) {
             p.getInventory().addItem(item);
         }

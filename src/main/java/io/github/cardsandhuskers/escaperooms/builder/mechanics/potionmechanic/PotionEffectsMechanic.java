@@ -1,4 +1,4 @@
-package io.github.cardsandhuskers.escaperooms.builder.mechanics.potion;
+package io.github.cardsandhuskers.escaperooms.builder.mechanics.potionmechanic;
 
 import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.Mechanic;

@@ -2,7 +2,7 @@ package io.github.cardsandhuskers.escaperooms.builder.listeners;
 
 import io.github.cardsandhuskers.escaperooms.EscapeRooms;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
-import io.github.cardsandhuskers.escaperooms.builder.mechanics.button.RandomButtonMechanic;
+import io.github.cardsandhuskers.escaperooms.builder.mechanics.buttonmechanic.RandomButtonMechanic;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

@@ -1,4 +1,4 @@
-package io.github.cardsandhuskers.escaperooms.builder.mechanics.button;
+package io.github.cardsandhuskers.escaperooms.builder.mechanics.buttonmechanic;
 
 import io.github.cardsandhuskers.escaperooms.EscapeRooms;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
@@ -38,6 +38,8 @@ public class RandomButtonMechanic extends Mechanic {
 
     private ArrayList<BlockLocation> blockLocations = new ArrayList<>();
 
+    private int randomNum = 0;
+
     public RandomButtonMechanic(Level level) {
         super();
         this.level = level;
@@ -57,6 +59,7 @@ public class RandomButtonMechanic extends Mechanic {
             }
         }
 
+        randomNum = new Random().nextInt(blockLocations.size());
     }
 
     @Override
@@ -86,6 +89,7 @@ public class RandomButtonMechanic extends Mechanic {
 
         BlockLocation bl = new BlockLocation(diff.getBlockX(), diff.getBlockY(), diff.getBlockZ(), blockFace);
         blockLocations.add(bl);
+        randomNum = new Random().nextInt(blockLocations.size());
 
         return true;
 
@@ -180,6 +184,7 @@ public class RandomButtonMechanic extends Mechanic {
             } else if (e.getClick() == ClickType.RIGHT && e.getCurrentItem().getType() == Material.ENDER_PEARL) {
                 int locIdx = itemName.charAt(itemName.length() - 1) - '0';
                 blockLocations.remove(locIdx - 1);
+                randomNum = new Random().nextInt(blockLocations.size());
 
                 p.openInventory(generateMechanicSettingsMenu(p));
             }
@@ -199,7 +204,7 @@ public class RandomButtonMechanic extends Mechanic {
     public void levelStartExecution(TeamInstance teamInstance) {
         Location corner = teamInstance.getCurrentLevelCorner();
 
-        BlockLocation loc = blockLocations.get(new Random().nextInt(blockLocations.size()));
+        BlockLocation loc = blockLocations.get(randomNum);
 
         corner.add(loc.getX(), loc.getY(), loc.getZ());
 

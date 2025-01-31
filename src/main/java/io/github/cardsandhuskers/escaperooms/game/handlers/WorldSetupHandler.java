@@ -63,6 +63,15 @@ public class WorldSetupHandler {
         List<Level> levelsToUse = selectLevels();
         List<TeamInstance> teamInstances = generateCourses(levelsToUse);
 
+
+        world.setGameRule(GameRule.DO_IMMEDIATE_RESPAWN, true);
+        world.setGameRule(GameRule.SHOW_DEATH_MESSAGES, false);
+        world.setGameRule(GameRule.DO_MOB_SPAWNING, false);
+        world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+        world.setGameRule(GameRule.DO_TRADER_SPAWNING, false);
+        world.setGameRule(GameRule.DO_FIRE_TICK, false);
+        world.setTime(1000);
+
         GameStageHandler gameStageHandler = new GameStageHandler(teamInstances);
         gameStageHandler.startPregame();
 

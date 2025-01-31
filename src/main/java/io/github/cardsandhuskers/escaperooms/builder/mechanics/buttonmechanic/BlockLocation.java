@@ -1,4 +1,4 @@
-package io.github.cardsandhuskers.escaperooms.builder.mechanics.button;
+package io.github.cardsandhuskers.escaperooms.builder.mechanics.buttonmechanic;
 
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;

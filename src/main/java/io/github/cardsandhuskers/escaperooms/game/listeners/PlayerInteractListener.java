@@ -28,7 +28,7 @@ public class PlayerInteractListener implements Listener {
         Team team = TeamHandler.getInstance().getPlayerTeam(e.getPlayer());
         if (team != null) {
             TeamInstance teamInstance = teamInstances.get(team);
-            if(teamInstance.isLevelEndPressed(e)) {
+            if(teamInstance.isLevelEndPressed(e, teamInstances)) {
                 return;
             }
 

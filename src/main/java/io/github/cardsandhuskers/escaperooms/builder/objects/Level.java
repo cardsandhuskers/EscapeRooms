@@ -20,9 +20,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.Vector;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,11 +28,12 @@ import java.util.Map;
 
 /**
  * This is a mess :(
+ * I don't know how to fix it
  */
 public class Level {
+    private String name;
     private int lowerX, lowerY, lowerZ, higherX, higherY, higherZ;
     private Location pos1, pos2;
-    private String name;
     private ArrayList<Mechanic> levelMechanics = new ArrayList<>();
 
     private GameMode gameMode = GameMode.ADVENTURE;
@@ -83,7 +82,10 @@ public class Level {
                     }
 
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    StringWriter sw = new StringWriter();
+                    e.printStackTrace(new PrintWriter(sw));
+                    String stackTraceString = sw.toString();
+                    plugin.getLogger().severe(stackTraceString);
                 }
             });
 
@@ -109,6 +111,7 @@ public class Level {
         }
     }
 
+    //generic getters and setters
     public double getSpawnPitch() {
         return spawnPitch;
     }
@@ -264,9 +267,9 @@ public class Level {
      */
     public boolean setSpawnPoint(Location pos) {
         if(pos1 != null && pos2 != null) {
-            int xDiff = (int) (pos.getX() - lowerX);
-            int yDiff = (int) (pos.getY() - lowerY);
-            int zDiff = (int) (pos.getZ() - lowerZ);
+            double xDiff = (pos.getX() - lowerX);
+            double yDiff = (pos.getY() - lowerY);
+            double zDiff = (pos.getZ() - lowerZ);
             spawnPointOffset = new Vector(xDiff, yDiff, zDiff);
             spawnPitch = pos.getPitch();
             spawnYaw = pos.getYaw();
@@ -397,6 +400,10 @@ public class Level {
         return null;
     }
 
+    /**
+     * Returns a vector representing the size of the level on all 3 axes
+     * @return
+     */
     public Vector getSize() {
         return new Vector(higherX - lowerX, higherY - lowerY, higherZ - lowerZ);
     }

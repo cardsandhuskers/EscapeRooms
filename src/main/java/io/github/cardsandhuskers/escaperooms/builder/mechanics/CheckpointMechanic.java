@@ -40,7 +40,7 @@ public class CheckpointMechanic extends Mechanic{
   private ArrayList<Vector> relativeCheckpoints;
   private ArrayList<Vector> actualCheckpoints;
 
-  private static final int CHECKPOINT_GUI_OFFSET = 27;
+  private static final int CHECKPOINT_GUI_OFFSET = 18;
 
   /**
    * Reads in metadata for relative spawn vectors and

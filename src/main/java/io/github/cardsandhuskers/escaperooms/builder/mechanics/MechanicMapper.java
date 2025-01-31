@@ -1,7 +1,7 @@
 package io.github.cardsandhuskers.escaperooms.builder.mechanics;
 
-import io.github.cardsandhuskers.escaperooms.builder.mechanics.button.RandomButtonMechanic;
-import io.github.cardsandhuskers.escaperooms.builder.mechanics.potion.PotionEffectsMechanic;
+import io.github.cardsandhuskers.escaperooms.builder.mechanics.buttonmechanic.RandomButtonMechanic;
+import io.github.cardsandhuskers.escaperooms.builder.mechanics.potionmechanic.PotionEffectsMechanic;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -22,7 +22,7 @@ public class MechanicMapper {
             new MechanicDetails(RandomButtonMechanic.class, "Random Button Location", Material.STONE_BUTTON),
             new MechanicDetails(PotionEffectsMechanic.class, "Apply Potion Effects", Material.POTION),
             new MechanicDetails(ClearBlocksMechanic.class, "Clear Blocks", Material.STONE),
-            new MechanicDetails(CheckpointMechanic.class, "Set Spawn", Material.RED_BED)
+            new MechanicDetails(CheckpointMechanic.class, "Set Checkpoints", Material.RED_BED)
             ));
 
     /**
