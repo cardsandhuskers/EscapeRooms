@@ -2,6 +2,7 @@ package io.github.cardsandhuskers.escaperooms.builder.mechanics;
 
 import io.github.cardsandhuskers.escaperooms.EscapeRooms;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
+import io.github.cardsandhuskers.escaperooms.builder.objects.EditorGUI;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
 import io.github.cardsandhuskers.escaperooms.game.objects.TeamInstance;
 import net.kyori.adventure.text.Component;
@@ -50,19 +51,37 @@ public class StartingItemMechanic extends Mechanic{
     }
 
     @Override
-    public Map<String, Object> serialize() {
+    public Inventory generateMechanicSettingsMenu(Player player) {
+        Inventory mechanicInv = Bukkit.createInventory(player, 27, Component.text("Mechanic: " + MechanicMapper.getMechName(this.getClass()))
+                .color(NamedTextColor.BLUE));
 
-        // Prepare attributes map
-        Map<String, Object> attributes = new HashMap<>();
-        if (getItem() != null) {
-            // Serialize the ItemStack
-            attributes.put("item", serializeItemStack(getItem()));
+        mechanicInv.setItem(4, createIDItem(mechanicID, Material.BOOK));
+
+        Component explainerName = Component.text(">>>").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.WHITE);
+        List<Component> explanationLore = List.of(Component.text("Place an item in the orange"),
+                                                  Component.text("concrete to select it as the"),
+                                                  Component.text("item to give to players."));
+        mechanicInv.setItem(11, createItem(Material.ARROW, 1, explainerName, explanationLore));
+
+        Component placementName = Component.text("Place Item Here!").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.GOLD);
+        mechanicInv.setItem(12, createItem(Material.ORANGE_CONCRETE, 1, placementName, null));
+
+        Component currExplainerName = Component.text("Current Item:").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.WHITE);
+        List<Component> currExplainerLore = List.of(Component.text("The item on the right is what"),
+                                                    Component.text("is currently stored to give "),
+                                                    Component.text("to players."));
+        mechanicInv.setItem(14, createItem(Material.ARROW, 1, currExplainerName, currExplainerLore));
+
+        if(getItem() == null) {
+            Component holderName = Component.text("None!").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.WHITE);
+            mechanicInv.setItem(15, createItem(Material.GLASS_PANE, 1, holderName, null));
+        } else {
+            mechanicInv.setItem(15, getItem());
         }
 
-        // Set other attributes like "type"
-        attributes.put("type", MechanicMapper.getMechName(this.getClass()));
-
-        return attributes;
+        mechanicInv.setItem(18, EditorGUI.createBackButton());
+        mechanicInv.setItem(26, EditorGUI.createDeleteButton());
+        return mechanicInv;
     }
 
     @Override
@@ -71,77 +90,6 @@ public class StartingItemMechanic extends Mechanic{
         if(item!= null) explanationLore = List.of(Component.text("Current Item: " + item.getType().name()));
         else explanationLore = List.of(Component.text("Current Item: None"));
         return explanationLore;
-    }
-
-
-    @Override
-    public Inventory generateMechanicSettingsMenu(Player player) {
-        Inventory mechanicInv = Bukkit.createInventory(player, 27, Component.text("Mechanic: " + MechanicMapper.getMechName(this.getClass()))
-                .color(NamedTextColor.BLUE));
-
-        mechanicInv.setItem(4, createIDItem(mechanicID, Material.BOOK));
-
-        ItemStack explainer = new ItemStack(Material.ARROW);
-        ItemMeta explainerMeta = explainer.getItemMeta();
-        explainerMeta.displayName(Component.text(">>>").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.WHITE));
-        List<Component> explanationLore = List.of(Component.text("Place an item in the orange"),
-                                                  Component.text("concrete to select it as the"),
-                                                  Component.text("item to give to players."));
-        explainerMeta.lore(explanationLore);
-        explainer.setItemMeta(explainerMeta);
-        mechanicInv.setItem(11, explainer);
-
-        ItemStack placementPoint = new ItemStack(Material.ORANGE_CONCRETE);
-        ItemMeta placementPointMeta = placementPoint.getItemMeta();
-        placementPointMeta.displayName(Component.text("Place Item Here!").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.GOLD));
-        placementPoint.setItemMeta(placementPointMeta);
-        mechanicInv.setItem(12, placementPoint);
-
-        ItemStack currExplainer = new ItemStack(Material.ARROW);
-        ItemMeta currExplainerMeta = currExplainer.getItemMeta();
-        currExplainerMeta.displayName(Component.text("Current Item:").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.WHITE));
-        List<Component> currExplainerLore = List.of(Component.text("The item on the right is what"),
-                                                    Component.text("is currently stored to give "),
-                                                    Component.text("to players."));
-        currExplainerMeta.lore(currExplainerLore);
-        currExplainer.setItemMeta(currExplainerMeta);
-        mechanicInv.setItem(14, currExplainer);
-
-        if(getItem() == null) {
-            ItemStack holderItem = new ItemStack(Material.GLASS_PANE);
-            ItemMeta holderItemMeta = holderItem.getItemMeta();
-            holderItemMeta.displayName(Component.text("None!").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.WHITE));
-            holderItem.setItemMeta(holderItemMeta);
-            mechanicInv.setItem(15, holderItem);
-        } else {
-            mechanicInv.setItem(15, getItem());
-        }
-
-        ItemStack back = new ItemStack(Material.RED_CONCRETE);
-        ItemMeta backMeta = back.getItemMeta();
-        backMeta.displayName(Component.text("Back").color(NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
-        back.setItemMeta(backMeta);
-        mechanicInv.setItem(24, back);
-
-        ItemStack delete = new ItemStack(Material.BARRIER);
-        ItemMeta deleteMeta = delete.getItemMeta();
-        deleteMeta.displayName(Component.text("Delete Mechanic").color(NamedTextColor.DARK_RED).decoration(TextDecoration.ITALIC, false));
-        delete.setItemMeta(deleteMeta);
-        mechanicInv.setItem(26, delete);
-
-        return mechanicInv;
-    }
-
-    public void setItem(ItemStack item) {
-        if(item != null) this.item = item.clone();
-    }
-
-    public ItemStack getItem() {
-        if(item != null) {
-            return item.clone();
-        }
-        return null;
-
     }
 
     @Override
@@ -185,5 +133,33 @@ public class StartingItemMechanic extends Mechanic{
         for(Player p: teamInstance.getTeam().getOnlinePlayers()) {
             p.getInventory().addItem(item);
         }
+    }
+
+    @Override
+    public Map<String, Object> serialize() {
+
+        // Prepare attributes map
+        Map<String, Object> attributes = new HashMap<>();
+        if (getItem() != null) {
+            // Serialize the ItemStack
+            attributes.put("item", serializeItemStack(getItem()));
+        }
+
+        // Set other attributes like "type"
+        attributes.put("type", MechanicMapper.getMechName(this.getClass()));
+
+        return attributes;
+    }
+
+    public void setItem(ItemStack item) {
+        if(item != null) this.item = item.clone();
+    }
+
+    public ItemStack getItem() {
+        if(item != null) {
+            return item.clone();
+        }
+        return null;
+
     }
 }

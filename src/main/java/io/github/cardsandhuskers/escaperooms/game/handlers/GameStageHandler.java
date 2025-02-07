@@ -129,6 +129,9 @@ public class GameStageHandler {
         gameTimer.scheduleTimer();
     }
 
+    /**
+     * Timer for post game time
+     */
     public void startGameEnd() {
         int gameTime = plugin.getConfig().getInt("postgameTime");
         gameEndTimer = new Countdown(plugin,
@@ -152,8 +155,7 @@ public class GameStageHandler {
                 //Each Second
                 (t) -> {
                     Placeholder.timeVar = t.getSecondsLeft();
-
-
+                    if (t.getSecondsLeft() == t.getTotalSeconds() - 5) GameMessages.announceTeamLeaderboard();
 
                 }
         );
@@ -162,6 +164,9 @@ public class GameStageHandler {
         gameEndTimer.scheduleTimer();
     }
 
+    /**
+     * Called at game end, unregisters all listeners
+     */
     public void endGame() {
         if(listeners != null) {
             for(Listener listener:listeners) {
@@ -182,6 +187,8 @@ public class GameStageHandler {
         listeners.add(playerDeathListener);
         Listener playerDamageListener = new PlayerDamageListener(teamInstanceMap);
         listeners.add(playerDamageListener);
+        Listener blockBreakListener = new BlockBreakListener(teamInstanceMap);
+        listeners.add(blockBreakListener);
 
         for(Listener l: listeners) {
             plugin.getServer().getPluginManager().registerEvents(l, plugin);

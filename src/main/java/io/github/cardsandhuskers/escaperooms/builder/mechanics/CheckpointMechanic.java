@@ -150,7 +150,7 @@ public class CheckpointMechanic extends Mechanic{
     mechanicInv.setItem(49, pop);
 
     //back/delete buttons
-    mechanicInv.setItem(51, EditorGUI.createBackButton());
+    mechanicInv.setItem(45, EditorGUI.createBackButton());
     mechanicInv.setItem(53, EditorGUI.createDeleteButton());
 
     return mechanicInv;

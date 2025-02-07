@@ -22,7 +22,8 @@ public class MechanicMapper {
             new MechanicDetails(RandomButtonMechanic.class, "Random Button Location", Material.STONE_BUTTON),
             new MechanicDetails(PotionEffectsMechanic.class, "Apply Potion Effects", Material.POTION),
             new MechanicDetails(ClearBlocksMechanic.class, "Clear Blocks", Material.STONE),
-            new MechanicDetails(CheckpointMechanic.class, "Set Checkpoints", Material.RED_BED)
+            new MechanicDetails(CheckpointMechanic.class, "Set Checkpoints", Material.RED_BED),
+            new MechanicDetails(CustomDropMechanic.class, "Custom Item Drop", Material.DIAMOND_PICKAXE)
             ));
 
     /**

@@ -8,35 +8,28 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 
 import java.util.List;
 import java.util.Map;
 
-/**
- * Listens for player movement event
- * @author jscotty
- */
+public class BlockBreakListener implements Listener {
 
-public class PlayerMovementListener implements Listener {
     Map<Team, TeamInstance> teamInstances;
 
-    public PlayerMovementListener(Map<Team, TeamInstance> teamInstances) {
-         this.teamInstances = teamInstances;
+    public BlockBreakListener(Map<Team, TeamInstance> teamInstances) {
+        this.teamInstances = teamInstances;
+
     }
 
     /**
-     * Listens for player movement and calls mechanic event
-     * handler. Ignores player movement from players in
-     * spectator.
-     * @param e player movement event
+     * Listens for players breaking a block and passes it to relevant mechanics.
+     * @param e
      */
     @EventHandler
-    public void onPlayerMovement(PlayerMoveEvent e) {
+    public void onPlayerDamage(BlockBreakEvent e) {
         Player p = e.getPlayer();
-        if(p.getGameMode() == GameMode.SPECTATOR) {
-            return;
-        }
 
         Team team = TeamHandler.getInstance().getPlayerTeam(p);
         if (team != null) {

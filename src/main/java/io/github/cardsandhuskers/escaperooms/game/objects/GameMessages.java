@@ -18,9 +18,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+/**
+ * Class containing static methods that build the text for the game.
+ * Ideally, all announcements should be constructed here for ease of changing later.
+ */
 public class GameMessages {
 
-
+    /**
+     * Gets the message giving directions on how to play the game
+     * @param num_puzzles - number of rounds in the game
+     * @return - TextComponent for the game description
+     */
     public static TextComponent getDescription(int num_puzzles) {
         return Component.text("----------------------------------------\n")
                     .color(NamedTextColor.DARK_GREEN)
@@ -50,7 +58,10 @@ public class GameMessages {
                         .decorate(TextDecoration.STRIKETHROUGH));
     }
 
-
+    /**
+     * Gets the description of the points scoring for the game.
+     * @return
+     */
     public static TextComponent getPointsDescription() {
         return Component.text("----------------------------------------")
                     .color(NamedTextColor.DARK_GREEN)
@@ -61,46 +72,6 @@ public class GameMessages {
                 .append(Component.text("\nFor Completing a Level: YOU GET POINTS!!!!!!")
                     .color(NamedTextColor.WHITE)
                     .decoration(TextDecoration.STRIKETHROUGH, false));
-    }
-
-
-    /**
-     * Announces the top 5 earning players in the game
-     */
-    public static void announceTopPlayers() {
-        Server server = EscapeRooms.getPlugin().getServer();
-        ArrayList<TempPointsHolder> tempPointsList = new ArrayList<>();
-        for(Team team: TeamHandler.getInstance().getTeams()) {
-            for(Player p:team.getOnlinePlayers()) {
-                tempPointsList.add(team.getPlayerTempPoints(p));
-                p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
-            }
-        }
-
-        tempPointsList.sort(Comparator.comparing(TempPointsHolder::getPoints));
-        Collections.reverse(tempPointsList);
-
-        int max;
-        if(tempPointsList.size() >= 5) {
-            max = 4;
-        } else {
-            max = tempPointsList.size() - 1;
-        }
-
-        server.broadcast(Component.text("Top 5 Players:").color(NamedTextColor.RED).decoration(TextDecoration.BOLD, true));
-        server.broadcast(Component.text("------------------------------").color(NamedTextColor.DARK_RED).decorate(TextDecoration.STRIKETHROUGH));
-
-        int number = 1;
-        for(int i = 0; i <= max; i++) {
-            TempPointsHolder h = tempPointsList.get(i);
-
-            TextComponent component = Component.text(number + ". " + TeamHandler.getInstance().getPlayerTeam(h.getPlayer()).color + h.getPlayer().getName());
-            component = component.append(Component.text("    Points: " + h.getPoints()));
-            server.broadcast(component);
-
-            number++;
-        }
-        server.broadcast(Component.text("------------------------------").color(NamedTextColor.DARK_RED).decorate(TextDecoration.STRIKETHROUGH));
     }
 
     /**

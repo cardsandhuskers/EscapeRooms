@@ -23,7 +23,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -42,20 +41,20 @@ public abstract class Mechanic implements ConfigurationSerializable {
     /**
      * Generates the settings menu for the mechanic
      * @param player - player that's opening the inventory
-     * @return
+     * @return - Inventory object that can be opened for the player
      */
     public abstract Inventory generateMechanicSettingsMenu(Player player);
 
     /**
      * Gets the lore for the mechanic item in the level editor inventory
-     * @return
+     * @return - Component list for the item's lore
      */
     public abstract List<Component> getLore();
 
     /**
      * handles the click event for the mechanic's settings menu
-     * @param e
-     * @param editorGUIHandler
+     * @param e - clickEvent
+     * @param editorGUIHandler - editorguihandler object to handle opening player inventories and such
      */
     public abstract void handleClick(InventoryClickEvent e, EditorGUIHandler editorGUIHandler);
 
@@ -71,6 +70,10 @@ public abstract class Mechanic implements ConfigurationSerializable {
      */
     public abstract void levelStartExecution(TeamInstance teamInstance);
 
+    /**
+     * Converts the Mechanic's data into text in a HashMap structure to write to the config
+     * @return
+     */
     @Override
     public abstract Map<String, Object> serialize();
 
@@ -87,7 +90,7 @@ public abstract class Mechanic implements ConfigurationSerializable {
     }
 
     /**
-     * Deletes the mechanic from memory and the file
+     * Deletes the mechanic from memory and the config file
      */
     public void delete() {
         EscapeRooms plugin = EscapeRooms.getPlugin();
@@ -215,7 +218,7 @@ public abstract class Mechanic implements ConfigurationSerializable {
      * Creates the item for the level editor page that will have the data about the mechanic
      * @return
      */
-    public ItemStack createItem() {
+    public ItemStack createEditorPageItem() {
         Material mat = MechanicMapper.getMechMaterial(this.getClass());
         ItemStack mechanicStack = new ItemStack(mat);
 
@@ -226,6 +229,31 @@ public abstract class Mechanic implements ConfigurationSerializable {
         mechanicStack.setItemMeta(mechanicMeta);
 
         return mechanicStack;
+    }
+
+    /**
+     *
+     * @param mat - material to use
+     * @param count - number of items to put in the stack
+     * @param name - custom name for the item, use null for default name
+     * @param lore - lore for the item, use null for no lore
+     * @return
+     */
+    public static ItemStack createItem( Material mat, int count, Component name, List<Component> lore) {
+        ItemStack item = new ItemStack(mat, count);
+        ItemMeta itemMeta = item.getItemMeta();
+
+        if(name != null) {
+            itemMeta.displayName(name);
+        }
+        if(lore != null) {
+            itemMeta.lore(lore);
+        }
+
+        item.setItemMeta(itemMeta);
+
+        return item;
+
     }
 
 }

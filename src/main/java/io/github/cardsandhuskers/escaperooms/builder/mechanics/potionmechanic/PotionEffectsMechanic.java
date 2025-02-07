@@ -3,6 +3,7 @@ package io.github.cardsandhuskers.escaperooms.builder.mechanics.potionmechanic;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.Mechanic;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.MechanicMapper;
+import io.github.cardsandhuskers.escaperooms.builder.objects.EditorGUI;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
 import io.github.cardsandhuskers.escaperooms.game.objects.TeamInstance;
 import net.kyori.adventure.text.Component;
@@ -121,7 +122,6 @@ public class PotionEffectsMechanic extends Mechanic {
         Inventory mechanicInv = Bukkit.createInventory(player, 54, Component.text("Mechanic: " + MechanicMapper.getMechName(this.getClass()))
                 .color(NamedTextColor.BLUE));
 
-
         ItemStack idItem = createIDItem(mechanicID, Material.POTION);
         ItemMeta idMeta = idItem.getItemMeta();
         idMeta.lore(List.of(Component.text("Left Click a potion to toggle enabling it"), Component.text("Right Click a potion to edit its time and level")));
@@ -155,19 +155,8 @@ public class PotionEffectsMechanic extends Mechanic {
             i++;
         }
 
-        //back button
-        ItemStack back = new ItemStack(Material.RED_CONCRETE);
-        ItemMeta backMeta = back.getItemMeta();
-        backMeta.displayName(Component.text("Back").color(NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
-        back.setItemMeta(backMeta);
-        mechanicInv.setItem(51, back);
-
-        //delete button
-        ItemStack delete = new ItemStack(Material.BARRIER);
-        ItemMeta deleteMeta = delete.getItemMeta();
-        deleteMeta.displayName(Component.text("Delete Mechanic").color(NamedTextColor.DARK_RED).decoration(TextDecoration.ITALIC, false));
-        delete.setItemMeta(deleteMeta);
-        mechanicInv.setItem(53, delete);
+        mechanicInv.setItem(45, EditorGUI.createBackButton());
+        mechanicInv.setItem(53, EditorGUI.createDeleteButton());
 
         return mechanicInv;
 

@@ -5,6 +5,7 @@ import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
 import io.github.cardsandhuskers.escaperooms.builder.listeners.ButtonMechanicClickListener;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.Mechanic;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.MechanicMapper;
+import io.github.cardsandhuskers.escaperooms.builder.objects.EditorGUI;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
 import io.github.cardsandhuskers.escaperooms.game.objects.TeamInstance;
 import net.kyori.adventure.text.Component;
@@ -126,39 +127,23 @@ public class RandomButtonMechanic extends Mechanic {
 
             Vector position = level.getCoordsFromSchem(new Vector(location.getX(), location.getY(), location.getZ()));
 
-            ItemStack item = new ItemStack(Material.ENDER_PEARL);
-            ItemMeta itemMeta = item.getItemMeta();
-            itemMeta.displayName(Component.text("Location " + (i - 8)).decoration(TextDecoration.ITALIC, false));
-
-            itemMeta.lore(List.of(
+            Component pearlName = Component.text("Location " + (i - 8)).decoration(TextDecoration.ITALIC, false);
+            List<Component> pearlLore = List.of(
                     Component.text("X: " + position.getX()),
                     Component.text("Y: " + position.getY()),
                     Component.text("Z: " + position.getZ()),
                     Component.text("Face: " + location.getFace()),
                     Component.text("Right Click to Delete")
-            ));
-            item.setItemMeta(itemMeta);
-            mechanicInv.setItem(i, item);
+            );
+            mechanicInv.setItem(i, createItem(Material.ENDER_PEARL, 1, pearlName, pearlLore));
             i++;
         }
 
-        ItemStack wand = new ItemStack(Material.BLAZE_ROD);
-        ItemMeta wandMeta = wand.getItemMeta();
-        wandMeta.displayName(Component.text("Add Button Locations").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.DARK_GREEN));
-        wand.setItemMeta(wandMeta);
-        mechanicInv.setItem(45, wand);
+        Component wandName = Component.text("Add Button Locations").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.DARK_GREEN);
+        mechanicInv.setItem(45, createItem(Material.BLAZE_ROD, 1, wandName, null));
 
-        ItemStack back = new ItemStack(Material.RED_CONCRETE);
-        ItemMeta backMeta = back.getItemMeta();
-        backMeta.displayName(Component.text("Back").color(NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
-        back.setItemMeta(backMeta);
-        mechanicInv.setItem(51, back);
-
-        ItemStack delete = new ItemStack(Material.BARRIER);
-        ItemMeta deleteMeta = delete.getItemMeta();
-        deleteMeta.displayName(Component.text("Delete Mechanic").color(NamedTextColor.DARK_RED).decoration(TextDecoration.ITALIC, false));
-        delete.setItemMeta(deleteMeta);
-        mechanicInv.setItem(53, delete);
+        mechanicInv.setItem(45, EditorGUI.createBackButton());
+        mechanicInv.setItem(53, EditorGUI.createDeleteButton());
 
         return mechanicInv;
     }

@@ -178,7 +178,7 @@ public class EditorGUI {
         int i = 18;
         for(Mechanic m: level.getMechanics()) {
             if(m != null) {
-                editInv.setItem(i, m.createItem());
+                editInv.setItem(i, m.createEditorPageItem());
                 i++;
             }
         }
@@ -203,11 +203,7 @@ public class EditorGUI {
         addMechanic.setItemMeta(addMechanicMeta);
         editInv.setItem(15, addMechanic);
 
-        ItemStack back = new ItemStack(Material.RED_CONCRETE);
-        ItemMeta backMeta = back.getItemMeta();
-        backMeta.displayName(Component.text("Back").color(NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
-        back.setItemMeta(backMeta);
-        editInv.setItem(51, back);
+        editInv.setItem(45, createBackButton());
 
         ItemStack save = new ItemStack(Material.GREEN_CONCRETE);
         ItemMeta saveMeta = save.getItemMeta();
@@ -215,11 +211,7 @@ public class EditorGUI {
         save.setItemMeta(saveMeta);
         editInv.setItem(49, save);
 
-        ItemStack delete = new ItemStack(Material.BARRIER);
-        ItemMeta deleteMeta = delete.getItemMeta();
-        deleteMeta.displayName(Component.text("Delete Level").color(NamedTextColor.DARK_RED).decoration(TextDecoration.ITALIC, false));
-        delete.setItemMeta(deleteMeta);
-        editInv.setItem(53, delete);
+        editInv.setItem(53, createDeleteButton());
 
     }
 
@@ -239,11 +231,7 @@ public class EditorGUI {
             i++;
         }
 
-        ItemStack back = new ItemStack(Material.RED_CONCRETE);
-        ItemMeta backMeta = back.getItemMeta();
-        backMeta.displayName(Component.text("Back").color(NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
-        back.setItemMeta(backMeta);
-        editInv.setItem(53, back);
+        addMechanicMenu.setItem(45, createBackButton());
 
         return addMechanicMenu;
     }
