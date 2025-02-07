@@ -245,8 +245,8 @@ public class Level {
 
     /**
      * Converts material to mechanic object
-     * @param mat
-     * @return
+     * @param mat - material clicked on
+     * @return - Instantiated Mechanic object
      */
     public Mechanic addMechanic(Material mat) {
         Mechanic mechanic = MechanicMapper.createTypedMechanic(mat, this);
@@ -262,8 +262,8 @@ public class Level {
 
     /**
      * sets the level spawnpoint data inside the object
-     * @param pos
-     * @return
+     * @param pos - position to set as spawn point
+     * @return - success of operation
      */
     public boolean setSpawnPoint(Location pos) {
         if(pos1 != null && pos2 != null) {
@@ -305,7 +305,7 @@ public class Level {
 
     /**
      * Gets the absolute coordinates of the level spawnpoint
-     * @return
+     * @return - coordinates
      */
     public Location getAbsoluteSpawnPoint() {
         if (spawnPointOffset != null && pos1 != null) return new Location(pos1.getWorld(), lowerX + spawnPointOffset.getX(), lowerY + spawnPointOffset.getY(), lowerZ + spawnPointOffset.getZ());
@@ -372,7 +372,7 @@ public class Level {
 
     /**
      * Gets the difference between the passed in Vector and the lower corner of the level
-     * @param pos
+     * @param pos - position to compare
      * @return - vector containing difference, null if pos1 or pos2 is unset
      */
     public Vector getDiffFromSchem(Vector pos) {
@@ -402,7 +402,7 @@ public class Level {
 
     /**
      * Returns a vector representing the size of the level on all 3 axes
-     * @return
+     * @return - 3d vector that's the size
      */
     public Vector getSize() {
         return new Vector(higherX - lowerX, higherY - lowerY, higherZ - lowerZ);

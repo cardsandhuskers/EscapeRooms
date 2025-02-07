@@ -24,7 +24,7 @@ import java.util.List;
 public class LevelHandler {
 
     private static LevelHandler levelHandler;
-    private ArrayList<Level> levels = new ArrayList<>();
+    private final ArrayList<Level> levels = new ArrayList<>();
 
     private LevelHandler() {
 
@@ -32,7 +32,6 @@ public class LevelHandler {
 
     /**
      * Gets the instance of this Singleton class
-     * @return
      */
     public static LevelHandler getInstance() {
         if (levelHandler == null) {
@@ -45,14 +44,14 @@ public class LevelHandler {
 
     /**
      * Creates a new Level object and adds it to the level list
-     * @param levelName
-     * @return - is creation successful
+     * @param levelName - name of level being created
+     * @param p - player making the level
      */
-    public boolean createLevel(Player p, String levelName) {
+    public void createLevel(Player p, String levelName) {
         for (Level level: levels) {
             if (level.getName().equals(levelName)) {
                 p.sendMessage(Component.text("Level by this name already exists").color(NamedTextColor.RED));
-                return false;
+                return;
             }
         }
 
@@ -61,7 +60,6 @@ public class LevelHandler {
         p.sendMessage(Component.text("Level created successfully").color(NamedTextColor.GREEN));
         level.writeData();
 
-        return true;
     }
 
     /**
@@ -153,7 +151,7 @@ public class LevelHandler {
 
     /**
      * Deletes a level from the list and the configs
-     * @param level
+     * @param level - level to delete
      */
     public void deleteLevel(Level level) {
         EscapeRooms plugin = EscapeRooms.getPlugin();
@@ -169,7 +167,7 @@ public class LevelHandler {
             configLevels.remove(level.getName());
             config.set("levels", configLevels); // Update the list in the config
             plugin.saveConfig(); // Save the changes to the config.yml file
-            plugin.getLogger().info("'asdf' has been removed from the levels list.");
+            plugin.getLogger().info( level.getName() + " has been removed from the levels list.");
         }
 
         levels.remove(level);
@@ -185,8 +183,8 @@ public class LevelHandler {
 
     /**
      * Gets a Level object based on the name
-     * @param name
-     * @return
+     * @param name - name of level to look for
+     * @return - level object of that level
      */
     public Level getLevel(String name) {
         for (Level level: levels) {
@@ -199,10 +197,10 @@ public class LevelHandler {
 
     /**
      * Sets a level's corner coordinates
-     * @param pos
-     * @param level
-     * @param mat
-     * @return
+     * @param pos - location to set a corner at
+     * @param level - level to set the corner for
+     * @param mat - which wand was used (wand for pos1 or pos2 corner)
+     * @return - whether it was successful
      */
     public boolean setLevelPos(Location pos, Level level, Material mat) {
         if(mat == Material.BREEZE_ROD) {

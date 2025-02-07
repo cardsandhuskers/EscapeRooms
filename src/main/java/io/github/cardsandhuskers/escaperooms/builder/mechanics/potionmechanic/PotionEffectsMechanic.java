@@ -2,7 +2,6 @@ package io.github.cardsandhuskers.escaperooms.builder.mechanics.potionmechanic;
 
 import io.github.cardsandhuskers.escaperooms.EscapeRooms;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
-import io.github.cardsandhuskers.escaperooms.builder.handlers.LevelHandler;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.Mechanic;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.MechanicMapper;
 import io.github.cardsandhuskers.escaperooms.builder.objects.EditorGUI;
@@ -29,6 +28,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -38,12 +38,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class PotionEffectsMechanic extends Mechanic {
 
-    private HashMap<PotionEffectType, PotionInfo> potions = new HashMap<>();
+    private final HashMap<PotionEffectType, PotionInfo> potions = new HashMap<>();
 
     /**
      * Constructor for when instantiated brand new
      * Should only pass level, must call super()
-     * @param level
+     * @param level - level mechanic is attached to
      */
     public PotionEffectsMechanic(Level level) {
         super();
@@ -85,7 +85,7 @@ public class PotionEffectsMechanic extends Mechanic {
      * @return - the hashmap
      */
     @Override
-    public Map<String, Object> serialize() {
+    public @NotNull Map<String, Object> serialize() {
         Map<String, Object> attributes = new HashMap<>();
         attributes.put("type", MechanicMapper.getMechName(this.getClass()));
 
@@ -107,7 +107,7 @@ public class PotionEffectsMechanic extends Mechanic {
 
         ArrayList<Component> explanationLore = new ArrayList<>();
 
-        explanationLore.add(Component.text("Select potion effects to apply to players on the start of the level."));
+        explanationLore.add(Component.text("Potion effects applied at level start:"));
         for(PotionInfo potionInfo: potions.values()) {
             if(potionInfo.isEnabled) explanationLore.add(Component.text(parseEffectName(potionInfo.effectType)));
         }
@@ -117,8 +117,8 @@ public class PotionEffectsMechanic extends Mechanic {
 
     /**
      * Generates the settings menu for the mechanic
-     * @param player
-     * @return
+     * @param player - player to generate mechanic for
+     * @return - Inventory object to open
      */
     @Override
     public Inventory generateMechanicSettingsMenu(Player player) {
@@ -168,8 +168,8 @@ public class PotionEffectsMechanic extends Mechanic {
 
     /**
      * handles the click event when the clicked inventory is the one for this mechanic
-     * @param e
-     * @param editorGUIHandler
+     * @param e - event for the inventory click
+     * @param editorGUIHandler - kind of a singleton, has data about player and inventory stuff
      */
     @Override
     public void handleClick(InventoryClickEvent e, EditorGUIHandler editorGUIHandler) {
@@ -188,18 +188,14 @@ public class PotionEffectsMechanic extends Mechanic {
                         PotionEffectType type = effect.getType();
 
                         PotionInfo info = potions.get(type);
-                        if(info.isEnabled) {
-                            info.isEnabled = false;
-                        } else {
-                            info.isEnabled = true;
-                        }
+                        info.isEnabled = !info.isEnabled;
                         getLevel().writeData();
                     }
 
                     e.getWhoClicked().openInventory(generateMechanicSettingsMenu((Player) e.getWhoClicked()));
                 }
 
-            } else {
+            } else if (e.getClick() == ClickType.RIGHT){
 
                 if (meta.hasCustomEffects()) {
                     // Iterate over custom effects
@@ -271,26 +267,22 @@ public class PotionEffectsMechanic extends Mechanic {
 
     /**
      * Effect types to skip over when generating the potions
-     * @param type
-     * @return
+     * @param type - effect type
+     * @return - whether this effect type should be allowed in the official list
      */
     private boolean isSkip(PotionEffectType type) {
-        if(type == PotionEffectType.INSTANT_DAMAGE ||
+        return type == PotionEffectType.INSTANT_DAMAGE ||
                 type == PotionEffectType.INSTANT_HEALTH ||
                 type == PotionEffectType.HERO_OF_THE_VILLAGE ||
                 type == PotionEffectType.TRIAL_OMEN ||
                 type == PotionEffectType.RAID_OMEN ||
-                type == PotionEffectType.BAD_OMEN) {
-            return true;
-        } else {
-            return false;
-        }
+                type == PotionEffectType.BAD_OMEN;
     }
 
     /**
      * Returns a color based on the potion effect type
-     * @param type
-     * @return - color
+     * @param type - potion effect type
+     * @return - color that potion should be
      */
     private static Color getPotionColorForEffect(PotionEffectType type) {
         if (type == PotionEffectType.SPEED) {
@@ -329,8 +321,8 @@ public class PotionEffectsMechanic extends Mechanic {
 
     /**
      * Formats the effect name in a nicer way
-     * @param type
-     * @return
+     * @param type - potion effect type
+     * @return - nicely formatted string for the potion effect type
      */
     private static String parseEffectName(PotionEffectType type) {
         String[] words = type.getKey().getKey().split("_");

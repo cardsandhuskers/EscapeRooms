@@ -21,10 +21,10 @@ import org.bukkit.inventory.ItemStack;
  * Unregisters itself 30 seconds after being registered
  */
 public class ButtonMechanicClickListener implements Listener, Runnable {
-    private RandomButtonMechanic mechanic;
+    private final RandomButtonMechanic mechanic;
     private Integer assignedTaskId;
-    private Player player;
-    private final int cancelTime = 120;
+    private final Player player;
+    private final int CANCEL_TIME = 120;
     EditorGUIHandler editorGUIHandler;
 
     public ButtonMechanicClickListener(RandomButtonMechanic mechanic, Player player, EditorGUIHandler editorGUIHandler) {
@@ -98,6 +98,6 @@ public class ButtonMechanicClickListener implements Listener, Runnable {
      */
     public void startOperation() {
         // Initialize our assigned task's id, for later use so we can cancel
-        this.assignedTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(EscapeRooms.getPlugin(), this, cancelTime * 20, 1L);
+        this.assignedTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(EscapeRooms.getPlugin(), this, CANCEL_TIME * 20, 1L);
     }
 }

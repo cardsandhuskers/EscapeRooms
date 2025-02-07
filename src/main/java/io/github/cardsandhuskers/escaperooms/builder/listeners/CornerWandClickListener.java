@@ -18,13 +18,13 @@ import org.bukkit.inventory.ItemStack;
  * Uses a countdown timer to cancel the listener after 30 seconds
  */
 public class CornerWandClickListener implements Listener, Runnable {
-    private EditorGUIHandler editorGUIHandler;
-    private Level currLevel;
-    private Material mat;
+    private final EditorGUIHandler editorGUIHandler;
+    private final Level currLevel;
+    private final Material mat;
     // Our scheduled task's assigned id, needed for canceling
     private Integer assignedTaskId;
-    private Player player;
-    private final int cancelTime = 30;
+    private final Player player;
+    private final int CANCEL_TIME = 30;
 
     public CornerWandClickListener(EditorGUIHandler editorGUIHandler, Level currLevel, Material mat, Player player) {
         this.editorGUIHandler = editorGUIHandler;
@@ -81,7 +81,7 @@ public class CornerWandClickListener implements Listener, Runnable {
      */
     public void startOperation() {
         // Initialize our assigned task's id, for later use so we can cancel
-        this.assignedTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(EscapeRooms.getPlugin(), this, cancelTime * 20, 1L);
+        this.assignedTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(EscapeRooms.getPlugin(), this, CANCEL_TIME * 20, 1L);
     }
 
 

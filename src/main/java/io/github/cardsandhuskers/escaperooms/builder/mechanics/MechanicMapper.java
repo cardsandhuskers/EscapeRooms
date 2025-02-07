@@ -17,7 +17,7 @@ public class MechanicMapper {
      * Add new mechanics to this list here
      * This is the ONLY place you need to do this
      */
-    private static ArrayList<MechanicDetails> mechanicDetails = new ArrayList<>(Arrays.asList(
+    private static final ArrayList<MechanicDetails> mechanicDetails = new ArrayList<>(Arrays.asList(
             new MechanicDetails(StartingItemMechanic.class, "Give Item on Spawn", Material.BOOK),
             new MechanicDetails(RandomButtonMechanic.class, "Random Button Location", Material.STONE_BUTTON),
             new MechanicDetails(PotionEffectsMechanic.class, "Apply Potion Effects", Material.POTION),
@@ -44,11 +44,11 @@ public class MechanicMapper {
     /**
      * Used to map typed mechanics correctly when loading them from a file
      *
-     * @param ID
-     * @param type
-     * @param attributes
-     * @param level
-     * @return
+     * @param ID - mechanic's UUID
+     * @param type - mechanic type as a string
+     * @param attributes - mechanic's attributes from config
+     * @param level - level mechanic is tied to
+     * @return - Instantiated mechanic object
      */
     public static Mechanic loadTypedMechanicFromFile(String ID, String type, ConfigurationSection attributes, Level level) {
 
@@ -66,9 +66,9 @@ public class MechanicMapper {
 
     /**
      * Creates a typed mechanic based on the material clicked
-     * @param mat
-     * @param level
-     * @return
+     * @param mat - material clicked on
+     * @param level - level mechanic should be tied to
+     * @return - Instantiated mechanic object
      */
     public static Mechanic createTypedMechanic(Material mat, Level level) {
         Mechanic mechanic = null;

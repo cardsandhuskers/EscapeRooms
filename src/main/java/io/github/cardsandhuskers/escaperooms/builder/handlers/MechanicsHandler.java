@@ -1,6 +1,5 @@
 package io.github.cardsandhuskers.escaperooms.builder.handlers;
 
-import io.github.cardsandhuskers.escaperooms.EscapeRooms;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.Mechanic;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
 import org.bukkit.Material;
@@ -13,7 +12,6 @@ import java.util.*;
 public class MechanicsHandler {
     private static MechanicsHandler mechanicsHandler;
 
-    private HashMap<String, Material> mechanicTypes = new HashMap<>();
     private MechanicsHandler() {
 
     }
@@ -27,7 +25,9 @@ public class MechanicsHandler {
 
     /**
      * gets the mechanic clicked using the item in the inventory title slot (slot 4)
-     * @param e
+     * if the click was a red concrete or barrier, handles that here,
+     * otherwise passes the click event into that specific mechanic,
+     * @param e - event to handle
      */
     public void onMechanicClick(InventoryClickEvent e, EditorGUIHandler editorGUIHandler) {
         Player p = (Player) e.getInventory().getHolder();
@@ -47,7 +47,7 @@ public class MechanicsHandler {
     }
 
     /**
-     * Handles a click within the GUI to confirm deletion of a
+     * Handles a click within the GUI to confirm deletion of a mechanic
      * @param e - click event
      * @param clickedItem - clicked item
      * @param editorGUIHandler - GUI handler so that the level editor can be returned to

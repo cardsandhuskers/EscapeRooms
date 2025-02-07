@@ -25,8 +25,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class EditorGUI {
     private Inventory mainInv;
     private Inventory editInv;
-    private Player player;
-    private EscapeRooms plugin = EscapeRooms.getPlugin();
+    private final Player player;
+    private final EscapeRooms plugin = EscapeRooms.getPlugin();
     private GUI currentGUI;
 
     private Level currentSelectedLevel;
@@ -34,8 +34,6 @@ public class EditorGUI {
 
     public EditorGUI(Player p) {
         player = p;
-
-        this.plugin = plugin;
     }
 
     public Level getCurrentSelectedLevel() {
@@ -159,7 +157,7 @@ public class EditorGUI {
         ItemMeta spawnSetMeta = spawnSet.getItemMeta();
         spawnSetMeta.displayName(Component.text("Set Level Spawn").decoration(TextDecoration.ITALIC, false));
         List<Component> spawnLore = new ArrayList<>(setPosLore(level.getAbsoluteSpawnPoint()));
-        spawnLore.add(0, Component.text("Sets the level's spawn to your current location"));
+        spawnLore.addFirst(Component.text("Sets the level's spawn to your current location"));
         spawnSetMeta.lore(spawnLore);
         spawnSet.setItemMeta(spawnSetMeta);
         editInv.setItem(7, spawnSet);
@@ -169,7 +167,7 @@ public class EditorGUI {
         ItemMeta endSetMeta = endSet.getItemMeta();
         endSetMeta.displayName(Component.text("Set Level End Button").decoration(TextDecoration.ITALIC, false));
         List<Component> endLore = new ArrayList<>(setPosLore(level.getAbsoluteEndButtonPoint()));
-        endLore.add(0, Component.text("Sets the level's button end to your current location"));
+        endLore.addFirst(Component.text("Sets the level's button end to your current location"));
         endSetMeta.lore(endLore);
         endSet.setItemMeta(endSetMeta);
         editInv.setItem(8, endSet);

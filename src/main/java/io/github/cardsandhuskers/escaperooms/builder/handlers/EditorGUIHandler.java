@@ -12,7 +12,6 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -25,8 +24,8 @@ import java.util.List;
 import java.util.UUID;
 
 public class EditorGUIHandler {
-    private HashMap<OfflinePlayer, EditorGUI> guiMap = new HashMap<>();
-    private EscapeRooms plugin = EscapeRooms.getPlugin();
+    private final HashMap<OfflinePlayer, EditorGUI> guiMap = new HashMap<>();
+    private final EscapeRooms plugin = EscapeRooms.getPlugin();
 
     public EditorGUIHandler() {
     }
@@ -37,9 +36,9 @@ public class EditorGUIHandler {
 
     /**
      * Click handler for main GUI (one with list of levels and ability to add levels)
-     * @param p
-     * @param clickedItem
-     * @param clickType
+     * @param p - player clicking
+     * @param clickedItem - item they clicked on
+     * @param clickType - left, right, or middle click
      */
     public void onMainGUIClick(Player p, ItemStack clickedItem, ClickType clickType) {
         //switch function for different items
@@ -49,7 +48,6 @@ public class EditorGUIHandler {
         String itemName = PlainTextComponentSerializer.plainText().serialize(display);
         Material mat = clickedItem.getType();
         EditorGUI gui = guiMap.get(p);
-
 
         switch (mat) {
             case NAME_TAG:
@@ -61,15 +59,14 @@ public class EditorGUIHandler {
                 gui.openEditInv(itemName);
                 break;
         }
-
     }
 
     /**
      * Handler for a click on the level editor GUI
-     * @param p
-     * @param clickedItem
-     * @param clickType
-     * @param levelName
+     * @param p - player clicking
+     * @param clickedItem - item they clicked on
+     * @param clickType - left, right, or middle click
+     * @param levelName - name of level they are editing
      */
     public void onEditorGUIClick(Player p, ItemStack clickedItem, ClickType clickType, String levelName) {
         Component displayName = clickedItem.getItemMeta().displayName();
@@ -122,12 +119,10 @@ public class EditorGUIHandler {
         switch(itemName) {
             case "Back"-> gui.openMainInv();
             case "Toggle Environment Damage" -> {
-                if(currLevel.isEnvDamage()) currLevel.setEnvDamage(false);
-                else currLevel.setEnvDamage(true);
+                currLevel.setEnvDamage(!currLevel.isEnvDamage());
             }
             case "Toggle PVP Damage" -> {
-                if(currLevel.isPvpDamage()) currLevel.setPvpDamage(false);
-                else currLevel.setPvpDamage(true);
+                currLevel.setPvpDamage(!currLevel.isPvpDamage());
             }
             case "Change Level GameMode" -> {
                 switch (currLevel.getGameMode()) {
@@ -164,8 +159,8 @@ public class EditorGUIHandler {
 
     /**
      * Handler for a click within the addMechanic GUI
-     * @param p
-     * @param clickedItem
+     * @param p - player that clicked
+     * @param clickedItem - item they clicked on
      */
     public void onMechanicGUIClick(Player p, ItemStack clickedItem) {
         EditorGUI gui = getPlayerMenu(p);
@@ -182,8 +177,8 @@ public class EditorGUIHandler {
 
     /**
      * Click handler for a click within the confirmation menu for deleting a level
-     * @param e
-     * @param clickedItem
+     * @param e - player that clicked
+     * @param clickedItem - item they clicked on
      */
     public void onDeleteLevelClick(InventoryClickEvent e, ItemStack clickedItem) {
 
@@ -215,22 +210,20 @@ public class EditorGUIHandler {
 
     /**
      * Returns a GUI for a specific player
-     * @param p
-     * @return
+     * @param p - player that needs the GUI
+     * @return - the GUI object
      */
     public EditorGUI getPlayerMenu(Player p) {
         EditorGUI playerGUI = guiMap.get((OfflinePlayer) p);
-        if(playerGUI != null) {
-            return playerGUI;
-        } else {
+        if (playerGUI == null) {
             playerGUI = new EditorGUI(p);
             guiMap.put((OfflinePlayer) p, playerGUI);
-            return playerGUI;
         }
+        return playerGUI;
     }
 
     /**
-     * Refreshes all menus
+     * Refreshes all menus that are currently open
      */
     public void refreshAll() {
         for (EditorGUI gui: guiMap.values()) {

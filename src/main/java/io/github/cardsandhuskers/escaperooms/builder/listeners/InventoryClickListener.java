@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
  * Main inventory click listener for the GUIs, calls appropriate functions based on which GUI the user clicks in
  */
 public class InventoryClickListener implements Listener {
-    private EditorGUIHandler editorGUIHandler;
+    private final EditorGUIHandler editorGUIHandler;
 
     public InventoryClickListener(EditorGUIHandler editorGUIHandler) {
         this.editorGUIHandler = editorGUIHandler;
@@ -24,11 +24,7 @@ public class InventoryClickListener implements Listener {
     public void onInventoryClick(InventoryClickEvent e) {
         String title = PlainTextComponentSerializer.plainText().serialize(e.getView().title());
         ItemStack clickedItem = e.getCurrentItem();
-        try {
-            Player p = (Player) e.getInventory().getHolder();
-        } catch (Exception ex) {
-            return;
-        }
+
         ClickType clickType = e.getClick();
 
         if(clickedItem != null) {

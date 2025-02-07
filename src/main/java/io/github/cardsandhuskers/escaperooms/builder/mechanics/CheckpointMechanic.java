@@ -35,19 +35,19 @@ import org.jetbrains.annotations.NotNull;
  * @author jscotty
  */
 public class CheckpointMechanic extends Mechanic{
-  private Vector relativeRespawn;
-  private HashMap<UUID,Integer> playerCheckpoint;
-  private ArrayList<Vector> relativeCheckpoints;
-  private ArrayList<Vector> actualCheckpoints;
+  private final Vector relativeRespawn;
+  private final HashMap<UUID,Integer> playerCheckpoint;
+  private final ArrayList<Vector> relativeCheckpoints;
+  private final ArrayList<Vector> actualCheckpoints;
 
   private static final int CHECKPOINT_GUI_OFFSET = 18;
 
   /**
    * Reads in metadata for relative spawn vectors and
    * stores them in the relativeCheckpoints list.
-   * @param mechanicID
-   * @param level
-   * @param attributes
+   * @param mechanicID - unique ID of the mechanic
+   * @param level - level mechanic is attached to
+   * @param attributes - list of attributes the mechanic has
    */
   public CheckpointMechanic(String mechanicID, Level level, ConfigurationSection attributes) {
     this.mechanicID = UUID.fromString(mechanicID);
@@ -89,7 +89,7 @@ public class CheckpointMechanic extends Mechanic{
 
   /**
    * Constructor for newly created SetSpawnMechanic
-   * @param level
+   * @param level - level mechanic is attached to
    */
   public CheckpointMechanic(Level level) {
     super();
@@ -204,8 +204,8 @@ public class CheckpointMechanic extends Mechanic{
 
   /**
    * Adds metadata for each checkpoint
-   * @param item
-   * @param vector
+   * @param item - item to add the metadata to
+   * @param vector - vector to get coordinates from
    */
   private void addSpawnMeta(ItemStack item, Vector vector) {
     if(this.relativeRespawn == null) return;

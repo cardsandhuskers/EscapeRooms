@@ -26,8 +26,8 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -37,7 +37,7 @@ import java.util.*;
  */
 public class RandomButtonMechanic extends Mechanic {
 
-    private ArrayList<BlockLocation> blockLocations = new ArrayList<>();
+    private final ArrayList<BlockLocation> blockLocations = new ArrayList<>();
 
     private int randomNum = 0;
 
@@ -65,8 +65,7 @@ public class RandomButtonMechanic extends Mechanic {
 
     @Override
     public List<Component> getLore() {
-        List<Component> explanationLore = List.of(Component.text("Currently " + blockLocations.size() + " saved locations."));
-        return explanationLore;
+        return List.of(Component.text("Currently " + blockLocations.size() + " saved locations."));
     }
 
     public boolean addLocation(Block block, BlockFace blockFace) {
@@ -97,7 +96,7 @@ public class RandomButtonMechanic extends Mechanic {
     }
 
     @Override
-    public Map<String, Object> serialize() {
+    public @NotNull Map<String, Object> serialize() {
         HashMap<String, Object> attributes = new HashMap<>();
 
         List<Map<String, Object>> serializedLocations = new ArrayList<>();
@@ -183,7 +182,7 @@ public class RandomButtonMechanic extends Mechanic {
 
     /**
      * Picks a random block from the list and sets a button at it, then faces it correctly
-     * @param teamInstance
+     * @param teamInstance - teamInstance to use to get corners for button locations
      */
     @Override
     public void levelStartExecution(TeamInstance teamInstance) {

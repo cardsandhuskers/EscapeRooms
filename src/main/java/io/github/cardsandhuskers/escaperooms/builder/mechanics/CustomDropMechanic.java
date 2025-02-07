@@ -10,7 +10,6 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -18,12 +17,16 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Mechanic that supports giving custom drops when breaking a certain block type
+ */
 public class CustomDropMechanic extends Mechanic{
 
     private Material baseBlock = null;
@@ -115,7 +118,8 @@ public class CustomDropMechanic extends Mechanic{
     @Override
     public List<Component> getLore() {
         List<Component> explanationLore = List.of(
-                Component.text("TEST")
+                Component.text("Breaking " + baseBlock.name()),
+                Component.text("Drops " + customDrop.displayName())
         );
         return explanationLore;
     }
@@ -172,7 +176,7 @@ public class CustomDropMechanic extends Mechanic{
     }
 
     @Override
-    public Map<String, Object> serialize() {
+    public @NotNull Map<String, Object> serialize() {
         Map<String, Object> attributes = new HashMap<>();
         if (baseBlock != null) {
             // Serialize the ItemStack

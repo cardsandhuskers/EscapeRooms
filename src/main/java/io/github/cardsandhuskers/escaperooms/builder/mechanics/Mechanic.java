@@ -21,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.List;
@@ -59,8 +60,8 @@ public abstract class Mechanic implements ConfigurationSerializable {
     public abstract void handleClick(InventoryClickEvent e, EditorGUIHandler editorGUIHandler);
 
     /**
-     * handle game time events (listeners pass through this to the mechanic
-     * @param e
+     * handle game time events (listeners pass through this to the mechanic)
+     * @param e - event that happened
      */
     public abstract void eventHandler(TeamInstance teamInstance, Event e);
 
@@ -72,10 +73,10 @@ public abstract class Mechanic implements ConfigurationSerializable {
 
     /**
      * Converts the Mechanic's data into text in a HashMap structure to write to the config
-     * @return
+     * @return - serializable map to write to config
      */
     @Override
-    public abstract Map<String, Object> serialize();
+    public abstract @NotNull Map<String, Object> serialize();
 
     public UUID getID() {
         return mechanicID;
@@ -117,10 +118,9 @@ public abstract class Mechanic implements ConfigurationSerializable {
 
     /**
      * Generates and opens a menu to let the player confirm if they want to delete the mechanic or not
-     * @param player
+     * @param player - player to open menu for
      */
     public void openDeleteMenu(Player player) {
-        EscapeRooms plugin = EscapeRooms.getPlugin();
         Inventory deleteLevelMenu = Bukkit.createInventory(player, 18, Component.text("Delete Mechanic?").decoration(TextDecoration.ITALIC, false)
                 .color(NamedTextColor.GREEN));
 
@@ -165,9 +165,9 @@ public abstract class Mechanic implements ConfigurationSerializable {
     /**
      * Creates the item at the top of the mechanic menu, contains the ID of the mechanic so that the mechanic the user
      * is working with can be retreived
-     * @param mechanicID
-     * @param mat
-     * @return
+     * @param mechanicID - ID of mechanic to create item for
+     * @param mat - material to use for the item
+     * @return - created ItemStack object
      */
     public static ItemStack createIDItem(UUID mechanicID, Material mat) {
         EscapeRooms plugin = EscapeRooms.getPlugin();
@@ -184,12 +184,12 @@ public abstract class Mechanic implements ConfigurationSerializable {
 
     /**
      * Pulls the UUID from an ID item
-     * @param clickedItem
-     * @return
+     * @param item - UUID item to get ID from
+     * @return - UUID of the mechanic
      */
-    public static UUID getUUIDFromItem(ItemStack clickedItem) {
+    public static UUID getUUIDFromItem(ItemStack item) {
         EscapeRooms plugin = EscapeRooms.getPlugin();
-        ItemMeta itemMeta = clickedItem.getItemMeta();
+        ItemMeta itemMeta = item.getItemMeta();
         NamespacedKey namespacedKey = new NamespacedKey(plugin, "ID");
         PersistentDataContainer container = itemMeta.getPersistentDataContainer();
         String idString = container.get(namespacedKey, PersistentDataType.STRING);
@@ -216,7 +216,7 @@ public abstract class Mechanic implements ConfigurationSerializable {
 
     /**
      * Creates the item for the level editor page that will have the data about the mechanic
-     * @return
+     * @return - ItemStack of the item
      */
     public ItemStack createEditorPageItem() {
         Material mat = MechanicMapper.getMechMaterial(this.getClass());
@@ -237,7 +237,7 @@ public abstract class Mechanic implements ConfigurationSerializable {
      * @param count - number of items to put in the stack
      * @param name - custom name for the item, use null for default name
      * @param lore - lore for the item, use null for no lore
-     * @return
+     * @return - Item created
      */
     public static ItemStack createItem( Material mat, int count, Component name, List<Component> lore) {
         ItemStack item = new ItemStack(mat, count);
