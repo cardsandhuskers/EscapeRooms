@@ -1,6 +1,8 @@
 package io.github.cardsandhuskers.escaperooms.builder.mechanics.potionmechanic;
 
+import io.github.cardsandhuskers.escaperooms.EscapeRooms;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
+import io.github.cardsandhuskers.escaperooms.builder.handlers.LevelHandler;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.Mechanic;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.MechanicMapper;
 import io.github.cardsandhuskers.escaperooms.builder.objects.EditorGUI;
@@ -10,6 +12,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -28,6 +31,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Allows for the application of 1 or more potion effects to start players with on a level
@@ -124,7 +128,7 @@ public class PotionEffectsMechanic extends Mechanic {
 
         ItemStack idItem = createIDItem(mechanicID, Material.POTION);
         ItemMeta idMeta = idItem.getItemMeta();
-        idMeta.lore(List.of(Component.text("Left Click a potion to toggle enabling it"), Component.text("Right Click a potion to edit its time and level")));
+        idMeta.lore(List.of(Component.text("Left Click a potion to toggle enabling it"), Component.text("Right Click a potion to edit its level")));
         idItem.setItemMeta(idMeta);
         mechanicInv.setItem(4, idItem);
 
@@ -135,7 +139,7 @@ public class PotionEffectsMechanic extends Mechanic {
             PotionMeta potionMeta = (PotionMeta) potion.getItemMeta();
 
             potionMeta.displayName(Component.text(parseEffectName(potionInfo.effectType)).decoration(TextDecoration.ITALIC, false));
-            PotionEffect potionEffect = new PotionEffect(potionInfo.effectType, -1, 0);  // default to amplifier 1
+            PotionEffect potionEffect = new PotionEffect(potionInfo.effectType, -1, potionInfo.amplifier);  // default to amplifier 1
             potionMeta.addCustomEffect(potionEffect, true);
             potionMeta.setColor(getPotionColorForEffect(potionInfo.effectType));
 
@@ -196,7 +200,16 @@ public class PotionEffectsMechanic extends Mechanic {
                 }
 
             } else {
-                e.getWhoClicked().sendMessage("Right Click!");
+
+                if (meta.hasCustomEffects()) {
+                    // Iterate over custom effects
+                    for (PotionEffect effect : meta.getCustomEffects()) {
+                        PotionEffectType type = effect.getType();
+                        PotionInfo info = potions.get(type);
+
+                        createAnvilInput((Player) e.getWhoClicked(), info);
+                    }
+                }
             }
         }
 
@@ -217,6 +230,43 @@ public class PotionEffectsMechanic extends Mechanic {
                 }
             }
         }
+    }
+
+    private void createAnvilInput(Player player, PotionInfo info) {
+        //first create anvil
+        AtomicBoolean result = new AtomicBoolean(false);
+        new AnvilGUI.Builder()
+                .onClose(player1 -> {           //called when the inventory is closing
+                    getLevel().writeData();
+                    player.openInventory(generateMechanicSettingsMenu(player));
+                })
+                .onClick((slot, stateSnapshot) -> {         //called when the inventory output slot is clicked
+                    String input = stateSnapshot.getText().trim();
+                    int level = 0;
+                    try {
+                        level = Integer.parseInt(input);
+                        if(level >= 1 && level <= 256) {
+                            result.set(true);
+                        } else {
+                            result.set(false);
+                        }
+                    } catch (Exception e) {
+                        result.set(false);
+                    }
+
+                    if (result.get()) {
+                        //amplifier is 0 indexed, we give them 1 indexed numbers, but should keep 0 indexed in the backend
+                        info.amplifier = level - 1;
+                    } else {
+                        player.sendMessage("Potion level must be an integer between 1 and 256.");
+                    }
+                    return AnvilGUI.Response.close();
+                })
+                .text(" ")                                      //sets the text the GUI should start with
+                .itemLeft(new ItemStack(Material.PAPER))        //use a custom item for the first slot
+                .title("Enter Potion Level (1-256) for : " + parseEffectName(info.effectType)) //set the title of the GUI (only works in 1.14+)
+                .plugin(EscapeRooms.getPlugin())                                 //set the plugin instance
+                .open(player);                                  //opens the GUI for the player provided
     }
 
     /**
