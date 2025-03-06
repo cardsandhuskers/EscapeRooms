@@ -14,15 +14,39 @@ import org.bukkit.Server;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
+
+import static net.kyori.adventure.text.format.NamedTextColor.*;
+import static net.kyori.adventure.text.format.NamedTextColor.BLUE;
+import static net.kyori.adventure.text.format.TextDecoration.BOLD;
+import static net.kyori.adventure.text.format.TextDecoration.STRIKETHROUGH;
 
 /**
  * Class containing static methods that build the text for the game.
  * Ideally, all announcements should be constructed here for ease of changing later.
  */
 public class GameMessages {
+
+    private static final Map<String, NamedTextColor> COLOR_MAP = new HashMap<>();
+
+    static {
+        COLOR_MAP.put("&0", NamedTextColor.BLACK);
+        COLOR_MAP.put("&1", NamedTextColor.DARK_BLUE);
+        COLOR_MAP.put("&2", NamedTextColor.DARK_GREEN);
+        COLOR_MAP.put("&3", NamedTextColor.DARK_AQUA);
+        COLOR_MAP.put("&4", NamedTextColor.DARK_RED);
+        COLOR_MAP.put("&5", NamedTextColor.DARK_PURPLE);
+        COLOR_MAP.put("&6", NamedTextColor.GOLD);
+        COLOR_MAP.put("&7", NamedTextColor.GRAY);
+        COLOR_MAP.put("&8", NamedTextColor.DARK_GRAY);
+        COLOR_MAP.put("&9", NamedTextColor.BLUE);
+        COLOR_MAP.put("&a", NamedTextColor.GREEN);
+        COLOR_MAP.put("&b", NamedTextColor.AQUA);
+        COLOR_MAP.put("&c", NamedTextColor.RED);
+        COLOR_MAP.put("&d", LIGHT_PURPLE);
+        COLOR_MAP.put("&e", NamedTextColor.YELLOW);
+        COLOR_MAP.put("&f", WHITE);
+    }
 
     /**
      * Gets the message giving directions on how to play the game
@@ -77,28 +101,30 @@ public class GameMessages {
     /**
      * Announces the leaderboard of teams based on points earned in the game
      */
+    /**
+     * Announces the leaderboard of teams based on points earned in the game
+     */
     public static void announceTeamLeaderboard() {
-        Server server = EscapeRooms.getPlugin().getServer();
 
         ArrayList<Team> teamList = TeamHandler.getInstance().getTeams();
         teamList.sort(Comparator.comparing(Team::getTempPoints));
         Collections.reverse(teamList);
 
-        server.broadcast(Component.text("Team Leaderboard").color(NamedTextColor.BLUE).decoration(TextDecoration.BOLD, true));
-        server.broadcast(Component.text("------------------------------").color(NamedTextColor.GREEN).decorate(TextDecoration.STRIKETHROUGH));
+        TextComponent.Builder builder = Component.text()
+                .append(Component.text("\nTeam Leaderboard:", BLUE, BOLD))
+                .append(Component.text("\n------------------------------", DARK_BLUE));
 
         int counter = 1;
         for(Team team:teamList) {
-
-            TextComponent component = Component.text(counter + ". " + team.color);
-            component = component.append(Component.text(team.getTeamName()).decoration(TextDecoration.BOLD, true));
-            component = component.append(Component.text(" Points: " + team.getTempPoints()));
-            server.broadcast(component);
+            builder.append(Component.text("\n" + counter + ". "))
+                    .append(Component.text(team.getTeamName(), COLOR_MAP.get(team.getConfigColor()), BOLD))
+                    .append(Component.text(" Points: " + team.getTempPoints()));
 
             counter++;
         }
+        builder.append(Component.text("\n------------------------------", DARK_BLUE));
 
-        server.broadcast(Component.text("------------------------------").color(NamedTextColor.GREEN).decorate(TextDecoration.STRIKETHROUGH));
+        Bukkit.broadcast(builder.build());
         for(Player p: Bukkit.getOnlinePlayers()) {
             p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
         }

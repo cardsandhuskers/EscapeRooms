@@ -139,7 +139,7 @@ public class RandomButtonMechanic extends Mechanic {
         }
 
         Component wandName = Component.text("Add Button Locations").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.DARK_GREEN);
-        mechanicInv.setItem(45, createItem(Material.BLAZE_ROD, 1, wandName, null));
+        mechanicInv.setItem(0, createItem(Material.BLAZE_ROD, 1, wandName, null));
 
         mechanicInv.setItem(45, EditorGUI.createBackButton());
         mechanicInv.setItem(53, EditorGUI.createDeleteButton());

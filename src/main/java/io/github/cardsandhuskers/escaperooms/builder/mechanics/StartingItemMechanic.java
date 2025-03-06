@@ -56,18 +56,20 @@ public class StartingItemMechanic extends Mechanic{
         mechanicInv.setItem(4, createIDItem(mechanicID, Material.BOOK));
 
         Component explainerName = Component.text(">>>").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.WHITE);
-        List<Component> explanationLore = List.of(Component.text("Place an item in the orange"),
-                                                  Component.text("concrete to select it as the"),
-                                                  Component.text("item to give to players."));
+        List<Component> explanationLore = List.of(
+                Component.text("Place an item in the orange"),
+                Component.text("concrete to select it as the"),
+                Component.text("item to give to players."));
         mechanicInv.setItem(11, createItem(Material.ARROW, 1, explainerName, explanationLore));
 
         Component placementName = Component.text("Place Item Here!").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.GOLD);
         mechanicInv.setItem(12, createItem(Material.ORANGE_CONCRETE, 1, placementName, null));
 
         Component currExplainerName = Component.text("Current Item:").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.WHITE);
-        List<Component> currExplainerLore = List.of(Component.text("The item on the right is what"),
-                                                    Component.text("is currently stored to give "),
-                                                    Component.text("to players."));
+        List<Component> currExplainerLore = List.of(
+                Component.text("The item on the right is what"),
+                Component.text("is currently stored to give "),
+                Component.text("to players."));
         mechanicInv.setItem(14, createItem(Material.ARROW, 1, currExplainerName, currExplainerLore));
 
         if(getItem() == null) {
