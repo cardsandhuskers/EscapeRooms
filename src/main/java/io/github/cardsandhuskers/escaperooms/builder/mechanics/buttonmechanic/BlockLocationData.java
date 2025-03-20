@@ -10,12 +10,12 @@ import java.util.Map;
  * Small serializable class that contains BlockLocation data (x,y,z, and blockface)
  * Used for the buttons in the RandomButtonMechanic
  */
-public class BlockLocation implements ConfigurationSerializable {
+public class BlockLocationData implements ConfigurationSerializable {
 
     private final int x, y, z;
     private final BlockFace face;
 
-    public BlockLocation(int x, int y, int z, BlockFace face) {
+    public BlockLocationData(int x, int y, int z, BlockFace face) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -47,12 +47,12 @@ public class BlockLocation implements ConfigurationSerializable {
                 '}';
     }
 
-    public static BlockLocation deserialize(Map<String, Object> data) {
+    public static BlockLocationData deserialize(Map<String, Object> data) {
 
         int x = (int) data.get("x");
         int y = (int) data.get("y");
         int z = (int) data.get("z");
         BlockFace face = BlockFace.valueOf((String) data.get("face"));
-        return new BlockLocation(x, y, z, face);
+        return new BlockLocationData(x, y, z, face);
     }
 }

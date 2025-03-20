@@ -408,7 +408,7 @@ public class Level {
         return new Vector(higherX - lowerX, higherY - lowerY, higherZ - lowerZ);
     }
 
-    private boolean isButton(Material mat) {
+    public static boolean isButton(Material mat) {
         switch (mat) {
             case OAK_BUTTON:
             case SPRUCE_BUTTON:

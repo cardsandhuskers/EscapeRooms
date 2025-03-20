@@ -185,7 +185,6 @@ public class EditorGUIHandler {
         Component displayName = e.getClickedInventory().getItem(4).getItemMeta().displayName();
         if(displayName == null) return;
         String itemName = PlainTextComponentSerializer.plainText().serialize(displayName);
-        System.out.println(itemName);
 
         if(clickedItem.getType() == Material.RED_CONCRETE) {
             getPlayerMenu((Player) e.getInventory().getHolder()).openEditInv(itemName);

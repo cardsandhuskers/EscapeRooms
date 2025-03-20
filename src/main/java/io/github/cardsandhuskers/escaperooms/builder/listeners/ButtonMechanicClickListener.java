@@ -41,22 +41,16 @@ public class ButtonMechanicClickListener implements Listener, Runnable {
         Action action = e.getAction();
 
         if (heldItem != null && heldItem.getType() == Material.BLAZE_ROD) {
-            System.out.println("TEST B");
             e.setCancelled(true);
             if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
-                System.out.println("TEST C");
                 cancelOperation();
                 HandlerList.unregisterAll(this);
                 editorGUIHandler.getPlayerMenu(player).openEditMechanicInv(mechanic);
 
 
             } else if (action == Action.RIGHT_CLICK_BLOCK) {
-                System.out.println("TEST D");
                 BlockFace face = e.getBlockFace();
                 Block block = e.getClickedBlock();
-
-                System.out.println(block);
-                System.out.println(face);
 
                 boolean success = mechanic.addLocation(block, face);
                 if(success) {

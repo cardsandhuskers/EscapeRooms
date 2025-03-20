@@ -1,6 +1,7 @@
 package io.github.cardsandhuskers.escaperooms.builder.mechanics;
 
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.buttonmechanic.RandomButtonMechanic;
+import io.github.cardsandhuskers.escaperooms.builder.mechanics.checkplacedblocksmechanic.CheckPlacedBlocksMechanic;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.potionmechanic.PotionEffectsMechanic;
 import io.github.cardsandhuskers.escaperooms.builder.objects.Level;
 import org.bukkit.Material;
@@ -25,7 +26,7 @@ public class MechanicMapper {
             new MechanicDetails(CheckpointMechanic.class, "Set Checkpoints", Material.RED_BED),
             new MechanicDetails(CustomDropMechanic.class, "Custom Item Drop", Material.DIAMOND_PICKAXE),
             new MechanicDetails(DisableInteractMechanic.class, "Disable Interact", Material.FURNACE),
-            new MechanicDetails(SpecificBlockPlacementWinMechanic.class, "Specific Block Placements For Win", Material.BELL)
+            new MechanicDetails(CheckPlacedBlocksMechanic.class, "Check Placed Blocks", Material.BELL)
             ));
 
     /**

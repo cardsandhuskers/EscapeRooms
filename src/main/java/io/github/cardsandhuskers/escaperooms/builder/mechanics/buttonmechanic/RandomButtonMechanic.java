@@ -37,7 +37,7 @@ import java.util.*;
  */
 public class RandomButtonMechanic extends Mechanic {
 
-    private final ArrayList<BlockLocation> blockLocations = new ArrayList<>();
+    private final ArrayList<BlockLocationData> blockLocationData = new ArrayList<>();
 
     private int randomNum = 0;
 
@@ -56,16 +56,16 @@ public class RandomButtonMechanic extends Mechanic {
         if (locations != null) {
             for (Map<?, ?> locationData : locations) {
                 // Deserialize each location into a BlockLocation
-                blockLocations.add(BlockLocation.deserialize((Map<String, Object>) locationData));
+                blockLocationData.add(BlockLocationData.deserialize((Map<String, Object>) locationData));
             }
         }
 
-        randomNum = new Random().nextInt(blockLocations.size());
+        randomNum = new Random().nextInt(blockLocationData.size());
     }
 
     @Override
     public List<Component> getLore() {
-        return List.of(Component.text("Currently " + blockLocations.size() + " saved locations."));
+        return List.of(Component.text("Currently " + blockLocationData.size() + " saved locations."));
     }
 
     public boolean addLocation(Block block, BlockFace blockFace) {
@@ -87,9 +87,9 @@ public class RandomButtonMechanic extends Mechanic {
         Vector diff = level.getDiffFromSchem(buttonBlock);
         if(diff == null) return false;
 
-        BlockLocation bl = new BlockLocation(diff.getBlockX(), diff.getBlockY(), diff.getBlockZ(), blockFace);
-        blockLocations.add(bl);
-        randomNum = new Random().nextInt(blockLocations.size());
+        BlockLocationData bl = new BlockLocationData(diff.getBlockX(), diff.getBlockY(), diff.getBlockZ(), blockFace);
+        blockLocationData.add(bl);
+        randomNum = new Random().nextInt(blockLocationData.size());
 
         return true;
 
@@ -101,7 +101,7 @@ public class RandomButtonMechanic extends Mechanic {
 
         List<Map<String, Object>> serializedLocations = new ArrayList<>();
 
-        for (BlockLocation loc : blockLocations) {
+        for (BlockLocationData loc : blockLocationData) {
             serializedLocations.add(loc.serialize());
         }
 
@@ -122,7 +122,7 @@ public class RandomButtonMechanic extends Mechanic {
 
         //location list
         int i = 9;
-        for(BlockLocation location: blockLocations) {
+        for(BlockLocationData location: blockLocationData) {
 
             Vector position = level.getCoordsFromSchem(new Vector(location.getX(), location.getY(), location.getZ()));
 
@@ -167,8 +167,8 @@ public class RandomButtonMechanic extends Mechanic {
 
             } else if (e.getClick() == ClickType.RIGHT && e.getCurrentItem().getType() == Material.ENDER_PEARL) {
                 int locIdx = itemName.charAt(itemName.length() - 1) - '0';
-                blockLocations.remove(locIdx - 1);
-                randomNum = new Random().nextInt(blockLocations.size());
+                blockLocationData.remove(locIdx - 1);
+                randomNum = new Random().nextInt(blockLocationData.size());
 
                 p.openInventory(generateMechanicSettingsMenu(p));
             }
@@ -188,7 +188,7 @@ public class RandomButtonMechanic extends Mechanic {
     public void levelStartExecution(TeamInstance teamInstance) {
         Location corner = teamInstance.getCurrentLevelCorner();
 
-        BlockLocation loc = blockLocations.get(randomNum);
+        BlockLocationData loc = blockLocationData.get(randomNum);
 
         corner.add(loc.getX(), loc.getY(), loc.getZ());
 

@@ -82,6 +82,10 @@ public class TeamInstance {
         }
     }
 
+    /**
+     * Returns a copy of the level corner (lowest x,y,z) of the level that the team is currently on.
+     * @return a copy of the corner
+     */
     public Location getCurrentLevelCorner() {
         return levelCorners.get(levels.get(currentLevel - 1)).clone();
     }
@@ -197,6 +201,10 @@ public class TeamInstance {
         Placeholder.currentLevelName.put(team, getCurrentLevel().getName());
         teleportToCurrentLevel();
         executeLevelMechanics();
+    }
+
+    public Location getLocationFromOffset(Vector offset) {
+        return getCurrentLevelCorner().add(offset);
     }
 
     public boolean hasCompletedLevel(int testLevel) {

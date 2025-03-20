@@ -19,10 +19,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Mechanic that supports giving custom drops when breaking a certain block type
@@ -58,7 +55,7 @@ public class CustomDropMechanic extends Mechanic{
         Inventory mechanicInv = Bukkit.createInventory(player, 36, Component.text("Mechanic: " + MechanicMapper.getMechName(this.getClass()))
                 .color(NamedTextColor.BLUE));
 
-        mechanicInv.setItem(4, createIDItem(mechanicID, Material.DIAMOND_PICKAXE));
+        mechanicInv.setItem(4, createIDItem(mechanicID, MechanicMapper.getMechMaterial(this.getClass())));
 
         Component explainerName = Component.text(">>>").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.WHITE);
         List<Component> explainerLore = List.of(
@@ -117,10 +114,18 @@ public class CustomDropMechanic extends Mechanic{
 
     @Override
     public List<Component> getLore() {
-        List<Component> explanationLore = List.of(
-                Component.text("Breaking " + baseBlock.name()),
-                Component.text("Drops " + customDrop.displayName())
-        );
+
+        List<Component> explanationLore = new ArrayList<>();
+        if (baseBlock != null) {
+            explanationLore.add(Component.text("Breaking: " + baseBlock.name()));
+        } else {
+            explanationLore.add(Component.text("Breaking: None"));
+        }
+        if (customDrop != null) {
+            explanationLore.add(Component.text("Drops: " + customDrop.displayName()));
+        } else {
+            explanationLore.add(Component.text("Drops: None"));
+        }
         return explanationLore;
     }
 

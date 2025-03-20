@@ -4,7 +4,7 @@ import io.github.cardsandhuskers.escaperooms.builder.mechanics.Mechanic;
 import io.github.cardsandhuskers.escaperooms.commands.ReloadConfigCommand;
 import io.github.cardsandhuskers.escaperooms.commands.SetLobbyCommand;
 import io.github.cardsandhuskers.escaperooms.game.objects.Placeholder;
-import io.github.cardsandhuskers.escaperooms.builder.mechanics.buttonmechanic.BlockLocation;
+import io.github.cardsandhuskers.escaperooms.builder.mechanics.buttonmechanic.BlockLocationData;
 import io.github.cardsandhuskers.escaperooms.builder.mechanics.potionmechanic.PotionInfo;
 import io.github.cardsandhuskers.escaperooms.commands.EscapeRoomCommand;
 import io.github.cardsandhuskers.escaperooms.builder.handlers.EditorGUIHandler;
@@ -44,7 +44,7 @@ public final class EscapeRooms extends JavaPlugin {
         }
 
         //register serializations here!
-        ConfigurationSerialization.registerClass(BlockLocation.class);
+        ConfigurationSerialization.registerClass(BlockLocationData.class);
         ConfigurationSerialization.registerClass(PotionInfo.class);
         ConfigurationSerialization.registerClass(Mechanic.class);
 
